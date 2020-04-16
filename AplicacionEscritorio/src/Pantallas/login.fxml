@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Pantallas.LoginController">
+   <children>
+      <StackPane layoutX="121.0" layoutY="98.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <effect>
+            <DropShadow />
+         </effect>
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <VBox style="-fx-background-color: #2000ee#2000ee;" HBox.hgrow="ALWAYS" />
+                  <VBox style="-fx-background-color: white;" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <opaqueInsets>
+                  <Insets bottom="45.0" left="45.0" right="45.0" top="45.0" />
+               </opaqueInsets>
+               <children>
+                  <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onKeyPressed="#keyPressed" prefHeight="350.0" prefWidth="350.0" style="-fx-background-color: white;">
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                     <children>
+                        <Text fill="#2000ee" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 2em; -fx-font-family: Quicksand; -fx-font-weight: bold;" text="Login">
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Text>
+                        <HBox maxWidth="-Infinity" prefWidth="250.0" style="-fx-background-color: white;">
+                           <VBox.margin>
+                              <Insets top="50.0" />
+                           </VBox.margin>
+                           <children>
+                              <JFXTextField fx:id="usuario" opacity="0.86" promptText="Username" style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="-Infinity" prefWidth="250.0" style="-fx-background-color: white;">
+                           <children>
+                              <JFXPasswordField fx:id="passwordField" opacity="0.86" promptText="Password" style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets top="20.0" />
+                                 </HBox.margin>
+                              </JFXPasswordField>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="5.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <JFXButton fx:id="buttonLogin" onAction="#iniciarSesion" onKeyPressed="#iniciarSesion" prefHeight="27.0" prefWidth="89.0" style="-fx-border-radius: 200px; -fx-background-color: #2000ee#2000ee;" text="Login" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="40.0" />
+                           </VBox.margin>
+                        </JFXButton>
+                        <ButtonBar prefHeight="40.0" prefWidth="200.0" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+   <cursor>
+      <Cursor fx:constant="OPEN_HAND" />
+   </cursor>
+</AnchorPane>

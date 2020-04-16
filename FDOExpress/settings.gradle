@@ -1,0 +1,2 @@
+rootProject.name='FDOExpress'
+include ':app', ':commons-codec-1.14'
