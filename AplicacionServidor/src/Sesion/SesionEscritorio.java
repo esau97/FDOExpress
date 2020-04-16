@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+
 public class SesionEscritorio extends Thread{
     private Socket socket;
     private InformacionCompartida informacionCompartida;
@@ -34,10 +36,13 @@ public class SesionEscritorio extends Thread{
                 print = new PrintWriter (socket.getOutputStream(), true);
                 while(listening){
                     if(cliente.ready()){
+                        // Leemos lo que nos envía el cliente
                         respuesta=cliente.readLine();
                         System.out.println("Recibo"+respuesta);
+                        // Tratamos el mensaje recibido
                         mensaje=tratarMensaje(respuesta);
                         System.out.println("Envio"+mensaje);
+                        //Enviamos una respuesta al cliente
                         print.println(mensaje);
                     }
                     Thread.sleep(2000);
@@ -58,10 +63,14 @@ public class SesionEscritorio extends Thread{
         String respuesta="";
         String argumentos[] = codigo.split("&");
         switch (Codigos.codigo_servidor(Integer.parseInt(argumentos[0]))){
-            case INICION_SESION:
-                    respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
+            case INICIO_SESION:
+                respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
+                break;
+            case REGISTRO:
+                respuesta=bbdd.registro(argumentos);
                 break;
         }
         return respuesta;
     }
+
 }
