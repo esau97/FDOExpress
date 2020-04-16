@@ -7,12 +7,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/*
-* Cuando ejecutamos el servidor, este lanza un hilo Sesiones que es el encargado de gestinar
-* todas las peticiones UDP
-* Además, el servidor es el encargado de gestinar las nuevas peticiones TCP,
-* lanzando un hilo para cada nueva sesión (En este caso seria con la app escritorio)
-*/
 public class Servidor {
     private InformacionCompartida informacionCompartida;
 
