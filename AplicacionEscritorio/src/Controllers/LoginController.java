@@ -1,4 +1,4 @@
-package Pantallas;
+package Controllers;
 
 import Util.Codigos;
 import Util.Constantes;

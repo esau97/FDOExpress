@@ -1,4 +1,4 @@
-package Pantallas;
+package Controllers;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
