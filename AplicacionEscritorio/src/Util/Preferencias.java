@@ -1,7 +1,7 @@
 package Util;
 
 public class Preferencias {
-    private String dir_ip="192.168.1.52";
+    private String dir_ip="192.168.1.39";
     private int puerto = 4444;
 
     public int getPuerto() {
