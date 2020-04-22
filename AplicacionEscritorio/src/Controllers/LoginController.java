@@ -1,5 +1,6 @@
-package Pantallas;
+package Controllers;
 
+import Entity.User;
 import Util.Codigos;
 import Util.Constantes;
 import Util.Preferencias;
@@ -13,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -28,11 +30,14 @@ import java.net.*;
 public class LoginController {
     Stage window;
     Scene principal;
-    Preferencias pref;
     ActionEvent actionEvent;
     KeyEvent keyEvent;
+    String nombre;
+    User user;
     int rol = 0;
-    Socket socket;
+    private Socket socket;
+    private DatabaseController databaseController;
+    private double x,y;
     BufferedReader in;
     @FXML
     JFXTextField usuario;
@@ -40,17 +45,13 @@ public class LoginController {
     JFXPasswordField passwordField;
     @FXML
     Button buttonLogin;
+    @FXML
+    Label labelError;
 
     public LoginController(){
-        pref = new Preferencias();
-        try{
-            socket = new Socket(pref.getDir_ip(),pref.getPuerto());
+        databaseController = new DatabaseController();
+        user = new User();
 
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     @FXML
     void keyPressed(KeyEvent event) {
@@ -77,7 +78,8 @@ public class LoginController {
         String user = usuario.getText().toString();
         String pass = passwordField.getText().toString();
         if(!user.equals("") && !pass.equals("")){
-            enviarDatos(user,pass,0);
+            tratarMensaje(databaseController.enviarDatos(user,pass,0));
+            //enviarDatos(user,pass,0);
         }else {
             showError("Error","Debe introducir el usuario y la contraseña");
         }
@@ -100,11 +102,11 @@ public class LoginController {
             tratarMensaje(recibido);
 
         } catch (Exception e) {
-            showError("Error direccion ip","Compruebe si ha escrito bien la direccion IP o si tiene conexion a internet");
+            labelError.setText("Compruebe si ha escrito bien la direccion IP o si tiene conexion a internet.");
+            labelError.setOpacity(1);
+
         }
     }
-
-
 
 
     public void tratarMensaje(String mensaje){
@@ -115,6 +117,7 @@ public class LoginController {
                 break;
             case LOGIN_CORRECTO:
                 rol=Integer.parseInt(codigos[1]);
+                user.setName(codigos[2]);
                 mostrarNuevaVentana();
                 break;
         }
@@ -123,31 +126,64 @@ public class LoginController {
         switch (codError){
             case 1:
                 System.out.println("La contraseña no es correcta");
-                showError("Error", "La contraseña o el usuario no son correctos.");
+                labelError.setText("La contraseña o el usuario no son correctos.");
+                labelError.setOpacity(1);
+                break;
+            case 2:
+                labelError.setText("Compruebe si todos los campos han sido rellenados.");
+                labelError.setOpacity(1);
+                break;
+            case 3:
+                labelError.setText("El usuario ya existe, introduzca uno nuevo.");
+                labelError.setOpacity(1);
+                break;
+            case 4:
+                labelError.setText("Compruebe si ha escrito bien la direccion IP o si tiene conexion a internet.");
+                labelError.setOpacity(1);
                 break;
 
         }
     }
     public void mostrarNuevaVentana(){
-        Parent root;
+        Parent root=null;
+        FXMLLoader loader = new FXMLLoader();
         try {
             if(rol==1){
-                root = FXMLLoader.load(getClass().getResource("principal_admin.fxml"));
-            }else{
-                root = FXMLLoader.load(getClass().getResource("principal_gerente.fxml"));
+                loader.setLocation(getClass().getResource("/Pantallas/principal_admin.fxml"));
+                root = loader.load();
+                PrincipalController principalController = loader.getController();
+                principalController.initData(user,databaseController);
+
+                principal =  new Scene(root);
+            }else if(rol==4){
+                loader.setLocation(getClass().getResource("/Pantallas/principal_gerente.fxml"));
+                root = loader.load();
+                PrincipalController principalController = loader.getController();
+                principalController.initData(user,databaseController);
+                principal =  new Scene(root);
             }
 
-            principal =  new Scene(root);
             if(actionEvent!=null){
                 window = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
                 window.setScene(principal);
+
             }else if(keyEvent!=null){
                 window = (Stage) ((Node)keyEvent.getSource()).getScene().getWindow();
                 window.setScene(principal);
             }
+            if(window!=null){
+                /*root.setOnMousePressed(event ->{
+                    x = event.getX();
+                    y = event.getY();
+                });
+                root.setOnMouseDragged(event ->{
+                    window.setX(event.getSceneX()-x);
+                    window.setY(event.getSceneY()-y);
+                });*/
 
+                window.show();
+            }
 
-            window.show();
         } catch (IOException e) {
             e.printStackTrace();
         }

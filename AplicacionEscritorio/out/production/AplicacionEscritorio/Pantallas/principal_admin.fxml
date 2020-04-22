@@ -1,27 +1,262 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Pantallas.PrincipalController">
+<AnchorPane fx:id="pnlParent" prefHeight="589.0" prefWidth="925.0" style="-fx-background-color: #FFF;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.PrincipalController">
    <children>
-      <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="600.0">
+      <VBox layoutX="-1.0" prefHeight="479.0" prefWidth="244.0" style="-fx-background-color: #48A5EA #48A5EA;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label layoutX="253.0" layoutY="200.0" text="Pantalla administrador">
-               <font>
-                  <Font name="System Bold Italic" size="13.0" />
-               </font>
-            </Label>
-            <ImageView fx:id="backImage" fitHeight="24.0" fitWidth="20.0" layoutX="553.0" layoutY="359.0" onMouseClicked="#backToLogin" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Imagenes/back.png" />
-               </image>
-            </ImageView>
+            <ImageView fitHeight="150.0" fitWidth="245.0" pickOnBounds="true" preserveRatio="true" />
+            <Button fx:id="btnHome" alignment="BASELINE_LEFT" graphicTextGap="20.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Home">
+               <graphic>
+                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Home_32px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Button>
+            <Button fx:id="btnOrders" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Orders">
+               <graphic>
+                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Box_32px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Button>
+            <Button fx:id="btnCustomers" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="199.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Customers">
+               <graphic>
+                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Person_32px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Button>
+            <Button fx:id="btnEmployees" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="238.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Employees">
+               <graphic>
+                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Person_32px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Button>
+            <Button fx:id="btnVehicles" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Vehicles">
+               <graphic>
+                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Person_32px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Button>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="199.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Sign Out">
+               <graphic>
+                  <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Sign_Out_32px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Button>
          </children>
-      </AnchorPane>
+      </VBox>
+      <StackPane fx:id="parentPane" layoutX="244.0" prefHeight="589.0" prefWidth="662.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Pane fx:id="pnlOrders" prefHeight="590.0" prefWidth="681.0">
+               <children>
+                  <Label layoutX="29.0" layoutY="43.0" text="Orders">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
+                     <children>
+                        <Label text="NºOrder">
+                           <HBox.margin>
+                              <Insets left="80.0" />
+                           </HBox.margin>
+                           <opaqueInsets>
+                              <Insets left="60.0" />
+                           </opaqueInsets>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="21.0" text="Date">
+                           <HBox.margin>
+                              <Insets left="80.0" />
+                           </HBox.margin>
+                           <opaqueInsets>
+                              <Insets left="60.0" />
+                           </opaqueInsets>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="From">
+                           <HBox.margin>
+                              <Insets left="80.0" />
+                           </HBox.margin>
+                           <opaqueInsets>
+                              <Insets left="60.0" />
+                           </opaqueInsets>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="To">
+                           <HBox.margin>
+                              <Insets left="80.0" />
+                           </HBox.margin>
+                           <opaqueInsets>
+                              <Insets left="60.0" />
+                           </opaqueInsets>
+                        </Label>
+                        <Label layoutX="470.0" layoutY="21.0" text="State">
+                           <opaqueInsets>
+                              <Insets left="60.0" />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets left="80.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <content>
+                        <VBox fx:id="orderItem1" prefHeight="354.0" prefWidth="617.0" />
+                     </content>
+                  </ScrollPane>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+               </children>
+            </Pane>
+            <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="29.0" layoutY="43.0" text="Vehicles">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
+                     <children>
+                        <Label text="Car registration">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="21.0" text="Purchase Date">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="Revision Date">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="Documentation">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <content>
+                        <VBox fx:id="orderItem2" prefHeight="354.0" prefWidth="617.0" />
+                     </content>
+                  </ScrollPane>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New vehicle" />
+               </children>
+            </Pane>
+            <Pane fx:id="pnlEmployees" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="29.0" layoutY="43.0" text="Wellcome">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="labelName" layoutX="29.0" layoutY="92.0" text="nombre">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
+                     <children>
+                        <Label text="Name">
+                           <HBox.margin>
+                              <Insets left="90.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="21.0" text="email">
+                           <HBox.margin>
+                              <Insets left="90.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="Address">
+                           <HBox.margin>
+                              <Insets left="90.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="Phone">
+                           <HBox.margin>
+                              <Insets left="90.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <content>
+                        <VBox fx:id="orderItem" prefHeight="354.0" prefWidth="617.0" />
+                     </content>
+                  </ScrollPane>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Employee" />
+                  <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="436.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Admin" />
+               </children>
+            </Pane>
+         </children>
+      </StackPane>
    </children>
 </AnchorPane>

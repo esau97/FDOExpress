@@ -65,9 +65,17 @@ public class SesionEscritorio extends Thread{
         switch (Codigos.codigo_servidor(Integer.parseInt(argumentos[0]))){
             case INICIO_SESION:
                 respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
+                String rsp [] = respuesta.split("&");
+                // Si el usuario se ha loqueado correctamente lo almaceno en una lista
+                if (rsp[0].equals("1")){
+                    informacionCompartida.setListaLogueados(argumentos[1]);
+                }
                 break;
             case REGISTRO:
                 respuesta=bbdd.registro(argumentos);
+                break;
+            case REGISTRO_VEHICULO:
+                respuesta = bbdd.registrarVehiculo(argumentos);
                 break;
         }
         return respuesta;

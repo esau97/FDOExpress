@@ -1,7 +1,7 @@
 package ClasesCompartidas;
 
 import Sesion.SesionEscritorio;
-import Sesion.Sesiones;
+import Sesion.PeticionesUDP;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,12 +19,13 @@ public class Servidor {
             serverSocket = new ServerSocket(4444);
 
 
-            new Sesiones().start(); // Este hilo se encarga de gestionar todas
+            new PeticionesUDP(serv.informacionCompartida).start(); // Este hilo se encarga de gestionar todas
             // las peticiones UDP
             //new ComprobarRegistros().start();
             while (listening){
                 Socket cliente = serverSocket.accept();
                 new SesionEscritorio(cliente,serv.informacionCompartida).start();
+                System.out.println("Lanzando hilo sesion Escritorio");
             }
             serverSocket.close();
         } catch (IOException ex) {

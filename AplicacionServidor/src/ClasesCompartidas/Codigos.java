@@ -4,7 +4,8 @@ public class Codigos {
 
     public enum recibeServidor{
         INICIO_SESION,
-        REGISTRO
+        REGISTRO,
+        REGISTRO_VEHICULO
     }
 
     public static recibeServidor codigo_servidor(int num){

@@ -23,8 +23,10 @@ public class SesionMovil extends Thread{
     private String recibido;
     private int port;
     private InetAddress address;
+    private InformacionCompartida informacionCompartida;
 
-    public SesionMovil(DatagramPacket packetIn, DatagramSocket dataSocket) {
+    public SesionMovil(DatagramPacket packetIn, DatagramSocket dataSocket,InformacionCompartida informacionCompartida) {
+        this.informacionCompartida = informacionCompartida;
         bbdd=new BaseDeDatos();
         this.dataSocket = dataSocket;
         paquete_entrada=packetIn;
@@ -36,11 +38,8 @@ public class SesionMovil extends Thread{
     }
     public void run(){
         System.out.println("Comienza el registro.");
-
         String enviar;
-
         byte bufOut[] ;
-
         DatagramPacket packetOut;
 
         try {
@@ -57,7 +56,6 @@ public class SesionMovil extends Thread{
 
     public String tratarMensaje(String codigo){
         String respuesta="";
-
         System.out.println(codigo);
         String argumentos[]=codigo.split("&");
         int num=Integer.parseInt(argumentos[0]);
@@ -69,6 +67,11 @@ public class SesionMovil extends Thread{
                 break;
             case INICIO_SESION:
                 respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
+                String rsp [] = respuesta.split("&");
+                // Si el usuario se ha loqueado correctamente lo almaceno en una lista
+                if (rsp[0].equals("1")){
+                    informacionCompartida.setListaLogueados(argumentos[1]);
+                }
                 break;
         }
 
