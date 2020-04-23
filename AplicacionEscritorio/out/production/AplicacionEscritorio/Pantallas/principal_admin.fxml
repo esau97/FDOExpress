@@ -160,51 +160,6 @@
                   <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
                </children>
             </Pane>
-            <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
-               <children>
-                  <Label layoutX="29.0" layoutY="43.0" text="Vehicles">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
-                     <children>
-                        <Label text="Car registration">
-                           <HBox.margin>
-                              <Insets left="61.0" />
-                           </HBox.margin>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="21.0" text="Purchase Date">
-                           <HBox.margin>
-                              <Insets left="61.0" />
-                           </HBox.margin>
-                        </Label>
-                        <Label layoutX="58.0" layoutY="21.0" text="Revision Date">
-                           <HBox.margin>
-                              <Insets left="61.0" />
-                           </HBox.margin>
-                        </Label>
-                        <Label layoutX="58.0" layoutY="21.0" text="Documentation">
-                           <HBox.margin>
-                              <Insets left="61.0" />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
-                     <content>
-                        <VBox fx:id="orderItem2" prefHeight="354.0" prefWidth="617.0" />
-                     </content>
-                  </ScrollPane>
-                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Imagenes/icons8_Search_52px.png" />
-                     </image>
-                  </ImageView>
-                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
-                  <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New vehicle" />
-               </children>
-            </Pane>
             <Pane fx:id="pnlEmployees" prefHeight="572.0" prefWidth="221.0">
                <children>
                   <Label layoutX="29.0" layoutY="43.0" text="Wellcome">
@@ -254,6 +209,51 @@
                   <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
                   <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Employee" />
                   <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="436.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Admin" />
+               </children>
+            </Pane>
+            <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="29.0" layoutY="43.0" text="Vehicles">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
+                     <children>
+                        <Label text="Car registration">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="21.0" text="Purchase Date">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="Revision Date">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="21.0" text="Documentation">
+                           <HBox.margin>
+                              <Insets left="61.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <content>
+                        <VBox fx:id="orderItem2" prefHeight="354.0" prefWidth="617.0" />
+                     </content>
+                  </ScrollPane>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New vehicle" />
                </children>
             </Pane>
          </children>

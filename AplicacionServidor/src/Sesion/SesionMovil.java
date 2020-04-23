@@ -30,8 +30,6 @@ public class SesionMovil extends Thread{
         bbdd=new BaseDeDatos();
         this.dataSocket = dataSocket;
         paquete_entrada=packetIn;
-        System.out.println("Tamaño "+paquete_entrada.getLength());
-        System.out.println("Tamaño in"+packetIn.getLength());
         recibido = new String(paquete_entrada.getData(), 0, paquete_entrada.getLength());
         address = paquete_entrada.getAddress();
         port = paquete_entrada.getPort();

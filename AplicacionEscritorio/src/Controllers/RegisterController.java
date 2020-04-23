@@ -5,28 +5,32 @@ import Util.Codigos;
 import Util.Constantes;
 import Util.Preferencias;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.xml.crypto.Data;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
@@ -35,13 +39,15 @@ public class RegisterController implements Initializable {
     @FXML
     AnchorPane apnlParent;
     @FXML
-    JFXTextField textName,textLName,textEmail,textAddress,textCode,textNumber;
+    JFXTextField textName,textLName,textEmail,textAddress,textCode,textNumber,textDocumentation,textRegistration;
     @FXML
     JFXPasswordField textPassword;
     @FXML
-    JFXButton submit;
+    JFXButton submit,registerVehicle;
     @FXML
     Text textInfo;
+    @FXML
+    JFXDatePicker datePurchase,dateRevision;
 
     private Integer rol;
 
@@ -155,6 +161,22 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+    }
+
+    public void choosingFile(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(null);
+        textDocumentation.setText(selectedFile.getAbsolutePath());
+
+    }
+
+    public void registerVehicle(ActionEvent actionEvent) {
+        String matricula = textRegistration.getText().trim();
+        LocalDate localDate = datePurchase.getValue();
+        Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
+        Date purchaseDate = Date.from(instant);
+
 
     }
 }

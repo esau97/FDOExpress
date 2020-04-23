@@ -62,4 +62,8 @@ public class DatabaseController {
         }
 
     }
+    public String enviarDatosVehiculo(){
+        String respuesta= "";
+        return respuesta;
+    }
 }

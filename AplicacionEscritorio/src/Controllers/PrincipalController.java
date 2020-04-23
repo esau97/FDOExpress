@@ -36,7 +36,7 @@ public class PrincipalController implements Initializable {
     @FXML
     VBox orderItem = null;
     @FXML
-    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin;
+    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle;
     @FXML
     private Pane pnlOrders,pnlCustomers,pnlEmployees,pnlVehicles;
     @FXML
@@ -152,7 +152,25 @@ public class PrincipalController implements Initializable {
                 e.printStackTrace();
             }
         }
+        if(actionEvent.getSource() == btnAddVehicle ){
+            Parent root = null;
+            FXMLLoader loader = new FXMLLoader();
+            try {
+                loader.setLocation(getClass().getResource("/Pantallas/register_vehicle.fxml"));
+                root = loader.load();
+                principal =  new Scene(root,700,417);
+                RegisterController registerController = loader.getController();
+                registerController.initData(databaseController,1);
+                Stage stage = new Stage();
+                stage.setTitle("Adding vehicle");
+                stage.initStyle(StageStyle.UNDECORATED);
+                stage.setScene(principal);
+                stage.show();
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 }

@@ -16,13 +16,12 @@ import java.util.logging.Logger;
 
 public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
 
-    BufferedReader br;
     byte[] bufOut;
     byte[] bufIn;
     InetAddress address = null;
     DatagramPacket packetToSend = null;
     DatagramPacket packetIn = null;
-    private String dir_ip="192.168.1.52";
+    private String dir_ip="192.168.1.39";
     DatagramSocket dataSocket;
     String enviar;
     private PeticionListener listener;
@@ -36,6 +35,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         String recibido="";
+        String argumentos[] = enviar.split("&");
         try {
             dataSocket = new DatagramSocket();
             address = InetAddress.getByName(dir_ip);
@@ -47,7 +47,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             packetIn = new DatagramPacket(bufIn, bufIn.length);
             dataSocket.receive(packetIn);
             recibido = new String(packetIn.getData(), 0, packetIn.getLength());
-            accion=recibido;
+            accion=recibido+"&"+argumentos[1]+"&"+argumentos[2];
         } catch (IOException ex) {
             Logger.getLogger(LoginRegisterAsyncTask.class.getName()).log(Level.SEVERE, null, ex);
         }
