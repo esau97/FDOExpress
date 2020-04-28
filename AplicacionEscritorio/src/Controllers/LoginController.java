@@ -18,8 +18,12 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import netscape.javascript.JSObject;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -118,7 +122,16 @@ public class LoginController {
             case LOGIN_CORRECTO:
                 rol=Integer.parseInt(codigos[1]);
                 user.setName(codigos[2]);
-                mostrarNuevaVentana();
+                user.setCodUser(Integer.parseInt(codigos[3]));
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject=null;
+                try{
+                    jsonObject = (JSONObject) jsonParser.parse(codigos[4]);
+                    System.out.println(jsonObject);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                mostrarNuevaVentana(jsonObject);
                 break;
         }
     }
@@ -144,7 +157,7 @@ public class LoginController {
 
         }
     }
-    public void mostrarNuevaVentana(){
+    public void mostrarNuevaVentana(JSONObject jsonObject){
         Parent root=null;
         FXMLLoader loader = new FXMLLoader();
         try {
@@ -152,14 +165,14 @@ public class LoginController {
                 loader.setLocation(getClass().getResource("/Pantallas/principal_admin.fxml"));
                 root = loader.load();
                 PrincipalController principalController = loader.getController();
-                principalController.initData(user,databaseController);
+                principalController.initData(user,databaseController,jsonObject);
 
                 principal =  new Scene(root);
             }else if(rol==4){
                 loader.setLocation(getClass().getResource("/Pantallas/principal_gerente.fxml"));
                 root = loader.load();
                 PrincipalController principalController = loader.getController();
-                principalController.initData(user,databaseController);
+                principalController.initData(user,databaseController,jsonObject);
                 principal =  new Scene(root);
             }
 

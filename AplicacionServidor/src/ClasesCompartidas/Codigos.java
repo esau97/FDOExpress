@@ -5,7 +5,9 @@ public class Codigos {
     public enum recibeServidor{
         INICIO_SESION,
         REGISTRO,
-        REGISTRO_VEHICULO
+        REGISTRO_VEHICULO,
+        CARGAR_TABLAS,
+        GUARDAR_ARCHIVO
     }
 
     public static recibeServidor codigo_servidor(int num){

@@ -29,15 +29,18 @@ public class PeticionesUDP extends Thread {
         DatagramPacket packetIn;
         bufIn = new byte[256]; //A buffer to get whatever information the client send with the request
         packetIn = new DatagramPacket(bufIn, bufIn.length);
+
         while(listening){
             try {
                 dataSocket.receive(packetIn);
                 System.out.println("Recibido");
-                new SesionMovil(packetIn,dataSocket,informacionCompartida).start();
+                new PeticionUDP(packetIn,dataSocket,informacionCompartida).start();
 
             } catch (IOException ex) {
                 Logger.getLogger(PeticionesUDP.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+
+
 }

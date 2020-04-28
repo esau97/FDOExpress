@@ -1,5 +1,6 @@
 package ClasesCompartidas;
 
+import BaseDatos.BaseDeDatos;
 import Sesion.SesionEscritorio;
 import Sesion.PeticionesUDP;
 
@@ -12,6 +13,8 @@ public class Servidor {
 
     public static void main(String[] args) {
         Servidor serv = new Servidor();
+        BaseDeDatos bd = new BaseDeDatos();
+        bd.cargarDatosTablas();
         serv.informacionCompartida = new InformacionCompartida();
         try {
             ServerSocket serverSocket = null;
@@ -32,4 +35,6 @@ public class Servidor {
             ex.printStackTrace();
         }
     }
+
+
 }

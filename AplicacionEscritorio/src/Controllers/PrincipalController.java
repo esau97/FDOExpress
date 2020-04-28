@@ -1,9 +1,18 @@
 package Controllers;
 
+import Entity.Employee;
 import Entity.User;
+import Entity.Vehicle;
 import Util.ModelTable;
+import Util.Preferencias;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.beans.value.ObservableListValue;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +22,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -20,9 +31,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
+import netscape.javascript.JSObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
+import java.net.*;
 import java.util.ResourceBundle;
 
 
@@ -30,13 +48,15 @@ public class PrincipalController implements Initializable {
     private Stage window;
     private Scene principal;
     private User usuario;
+    private Preferencias preferencias;
     private DatabaseController databaseController;
+    private JSONObject jsonObject;
     @FXML
     private Label labelName;
     @FXML
     VBox orderItem = null;
     @FXML
-    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle;
+    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,btnRefresh;
     @FXML
     private Pane pnlOrders,pnlCustomers,pnlEmployees,pnlVehicles;
     @FXML
@@ -44,6 +64,15 @@ public class PrincipalController implements Initializable {
     @FXML
     AnchorPane pnlParent;
     private double xOffset=0,yOffset=0;
+
+    @FXML
+    private JFXTreeTableView<Employee> tableEmployees;
+    @FXML
+    private JFXTreeTableView<Vehicle> tableVehicles;
+    @FXML
+    private TreeTableColumn<Employee, String > columnName,columnEmail,columnAddress,columnPhone;
+    @FXML
+    private TreeTableColumn<Vehicle, String > columnRegistration,columnPurchase,columnRevision,columnDocumentation;
     public void backToLogin(MouseEvent mouseEvent) {
         Parent root;
         try {
@@ -63,10 +92,13 @@ public class PrincipalController implements Initializable {
     }
 
 
-    public void initData(User user,DatabaseController databaseController) {
+    public void initData(User user, DatabaseController databaseController, JSONObject jsonObject) {
         this.usuario=user;
         labelName.setText(usuario.getName());
         this.databaseController=databaseController;
+        this.jsonObject=jsonObject;
+        cargarDatosTabla(jsonObject);
+        cargarDatosVehiculos(jsonObject);
         makeStageDragable();
     }
     public void makeStageDragable(){
@@ -84,22 +116,17 @@ public class PrincipalController implements Initializable {
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //cargarDatosTabla();
+        preferencias= new Preferencias();
+
+
         pnlEmployees.toFront();
         pnlOrders.setVisible(false);
         pnlVehicles.setVisible(false);
-        Node[] node = new Node[10];
-        for (int i = 0; i < node.length ; i++) {
-            try {
-                node[i] = (Node) FXMLLoader.load(getClass().getResource("/Pantallas/item.fxml"));
-                orderItem.getChildren().add(node[i]);
-            } catch (IOException e) {
 
-            }
-        }
     }
 
     public void handleClicks(ActionEvent actionEvent) {
+
         if (actionEvent.getSource() == btnOrders) {
             pnlOrders.setStyle("-fx-background-color : #fff");
             pnlOrders.toFront();
@@ -114,6 +141,10 @@ public class PrincipalController implements Initializable {
             pnlEmployees.setStyle("-fx-background-color: #fff");
             pnlEmployees.toFront();
         }
+        if (actionEvent.getSource()==btnRefresh){
+            System.out.println("Cargando datos");
+            //cargarDatosTabla();
+        }
         if(actionEvent.getSource() == btnAddEmployee ){
             Parent root = null;
             FXMLLoader loader = new FXMLLoader();
@@ -122,7 +153,7 @@ public class PrincipalController implements Initializable {
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(databaseController,2);
+                registerController.initData(usuario,databaseController,2);
                 Stage stage = new Stage();
                 stage.setTitle("Adding employees");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -141,7 +172,7 @@ public class PrincipalController implements Initializable {
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(databaseController,1);
+                registerController.initData(usuario,databaseController,1);
                 Stage stage = new Stage();
                 stage.setTitle("Adding admin");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -160,7 +191,7 @@ public class PrincipalController implements Initializable {
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(databaseController,1);
+                registerController.initData(usuario,databaseController,1);
                 Stage stage = new Stage();
                 stage.setTitle("Adding vehicle");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -173,4 +204,159 @@ public class PrincipalController implements Initializable {
         }
 
     }
+    public void cargarDatosTabla(JSONObject jsonObject){
+        columnName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getName();
+            }
+        });
+        columnEmail.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().emailProperty();
+            }
+        });
+        columnAddress.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getAddress();
+            }
+        });
+        columnPhone.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getPhone();
+            }
+        });
+
+
+            JSONObject root = jsonObject;
+            JSONArray array = (JSONArray) root.get("Empleados");
+            ObservableList<Employee> employees = FXCollections.observableArrayList();
+            for(int i = 0 ; i < array.size() ; i++) {
+                JSONObject jsonObject1 = (JSONObject) array.get(i);
+                employees.add(new Employee(jsonObject1.get("nombre").toString(),jsonObject1.get("email").toString(),jsonObject1.get("direccion").toString(),jsonObject1.get("telefono").toString()));
+            }
+            final TreeItem<Employee> rootTable= new RecursiveTreeItem<Employee>(employees, RecursiveTreeObject::getChildren);
+            tableEmployees.getColumns().setAll(columnName,columnEmail ,columnAddress,columnPhone);
+            tableEmployees.setRoot(rootTable);
+            tableEmployees.setShowRoot(false);
+
+
+
+        /*ObservableList<Employee> employees = FXCollections.observableArrayList();
+        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
+        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
+        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
+        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
+        */
+
+
+    }
+    public void cargarDatosVehiculos(JSONObject jsonObject){
+        columnRegistration.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Vehicle, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Vehicle, String> param) {
+                return param.getValue().getValue().getCarRegistration();
+            }
+        });
+        columnPurchase.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Vehicle, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Vehicle, String> param) {
+                return param.getValue().getValue().getDatePurchase();
+            }
+        });
+        columnRevision.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Vehicle, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Vehicle, String> param) {
+                return param.getValue().getValue().getDateRevision();
+            }
+        });
+        columnDocumentation.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Vehicle, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Vehicle, String> param) {
+                return param.getValue().getValue().getDataName();
+            }
+        });
+
+        JSONObject root = jsonObject;
+        JSONArray array = (JSONArray) root.get("Vehiculos");
+        ObservableList<Vehicle> vehicles = FXCollections.observableArrayList();
+        for(int i = 0 ; i < array.size() ; i++) {
+            JSONObject jsonObject1 = (JSONObject) array.get(i);
+            vehicles.add(new Vehicle(jsonObject1.get("matricula").toString(),jsonObject1.get("fecha_compra").toString(),jsonObject1.get("fecha_revision").toString(),jsonObject1.get("documentacion").toString()));
+        }
+        final TreeItem<Vehicle> rootTable= new RecursiveTreeItem<Vehicle>(vehicles, RecursiveTreeObject::getChildren);
+        tableVehicles.getColumns().setAll(columnRegistration,columnPurchase,columnRevision,columnDocumentation);
+        tableVehicles.setRoot(rootTable);
+        tableVehicles.setShowRoot(false);
+
+    }
+    /*public void cargarDatosTabla(){
+        columnName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getName();
+            }
+        });
+        columnEmail.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().emailProperty();
+            }
+        });
+        columnAddress.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getAddress();
+            }
+        });
+        columnPhone.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getPhone();
+            }
+        });
+
+        DatagramSocket dataSocket = null;
+        DatagramPacket packetToSend;
+        DatagramPacket packetIn;
+        String enviar="3&";
+        try {
+            dataSocket = new DatagramSocket();
+            InetAddress address = InetAddress.getByName(preferencias.getDir_ip());
+            byte [] bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
+            byte []bufIn = new byte[4096];
+            dataSocket.setBroadcast(true);
+            dataSocket.send(packetToSend);
+            packetIn = new DatagramPacket(bufIn, bufIn.length);
+            dataSocket.receive(packetIn);
+            String recibido = new String(packetIn.getData(), 0, packetIn.getLength());
+            String valores[] = recibido.split("&");
+            if(!valores[0].equals("0")){
+
+                ObservableList<Employee> employees = FXCollections.observableArrayList();
+                for (int i = 1; i < valores.length; i++) {
+                    System.out.println("Vuelta "+i);
+                    String datosEmployee [] = valores[i].split("#");
+                    employees.add(new Employee(datosEmployee[0],datosEmployee[1],datosEmployee[2],datosEmployee[3]));
+                }
+                final TreeItem<Employee> root = new RecursiveTreeItem<Employee>(employees, RecursiveTreeObject::getChildren);
+                tableEmployees.getColumns().setAll(columnName,columnEmail ,columnAddress,columnPhone);
+                tableEmployees.setRoot(root);
+                tableEmployees.setShowRoot(false);
+            }
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }*/
 }

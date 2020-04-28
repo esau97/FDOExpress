@@ -4,18 +4,14 @@ import BaseDatos.BaseDeDatos;
 import ClasesCompartidas.Codigos;
 import ClasesCompartidas.InformacionCompartida;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SesionMovil extends Thread{
+public class PeticionUDP extends Thread{
     private BaseDeDatos bbdd;
 
     private DatagramPacket paquete_entrada;
@@ -25,7 +21,7 @@ public class SesionMovil extends Thread{
     private InetAddress address;
     private InformacionCompartida informacionCompartida;
 
-    public SesionMovil(DatagramPacket packetIn, DatagramSocket dataSocket,InformacionCompartida informacionCompartida) {
+    public PeticionUDP(DatagramPacket packetIn, DatagramSocket dataSocket, InformacionCompartida informacionCompartida) {
         this.informacionCompartida = informacionCompartida;
         bbdd=new BaseDeDatos();
         this.dataSocket = dataSocket;
@@ -35,7 +31,7 @@ public class SesionMovil extends Thread{
         port = paquete_entrada.getPort();
     }
     public void run(){
-        System.out.println("Comienza el registro.");
+
         String enviar;
         byte bufOut[] ;
         DatagramPacket packetOut;
@@ -48,7 +44,7 @@ public class SesionMovil extends Thread{
             dataSocket.send(packetOut);
 
         } catch (IOException ex) {
-            Logger.getLogger(SesionMovil.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PeticionUDP.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -64,12 +60,17 @@ public class SesionMovil extends Thread{
                 System.out.println("Envio"+respuesta);
                 break;
             case INICIO_SESION:
+                System.out.println("INICIO SESION");
                 respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
                 String rsp [] = respuesta.split("&");
                 // Si el usuario se ha loqueado correctamente lo almaceno en una lista
                 if (rsp[0].equals("1")){
                     informacionCompartida.setListaLogueados(argumentos[1]);
                 }
+                break;
+            case CARGAR_TABLAS:
+                System.out.println("CARGANDO TABLAS");
+                respuesta = bbdd.devolverDatosEmpleados();
                 break;
         }
 

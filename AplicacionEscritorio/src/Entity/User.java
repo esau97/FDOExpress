@@ -3,6 +3,7 @@ package Entity;
 public class User {
     private String email;
     private String name;
+    private Integer codUser;
 
     public User(){
 
@@ -16,6 +17,13 @@ public class User {
     }
 
 
+    public Integer getCodUser() {
+        return codUser;
+    }
+
+    public void setCodUser(Integer codUser) {
+        this.codUser = codUser;
+    }
 
     public String getEmail() {
         return email;

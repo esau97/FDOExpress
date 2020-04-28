@@ -1,5 +1,9 @@
 package BaseDatos;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.io.FileWriter;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,13 +26,13 @@ public class BaseDeDatos {
 
         Connection connection=(Connection) cn.getConnection();
         try{
-            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("Select rol,nombre from usuario where email=? && contrasena=?");
+            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("Select rol,nombre,cod from usuario where email=? && contrasena=?");
             pps.setString(1, email);
             pps.setString(2, contrasena);
 
             ResultSet result=pps.executeQuery();
             while(result.next()){
-                respuesta="1&"+result.getInt(1)+"&"+result.getString(2);
+                respuesta="1&"+result.getInt(1)+"&"+result.getString(2)+"&"+result.getInt(3);
                 return respuesta;
             }
             respuesta="0&1";
@@ -73,28 +77,26 @@ public class BaseDeDatos {
 
         if(!comprobarVehiculo(matricula)){
             try{
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                Date fechaCompra = (Date) dateFormat.parse(argumentos[2]);
-                Date fechaRevision = (Date) dateFormat.parse(argumentos[3]);
+
+                String fechaCompra = argumentos[2];
+                String fechaRevision = argumentos[3];
                 String documentacion = argumentos[4];
                 String codAdmin = argumentos[5];
-                PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO vehiculo (matricula,fecha_compra,fecha_revision,,documentacion,cod_admin) VALUES (?,?,?,?,?)");
+                PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO vehiculo (matricula,fecha_compra,fecha_revision,documentacion,cod_admin) VALUES (?,?,?,?,?)");
                 pps.setString(1, matricula);
-                pps.setDate(2, fechaCompra);
-                pps.setDate(3,fechaRevision);
+
+                pps.setString(2, fechaCompra);
+                pps.setString(3, fechaRevision);
                 pps.setString(4,documentacion);
                 pps.setInt(5,Integer.parseInt(codAdmin));
 
-
                 if(pps.executeUpdate()>0){
-                    respuesta="4&";
+                    respuesta="6&";
                 }else{
                     respuesta="0&2";
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
         return respuesta;
@@ -125,5 +127,98 @@ public class BaseDeDatos {
         }
 
         return false;
+    }
+
+    public String devolverDatosEmpleados(){
+        String respuesta="";
+        String consulta1="SELECT nombre,email,direccion,tfno FROM usuario WHERE rol=1 or rol=2";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultado = statement.executeQuery(consulta1);
+            if (resultado.next()){
+                respuesta="4&"+resultado.getString(1)+"#"+resultado.getString(2)+"#"+resultado.getString(3)+"#"+resultado.getInt(4);
+            }else {
+                respuesta="0&1";
+            }
+            while(resultado.next()){
+                respuesta+="&"+resultado.getString(1)+"#"+resultado.getString(2)+"#"+resultado.getString(3)+"#"+resultado.getInt(4);;
+            }
+            System.out.println(respuesta);
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+
+        return respuesta;
+    }
+
+    public void cargarDatosTablas() {
+        JSONObject root = new JSONObject();
+        root.put("Empleados",cargarDatosEmpleados(root));
+        root.put("Vehiculos",cargarDatosVehiculos(root));
+        System.out.println("Guardando datos");
+        try {
+            FileWriter fileWriter = new FileWriter("Ficheros/tablas.json");
+            fileWriter.write(root.toJSONString());
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private JSONArray cargarDatosVehiculos(JSONObject root) {
+        String respuesta="";
+        JSONArray vehiculosArray = new JSONArray();
+
+        String consulta1="SELECT matricula,fecha_compra,fecha_revision,documentacion FROM vehiculo";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultado = statement.executeQuery(consulta1);
+            while (resultado.next()){
+                JSONObject vehiculoObject = new JSONObject();
+                vehiculoObject.put("matricula",resultado.getString(1));
+                vehiculoObject.put("fecha_compra",resultado.getDate(2).toString());
+                vehiculoObject.put("fecha_revision",resultado.getDate(3).toString());
+                vehiculoObject.put("documentacion",resultado.getString(4));
+                vehiculosArray.add(vehiculoObject);
+
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+        return vehiculosArray;
+    }
+
+    private JSONArray cargarDatosEmpleados(JSONObject root) {
+
+        JSONArray empleadosArray = new JSONArray();
+
+        String consulta1="SELECT nombre,email,direccion,tfno FROM usuario WHERE rol=1 or rol=2";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultado = statement.executeQuery(consulta1);
+
+            while (resultado.next()){
+
+                JSONObject empleadoObject = new JSONObject();
+                empleadoObject.put("nombre",resultado.getString(1));
+                empleadoObject.put("email",resultado.getString(2));
+                empleadoObject.put("direccion",resultado.getString(3));
+                empleadoObject.put("telefono",resultado.getInt(4));
+                empleadosArray.add(empleadoObject);
+
+            }
+
+
+            System.out.println(empleadosArray);
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+        return empleadosArray;
     }
 }

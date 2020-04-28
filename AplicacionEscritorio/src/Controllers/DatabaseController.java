@@ -5,10 +5,7 @@ import Util.Preferencias;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class DatabaseController {
@@ -62,8 +59,47 @@ public class DatabaseController {
         }
 
     }
-    public String enviarDatosVehiculo(){
-        String respuesta= "";
-        return respuesta;
+    public String enviarDatosVehiculo(String matricula, String purchaseDate, String revisionDate, File file,Integer idAdmin){
+
+        String mensaje=2+"&"+matricula+"&"+purchaseDate+"&"+revisionDate+"&"+file.getName()+"&"+idAdmin;
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(mensaje);
+            String recibido = in.readLine();
+            System.out.println(recibido);
+
+            String argumentosRecibidos[] = recibido.split("&");
+
+            if(!argumentosRecibidos[0].equals("0")){
+                enviarFile(file);
+            }
+            System.out.println("Después de enviar los datos del fichero");
+            in.close();
+            out.close();
+            return recibido;
+            //stage.close();
+        } catch (Exception e) {
+            return "0&4";
+        }
+
+    }
+    public void enviarFile(File file){
+        // Get the size of the file
+        long length = file.length();
+        byte[] bytes = new byte[16 * 1024];
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            OutputStream out = socket.getOutputStream();
+            int count;
+            while ((count = in.read(bytes)) > 0) {
+                out.write(bytes, 0, count);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

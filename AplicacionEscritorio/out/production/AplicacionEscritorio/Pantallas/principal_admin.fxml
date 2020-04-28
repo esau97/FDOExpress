@@ -2,10 +2,13 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -172,35 +175,14 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
-                     <children>
-                        <Label text="Name">
-                           <HBox.margin>
-                              <Insets left="90.0" />
-                           </HBox.margin>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="21.0" text="email">
-                           <HBox.margin>
-                              <Insets left="90.0" />
-                           </HBox.margin>
-                        </Label>
-                        <Label layoutX="58.0" layoutY="21.0" text="Address">
-                           <HBox.margin>
-                              <Insets left="90.0" />
-                           </HBox.margin>
-                        </Label>
-                        <Label layoutX="58.0" layoutY="21.0" text="Phone">
-                           <HBox.margin>
-                              <Insets left="90.0" />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
-                     <content>
-                        <VBox fx:id="orderItem" prefHeight="354.0" prefWidth="617.0" />
-                     </content>
-                  </ScrollPane>
+                  <JFXTreeTableView fx:id="tableEmployees" layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnName" prefWidth="159.0" text="Name" />
+                        <TreeTableColumn fx:id="columnEmail" prefWidth="159.0" text="email" />
+                        <TreeTableColumn fx:id="columnAddress" prefWidth="159.0" text="Address" />
+                        <TreeTableColumn fx:id="columnPhone" prefWidth="159.0" text="Phone" />
+                     </columns>
+                  </JFXTreeTableView>
                   <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Imagenes/icons8_Search_52px.png" />
@@ -209,6 +191,11 @@
                   <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
                   <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Employee" />
                   <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="436.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Admin" />
+                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="583.0" layoutY="181.0" onAction="#handleClicks" text="Refresh">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
                </children>
             </Pane>
             <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
@@ -242,11 +229,6 @@
                         </Label>
                      </children>
                   </HBox>
-                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
-                     <content>
-                        <VBox fx:id="orderItem2" prefHeight="354.0" prefWidth="617.0" />
-                     </content>
-                  </ScrollPane>
                   <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Imagenes/icons8_Search_52px.png" />
@@ -254,6 +236,14 @@
                   </ImageView>
                   <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
                   <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New vehicle" />
+                  <JFXTreeTableView fx:id="tableVehicles" layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnRegistration" prefWidth="159.0" text="Car Registration" />
+                        <TreeTableColumn fx:id="columnPurchase" prefWidth="159.0" text="Purchase Date" />
+                        <TreeTableColumn fx:id="columnRevision" prefWidth="159.0" text="Revision Date" />
+                        <TreeTableColumn fx:id="columnDocumentation" prefWidth="159.0" text="Documentation" />
+                     </columns>
+                  </JFXTreeTableView>
                </children>
             </Pane>
          </children>
