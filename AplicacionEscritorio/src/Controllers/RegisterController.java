@@ -1,15 +1,14 @@
 package Controllers;
 
+import Entity.Employee;
 import Entity.User;
 import Util.Codigos;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -38,10 +37,11 @@ public class RegisterController implements Initializable {
     @FXML
     JFXDatePicker datePurchase,dateRevision;
 
-
     private User user;
     private Integer rol;
     private File archivo;
+    @FXML
+    private JFXTreeTableView<Employee> tableEmployees;
 
 
     public RegisterController(){
@@ -55,7 +55,8 @@ public class RegisterController implements Initializable {
         stage.close();
     }
 
-    public void initData(User user,DatabaseController databaseController,Integer rol){
+    public void initData(JFXTreeTableView<Employee> tableEmployees,User user,DatabaseController databaseController,Integer rol){
+        this.tableEmployees=tableEmployees;
         this.databaseController = databaseController;
         this.rol = rol;
         this.user = user;
@@ -87,7 +88,8 @@ public class RegisterController implements Initializable {
         String fullAddress = address +" "+zipCode;
         String phoneNumber = textNumber.getText().trim();
         tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber,rol));
-        stage.close();
+
+        //stage.close();
 
 
     }
@@ -105,6 +107,15 @@ public class RegisterController implements Initializable {
                     textInfo.setOpacity(1);
                     Thread.sleep(1000);
                     textInfo.setOpacity(0);
+
+                    TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4]));
+                    //tableEmployees.getRoot().getParent().getChildren().add(newEmployee);
+                    if (tableEmployees!=null){
+                        tableEmployees.getRoot().getChildren().add(newEmployee);
+                    }else{
+                        System.out.println("Table employee is null");
+                    }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

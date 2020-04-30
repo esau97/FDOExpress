@@ -56,7 +56,7 @@ public class BaseDeDatos {
                 pps.setInt(6,Integer.parseInt(argumentos[6]));
 
                 if(pps.executeUpdate()>0){
-                    respuesta="3&";
+                    respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5];
                 }else{
                     respuesta="0&2";
                 }

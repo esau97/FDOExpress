@@ -155,7 +155,7 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(usuario,databaseController,2);
+                registerController.initData(tableEmployees,usuario,databaseController,2);
                 Stage stage = new Stage();
                 stage.setTitle("Adding employees");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -174,7 +174,7 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(usuario,databaseController,1);
+                registerController.initData(tableEmployees,usuario,databaseController,1);
                 Stage stage = new Stage();
                 stage.setTitle("Adding admin");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -193,7 +193,7 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(usuario,databaseController,1);
+                registerController.initData(tableEmployees,usuario,databaseController,1);
                 Stage stage = new Stage();
                 stage.setTitle("Adding vehicle");
                 stage.initStyle(StageStyle.UNDECORATED);
