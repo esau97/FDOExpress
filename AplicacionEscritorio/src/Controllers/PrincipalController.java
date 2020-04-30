@@ -44,7 +44,7 @@ import java.net.*;
 import java.util.ResourceBundle;
 
 
-public class PrincipalController implements Initializable {
+public class PrincipalController implements Initializable,Callback<Employee, Employee> {
     private Stage window;
     private Scene principal;
     private User usuario;
@@ -64,6 +64,7 @@ public class PrincipalController implements Initializable {
     @FXML
     AnchorPane pnlParent;
     private double xOffset=0,yOffset=0;
+    private ObservableList<Employee> employees;
 
     @FXML
     private JFXTreeTableView<Employee> tableEmployees;
@@ -97,6 +98,7 @@ public class PrincipalController implements Initializable {
         labelName.setText(usuario.getName());
         this.databaseController=databaseController;
         this.jsonObject=jsonObject;
+        this.employees = FXCollections.observableArrayList();
         cargarDatosTabla(jsonObject);
         cargarDatosVehiculos(jsonObject);
         makeStageDragable();
@@ -245,14 +247,6 @@ public class PrincipalController implements Initializable {
 
 
 
-        /*ObservableList<Employee> employees = FXCollections.observableArrayList();
-        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
-        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
-        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
-        employees.add(new Employee("Pedro Toledo", "pedrito@gmail.com", "Moroco","594823454"));
-        */
-
-
     }
     public void cargarDatosVehiculos(JSONObject jsonObject){
         columnRegistration.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Vehicle, String>, ObservableValue<String>>() {
@@ -293,6 +287,12 @@ public class PrincipalController implements Initializable {
         tableVehicles.setShowRoot(false);
 
     }
+
+    @Override
+    public Employee call(Employee param) {
+        return param;
+    }
+
     /*public void cargarDatosTabla(){
         columnName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
             @Override
@@ -326,7 +326,7 @@ public class PrincipalController implements Initializable {
         try {
             dataSocket = new DatagramSocket();
             InetAddress address = InetAddress.getByName(preferencias.getDir_ip());
-            byte [] bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            byte [] bufOut = enviar.getBytes();
             packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
             byte []bufIn = new byte[4096];
             dataSocket.setBroadcast(true);

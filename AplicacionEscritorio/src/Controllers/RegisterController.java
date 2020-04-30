@@ -89,7 +89,9 @@ public class RegisterController implements Initializable {
         tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber,rol));
         stage.close();
 
+
     }
+
 
     public void tratarMensaje(String mensaje){
         String codigos[]=mensaje.split("&");

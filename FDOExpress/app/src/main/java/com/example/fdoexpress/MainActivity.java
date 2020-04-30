@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 //Si el login es correcto se mostraría al cliente el activity menu
                 saveLoginState(argumentos[3],argumentos[4]);
                 Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
-                Intent intent   = new Intent(MainActivity.this,MenuReceptorActivity.class);
+                Intent intent   = new Intent(MainActivity.this,MenuActivity.class);
 
                 ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                 startActivity(intent,activityOptions.toBundle());
