@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="pnlParent" prefHeight="589.0" prefWidth="925.0" style="-fx-background-color: #FFF;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.PrincipalController">
    <children>
@@ -27,7 +27,7 @@
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Imagenes/icons8_Home_32px.png" />
+                        <Image url="@../Imagenes/icons8-home-32.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -39,7 +39,7 @@
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Imagenes/icons8_Box_32px.png" />
+                        <Image url="@../Imagenes/icons8-purchase-order-32.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -51,7 +51,7 @@
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Imagenes/icons8_Person_32px.png" />
+                        <Image url="@../Imagenes/icons8-person-32.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -63,7 +63,7 @@
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Imagenes/icons8_Person_32px.png" />
+                        <Image url="@../Imagenes/icons8-person-32.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -75,7 +75,7 @@
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Imagenes/icons8_Person_32px.png" />
+                        <Image url="@../Imagenes/icons8-car-32.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -87,7 +87,7 @@
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Imagenes/icons8_Sign_Out_32px.png" />
+                        <Image url="@../Imagenes/icons8-sign-out-32.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -99,71 +99,7 @@
       </VBox>
       <StackPane fx:id="parentPane" layoutX="244.0" prefHeight="589.0" prefWidth="662.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Pane fx:id="pnlOrders" opacity="0.0" prefHeight="590.0" prefWidth="681.0">
-               <children>
-                  <Label layoutX="29.0" layoutY="43.0" text="Orders">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="163.0" prefHeight="39.0" prefWidth="636.0">
-                     <children>
-                        <Label text="NºOrder">
-                           <HBox.margin>
-                              <Insets left="80.0" />
-                           </HBox.margin>
-                           <opaqueInsets>
-                              <Insets left="60.0" />
-                           </opaqueInsets>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="21.0" text="Date">
-                           <HBox.margin>
-                              <Insets left="80.0" />
-                           </HBox.margin>
-                           <opaqueInsets>
-                              <Insets left="60.0" />
-                           </opaqueInsets>
-                        </Label>
-                        <Label layoutX="58.0" layoutY="21.0" text="From">
-                           <HBox.margin>
-                              <Insets left="80.0" />
-                           </HBox.margin>
-                           <opaqueInsets>
-                              <Insets left="60.0" />
-                           </opaqueInsets>
-                        </Label>
-                        <Label layoutX="58.0" layoutY="21.0" text="To">
-                           <HBox.margin>
-                              <Insets left="80.0" />
-                           </HBox.margin>
-                           <opaqueInsets>
-                              <Insets left="60.0" />
-                           </opaqueInsets>
-                        </Label>
-                        <Label layoutX="470.0" layoutY="21.0" text="State">
-                           <opaqueInsets>
-                              <Insets left="60.0" />
-                           </opaqueInsets>
-                           <HBox.margin>
-                              <Insets left="80.0" />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <ScrollPane layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
-                     <content>
-                        <VBox fx:id="orderItem1" prefHeight="354.0" prefWidth="617.0" />
-                     </content>
-                  </ScrollPane>
-                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Imagenes/icons8_Search_52px.png" />
-                     </image>
-                  </ImageView>
-                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
-               </children>
-            </Pane>
-            <Pane fx:id="pnlEmployees" opacity="0.47" prefHeight="572.0" prefWidth="221.0">
+            <Pane fx:id="pnlEmployees" opacity="0.0" prefHeight="572.0" prefWidth="221.0">
                <children>
                   <Label layoutX="29.0" layoutY="43.0" text="Wellcome">
                      <font>
@@ -188,7 +124,7 @@
                         <Image url="@../Imagenes/icons8_Search_52px.png" />
                      </image>
                   </ImageView>
-                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXTextField fx:id="searchEmployee" alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
                   <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Employee" />
                   <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="436.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Admin" />
                   <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="583.0" layoutY="181.0" onAction="#handleClicks" text="Refresh">
@@ -196,6 +132,70 @@
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
                   </JFXButton>
+                  <JFXComboBox fx:id="comboBoxEmployees" layoutX="300.0" layoutY="45.0" prefWidth="126.0" promptText="Filter by" />
+               </children>
+            </Pane>
+            <Pane fx:id="pnlOrders" opacity="0.0" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="29.0" layoutY="43.0" text="Orders">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <JFXTreeTableView fx:id="tableOrders" layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnCode" prefWidth="126.0" text="Shipping code" />
+                        <TreeTableColumn fx:id="columnShipAddress" prefWidth="130.0" text="Shipping Address" />
+                        <TreeTableColumn fx:id="columnAddress1" prefWidth="126.0" text="Addressee" />
+                        <TreeTableColumn fx:id="columnPhone" prefWidth="126.0" text="Phone" />
+                        <TreeTableColumn fx:id="columnDealer" prefWidth="126.0" text="Dealer" />
+                     </columns>
+                  </JFXTreeTableView>
+                  <ImageView fx:id="btnSearchOrders" fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField fx:id="searchOrders" alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXButton id="btnAdd" fx:id="btnAddOrder" layoutX="576.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Order" />
+                  <JFXButton fx:id="btnRefresh2" contentDisplay="RIGHT" layoutX="583.0" layoutY="181.0" onAction="#handleClicks" text="Refresh">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
+                  <JFXComboBox fx:id="comboBoxOrders" layoutX="300.0" layoutY="45.0" prefWidth="126.0" promptText="Filter by" />
+                  <FontAwesomeIcon fx:id="downloadIcon" glyphName="DOWNLOAD" layoutX="563.0" layoutY="199.0" />
+               </children>
+            </Pane>
+            <Pane fx:id="pnlCustomers" opacity="0.0" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="29.0" layoutY="43.0" text="Customers">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="629.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField fx:id="searchCompany" alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXButton id="btnAdd" fx:id="btnAddCompany" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New provider" />
+                  <JFXTreeTableView fx:id="tableProviders" layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnCompanyName" prefWidth="159.0" text="Company Name" />
+                        <TreeTableColumn fx:id="columnCompanyAddress" prefWidth="159.0" text="Address" />
+                        <TreeTableColumn fx:id="columnCompanyNumber" prefWidth="159.0" text="Phone Number" />
+                        <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="159.0" text="Email" />
+                     </columns>
+                  </JFXTreeTableView>
+                  <JFXButton fx:id="btnRefresh11" contentDisplay="RIGHT" layoutX="583.0" layoutY="181.0" onAction="#handleClicks" text="Refresh">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
+                  <JFXComboBox fx:id="comboBoxCompany" layoutX="300.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filter by" />
+                  <Text fx:id="textInfo1" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                </children>
             </Pane>
             <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
@@ -210,7 +210,7 @@
                         <Image url="@../Imagenes/icons8_Search_52px.png" />
                      </image>
                   </ImageView>
-                  <JFXTextField alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
+                  <JFXTextField fx:id="searchVehicles" alignment="CENTER" layoutX="477.0" layoutY="45.0" promptText="Search" />
                   <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="549.0" layoutY="118.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New vehicle" />
                   <JFXTreeTableView fx:id="tableVehicles" layoutX="24.0" layoutY="220.0" prefHeight="355.0" prefWidth="636.0">
                      <columns>
@@ -225,6 +225,13 @@
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
                   </JFXButton>
+                  <JFXComboBox fx:id="comboBoxVehicles" layoutX="300.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filter by" />
+                  <Text fx:id="textInfo" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                  <Button layoutX="541.0" layoutY="182.0" mnemonicParsing="false" onAction="#downloadDocumentation" prefHeight="25.0" prefWidth="42.0">
+                     <graphic>
+                        <FontAwesomeIcon fx:id="downloadIcon1" glyphName="DOWNLOAD" />
+                     </graphic>
+                  </Button>
                </children>
             </Pane>
          </children>

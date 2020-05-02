@@ -128,7 +128,20 @@ public class BaseDeDatos {
 
         return false;
     }
+    public boolean comprobarExisteCompany(String nombre){
+        try {
+            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("SELECT nombre FROM proveedor WHERE nombre=?");
+            pps.setString(1,nombre);
+            ResultSet result=pps.executeQuery();
+            while(result.next()){
+                return true;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
+        return false;
+    }
     public String devolverDatosEmpleados(){
         String respuesta="";
         String consulta1="SELECT nombre,email,direccion,tfno FROM usuario WHERE rol=1 or rol=2";
@@ -151,11 +164,11 @@ public class BaseDeDatos {
 
         return respuesta;
     }
-
     public void cargarDatosTablas() {
         JSONObject root = new JSONObject();
         root.put("Empleados",cargarDatosEmpleados(root));
         root.put("Vehiculos",cargarDatosVehiculos(root));
+        root.put("Proveedores",cargarDatosProveedores(root));
         System.out.println("Guardando datos");
         try {
             FileWriter fileWriter = new FileWriter("Ficheros/tablas.json");
@@ -167,7 +180,6 @@ public class BaseDeDatos {
         }
 
     }
-
     private JSONArray cargarDatosVehiculos(JSONObject root) {
         String respuesta="";
         JSONArray vehiculosArray = new JSONArray();
@@ -192,7 +204,6 @@ public class BaseDeDatos {
         }
         return vehiculosArray;
     }
-
     private JSONArray cargarDatosEmpleados(JSONObject root) {
 
         JSONArray empleadosArray = new JSONArray();
@@ -220,5 +231,54 @@ public class BaseDeDatos {
             throwables.printStackTrace();
         }
         return empleadosArray;
+    }
+    private JSONArray cargarDatosProveedores(JSONObject root){
+
+        JSONArray proveedoresArray = new JSONArray();
+
+        String consulta1="SELECT nombre,direccion,telefono,correo FROM proveedor";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultado = statement.executeQuery(consulta1);
+
+            while (resultado.next()){
+
+                JSONObject proveedorObject = new JSONObject();
+                proveedorObject.put("nombre",resultado.getString(1));
+                proveedorObject.put("direccion",resultado.getString(2));
+                proveedorObject.put("telefono",resultado.getString(3));
+                proveedorObject.put("correo",resultado.getString(4));
+                proveedoresArray.add(proveedorObject);
+
+            }
+
+            System.out.println(proveedoresArray);
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from proveedor");
+            throwables.printStackTrace();
+        }
+        return proveedoresArray;
+    }
+    public String registrarProveedor(String[] argumentos) {
+        String respuesta="";
+        if(!comprobarExisteCompany(argumentos[1])){
+            try {
+                PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO proveedor (nombre,direccion,telefono,correo) VALUES (?,?,?,?)");
+                pps.setString(1,argumentos[1]);
+                pps.setString(2,argumentos[2]);
+                pps.setInt(3,Integer.parseInt(argumentos[3]));
+                pps.setString(4,argumentos[4]);
+                if(pps.executeUpdate()>0){
+                    respuesta="7&";
+                }else{
+                    respuesta="0&2";
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }else{
+            respuesta="0&3";
+        }
+        return respuesta;
     }
 }

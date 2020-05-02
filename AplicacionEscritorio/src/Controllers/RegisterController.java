@@ -1,7 +1,9 @@
 package Controllers;
 
 import Entity.Employee;
+import Entity.Provider;
 import Entity.User;
+import Entity.Vehicle;
 import Util.Codigos;
 import com.jfoenix.controls.*;
 import javafx.event.ActionEvent;
@@ -27,11 +29,11 @@ public class RegisterController implements Initializable {
     @FXML
     AnchorPane apnlParent;
     @FXML
-    JFXTextField textName,textLName,textEmail,textAddress,textCode,textNumber,textDocumentation,textRegistration;
+    JFXTextField textName,textLName,textEmail,textAddress,textCode,textNumber,textDocumentation,textRegistration,textCompanyName;
     @FXML
     JFXPasswordField textPassword;
     @FXML
-    JFXButton submit,registerVehicle,btnChoose;
+    JFXButton submit,registerVehicle,btnChoose,registerProvider;
     @FXML
     Text textInfo;
     @FXML
@@ -39,9 +41,13 @@ public class RegisterController implements Initializable {
 
     private User user;
     private Integer rol;
-    private File archivo;
+
     @FXML
     private JFXTreeTableView<Employee> tableEmployees;
+    @FXML
+    private JFXTreeTableView<Provider> tableProviders;
+    @FXML
+    private JFXTreeTableView<Vehicle> tableVehicles;
 
 
     public RegisterController(){
@@ -55,7 +61,7 @@ public class RegisterController implements Initializable {
         stage.close();
     }
 
-    public void initData(JFXTreeTableView<Employee> tableEmployees,User user,DatabaseController databaseController,Integer rol){
+    public void initDataEmployees(JFXTreeTableView<Employee> tableEmployees,User user,DatabaseController databaseController,Integer rol){
         this.tableEmployees=tableEmployees;
         this.databaseController = databaseController;
         this.rol = rol;
@@ -76,6 +82,20 @@ public class RegisterController implements Initializable {
         });
     }
 
+    public void initDataProviders(JFXTreeTableView<Provider> tableProviders,User user,DatabaseController databaseController,Integer rol){
+        this.tableProviders=tableProviders;
+        this.databaseController = databaseController;
+        this.rol = rol;
+        this.user = user;
+        makeStageDragable();
+    }
+    public void initDataVehicles(JFXTreeTableView<Vehicle> tableVehicles, User user, DatabaseController databaseController, Integer rol){
+        this.tableVehicles=tableVehicles;
+        this.databaseController = databaseController;
+        this.rol = rol;
+        this.user = user;
+        makeStageDragable();
+    }
     public void register(ActionEvent actionEvent) {
 
         String name= textName.getText().trim();
@@ -122,7 +142,6 @@ public class RegisterController implements Initializable {
                 break;
             case REGISTRO_VEHICULO:
                 System.out.println("Vehiculo registrado");
-                //databaseController.enviarFile(archivo);
                 break;
             case ARCHIVO_GUARDADO:
                 System.out.println("Fichero guardado.");
@@ -137,13 +156,13 @@ public class RegisterController implements Initializable {
                 System.out.println("La contraseña no es correcta");
                 break;
             case 2:
-
+                System.out.println("Ha ocurrido un error y no se ha podido registrar correctamente");
                 break;
             case 3:
-
+                System.out.println("Existe el proveedor");
                 break;
             case 4:
-                textInfo.setText("");
+                textInfo.setText("Error de conexion");
                 textInfo.setOpacity(1);
                 break;
 
@@ -153,6 +172,17 @@ public class RegisterController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+    }
+    public void registerProvider(ActionEvent actionEvent){
+        if(actionEvent.getSource()==registerProvider){
+            String companyName= textCompanyName.getText().trim();
+            String email = textEmail.getText().trim();
+            String address= textAddress.getText().trim();
+            String zipCode= textCode.getText().trim();
+            String fullAddress = address +" "+zipCode;
+            String phoneNumber = textNumber.getText().trim();
+            tratarMensaje(databaseController.enviarDatosProveedor(companyName,email,fullAddress,phoneNumber));
+        }
     }
 
     public void registerVehicle(ActionEvent actionEvent) {
@@ -166,8 +196,20 @@ public class RegisterController implements Initializable {
             String matricula = textRegistration.getText().trim();
             File selectedFile = new File(textDocumentation.getText());
             if (selectedFile==null){
-                textInfo.setText("Debe seleccionar un archivo para subir");
                 textInfo.setOpacity(1);
+                textInfo.setText("No se ha podido descargar el archivo");
+                new Thread(){
+                    @Override
+                    public void run(){
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        textInfo.setOpacity(0);
+                    }
+                }.start();
+
                 return;
             }
             LocalDate localDate = datePurchase.getValue();
@@ -175,13 +217,25 @@ public class RegisterController implements Initializable {
 
             localDate = dateRevision.getValue();
             String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-            archivo=selectedFile;
+
             tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
             stage.close();
         }else{
-            textInfo.setText("Debe seleccionar un archivo para subir");
             textInfo.setOpacity(1);
+            textInfo.setText("No se ha podido descargar el archivo");
+            new Thread(){
+                @Override
+                public void run(){
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    textInfo.setOpacity(0);
+                }
+            }.start();
         }
+
 
     }
 

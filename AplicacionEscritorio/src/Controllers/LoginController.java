@@ -112,7 +112,6 @@ public class LoginController {
         }
     }
 
-
     public void tratarMensaje(String mensaje){
         String codigos[]=mensaje.split("&");
         switch (Codigos.codigo_cliente(Integer.parseInt(codigos[0]))){
@@ -160,6 +159,7 @@ public class LoginController {
     public void mostrarNuevaVentana(JSONObject jsonObject){
         Parent root=null;
         FXMLLoader loader = new FXMLLoader();
+
         try {
             if(rol==1){
                 loader.setLocation(getClass().getResource("/Pantallas/principal_admin.fxml"));
@@ -193,7 +193,7 @@ public class LoginController {
                     window.setX(event.getSceneX()-x);
                     window.setY(event.getSceneY()-y);
                 });*/
-
+                window.centerOnScreen();
                 window.show();
             }
 

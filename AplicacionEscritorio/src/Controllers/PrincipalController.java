@@ -1,14 +1,16 @@
 package Controllers;
 
 import Entity.Employee;
+import Entity.Provider;
 import Entity.User;
 import Entity.Vehicle;
+import Util.Codigos;
 import Util.ModelTable;
 import Util.Preferencias;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.*;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableListValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -29,6 +31,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
@@ -38,13 +42,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.*;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 
-public class PrincipalController implements Initializable,Callback<Employee, Employee> {
+public class PrincipalController implements Initializable {
     private Stage window;
     private Scene principal;
     private User usuario;
@@ -56,41 +62,35 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
     @FXML
     VBox orderItem = null;
     @FXML
-    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,btnRefresh;
+    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,btnRefresh,btnAddCompany;
     @FXML
     private Pane pnlOrders,pnlCustomers,pnlEmployees,pnlVehicles;
     @FXML
     StackPane parentPane;
     @FXML
     AnchorPane pnlParent;
+    @FXML
+    JFXTextField searchOrders,searchEmployee,searchVehicles,searchCompany;
     private double xOffset=0,yOffset=0;
     private ObservableList<Employee> employees;
-
+    @FXML
+    private FontAwesomeIcon downloadIcon;
+    @FXML
+    Text textInfo;
     @FXML
     private JFXTreeTableView<Employee> tableEmployees;
     @FXML
     private JFXTreeTableView<Vehicle> tableVehicles;
     @FXML
+    private JFXTreeTableView<Provider> tableProviders;
+    @FXML
     private TreeTableColumn<Employee, String > columnName,columnEmail,columnAddress,columnPhone;
     @FXML
     private TreeTableColumn<Vehicle, String > columnRegistration,columnPurchase,columnRevision,columnDocumentation;
-    public void backToLogin(MouseEvent mouseEvent) {
-        Parent root;
-        try {
-            root = FXMLLoader.load(getClass().getResource("login.fxml"));
-
-            principal = new Scene(root);
-            if (mouseEvent != null) {
-                window = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-                window.setScene(principal);
-                window.show();
-            }
-
-
-        } catch (IOException e) {
-            System.out.println("Go back");
-        }
-    }
+    @FXML
+    private TreeTableColumn<Provider, String> columnCompanyName,columnCompanyAddress,columnCompanyNumber,columnCompanyEmail;
+    @FXML
+    private JFXComboBox<String> comboBoxVehicles,comboBoxEmployees,comboBoxCompany;
 
 
     public void initData(User user, DatabaseController databaseController, JSONObject jsonObject) {
@@ -101,7 +101,8 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
         this.employees = FXCollections.observableArrayList();
         cargarDatosTabla(jsonObject);
         cargarDatosVehiculos(jsonObject);
-        makeStageDragable();
+        cargarDatosProveedores(jsonObject);
+        //makeStageDragable();
     }
     public void makeStageDragable(){
 
@@ -119,16 +120,109 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         preferencias= new Preferencias();
-
-
         pnlEmployees.toFront();
         pnlOrders.setVisible(false);
         pnlVehicles.setVisible(false);
+        pnlCustomers.setVisible(false);
+
+        comboBoxVehicles.getItems().add("Car Registration");
+        comboBoxVehicles.getItems().add("Purchase Date");
+        comboBoxVehicles.getItems().add("Revision Date");
+        comboBoxEmployees.getItems().add("Name");
+        comboBoxEmployees.getItems().add("Mail");
+        comboBoxEmployees.getItems().add("Address");
+        comboBoxCompany.getItems().add("Company Name");
+        comboBoxCompany.getItems().add("Company Address");
+        comboBoxCompany.getItems().add("Company Email");
+
+        searchEmployee.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                tableEmployees.setPredicate(new Predicate<TreeItem<Employee>>() {
+                    @Override
+                    public boolean test(TreeItem<Employee> employee) {
+                        Boolean flag=false;
+                        flag = employee.getValue().getEmail().getValue().contains(newValue);
+                        switch (comboBoxEmployees.getSelectionModel().getSelectedItem().toString()){
+                            case "Mail":
+                                flag = employee.getValue().getEmail().getValue().contains(newValue);
+                                break;
+                            case "Address":
+                                flag = employee.getValue().getAddress().getValue().contains(newValue);
+                                break;
+                            case "Name":
+                            default:
+                                flag = employee.getValue().getName().getValue().contains(newValue);
+                                break;
+                        }
+
+                        return flag;
+                    }
+                });
+            }
+        });
+        searchVehicles.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                tableVehicles.setPredicate(new Predicate<TreeItem<Vehicle>>() {
+                    @Override
+                    public boolean test(TreeItem<Vehicle> vehicle) {
+                        Boolean flag=false;
+                        flag = vehicle.getValue().getDateRevision().getValue().contains(newValue);
+                        switch (comboBoxVehicles.getSelectionModel().getSelectedItem().toString()){
+                            case "Revision Date":
+                                flag = vehicle.getValue().getDateRevision().getValue().contains(newValue);
+
+                                break;
+                            case "Purchase Date":
+                                flag = vehicle.getValue().getDatePurchase().getValue().contains(newValue);
+                                break;
+                            case "Car Registration":
+                            default:
+                                flag = vehicle.getValue().getCarRegistration().getValue().contains(newValue);
+                                break;
+                        }
+
+                        return flag;
+                    }
+                });
+            }
+        });
+        searchCompany.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                tableProviders.setPredicate(new Predicate<TreeItem<Provider>>() {
+                    @Override
+                    public boolean test(TreeItem<Provider> provider) {
+                        Boolean flag=false;
+                        flag = provider.getValue().getCompanyAddress().getValue().contains(newValue);
+                        switch (comboBoxCompany.getSelectionModel().getSelectedItem().toString()){
+                            case "Company Address":
+                                flag = provider.getValue().getCompanyAddress().getValue().contains(newValue);
+                                break;
+                            case "Company Email":
+                                flag = provider.getValue().getCompanyEmail().getValue().contains(newValue);
+                                break;
+                            case "Company Name":
+                            default:
+                                flag = provider.getValue().getCompanyName().getValue().contains(newValue);
+                                break;
+                        }
+
+                        return flag;
+                    }
+                });
+            }
+        });
 
     }
-
     public void handleClicks(ActionEvent actionEvent) {
 
+        if(actionEvent.getSource()==btnCustomers){
+            pnlCustomers.setStyle("-fx-background-color : #fff");
+            pnlCustomers.toFront();
+            pnlCustomers.setVisible(true);
+        }
         if (actionEvent.getSource() == btnOrders) {
             pnlOrders.setStyle("-fx-background-color : #fff");
             pnlOrders.toFront();
@@ -155,7 +249,7 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(tableEmployees,usuario,databaseController,2);
+                registerController.initDataEmployees(tableEmployees,usuario,databaseController,2);
                 Stage stage = new Stage();
                 stage.setTitle("Adding employees");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -174,9 +268,28 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(tableEmployees,usuario,databaseController,1);
+                registerController.initDataEmployees(tableEmployees,usuario,databaseController,1);
                 Stage stage = new Stage();
                 stage.setTitle("Adding admin");
+                stage.initStyle(StageStyle.UNDECORATED);
+                stage.setScene(principal);
+                stage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(actionEvent.getSource()== btnAddCompany){
+            Parent root = null;
+            FXMLLoader loader = new FXMLLoader();
+            try {
+                loader.setLocation(getClass().getResource("/Pantallas/register_provider.fxml"));
+                root = loader.load();
+                principal =  new Scene(root,700,417);
+                RegisterController registerController = loader.getController();
+                registerController.initDataProviders(tableProviders,usuario,databaseController,1);
+                Stage stage = new Stage();
+                stage.setTitle("Adding vehicle");
                 stage.initStyle(StageStyle.UNDECORATED);
                 stage.setScene(principal);
                 stage.show();
@@ -193,7 +306,7 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
                 root = loader.load();
                 principal =  new Scene(root,700,417);
                 RegisterController registerController = loader.getController();
-                registerController.initData(tableEmployees,usuario,databaseController,1);
+                registerController.initDataVehicles(tableVehicles,usuario,databaseController,1);
                 Stage stage = new Stage();
                 stage.setTitle("Adding vehicle");
                 stage.initStyle(StageStyle.UNDECORATED);
@@ -287,76 +400,110 @@ public class PrincipalController implements Initializable,Callback<Employee, Emp
         tableVehicles.setShowRoot(false);
 
     }
+    public void cargarDatosProveedores(JSONObject jsonObject){
+        columnCompanyName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Provider, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Provider, String> param) {
+                return param.getValue().getValue().getCompanyName();
+            }
+        });
+        columnCompanyAddress.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Provider, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Provider, String> param) {
+                return param.getValue().getValue().getCompanyAddress();
+            }
+        });
+        columnCompanyNumber.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Provider, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Provider, String> param) {
+                return param.getValue().getValue().getCompanyPhone();
+            }
+        });
+        columnCompanyEmail.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Provider, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Provider, String> param) {
+                return param.getValue().getValue().getCompanyEmail();
+            }
+        });
 
-    @Override
-    public Employee call(Employee param) {
-        return param;
+        JSONObject root = jsonObject;
+        JSONArray array = (JSONArray) root.get("Proveedores");
+        ObservableList<Provider> providers = FXCollections.observableArrayList();
+        for(int i = 0 ; i < array.size() ; i++) {
+            JSONObject jsonObject1 = (JSONObject) array.get(i);
+            providers.add(new Provider(jsonObject1.get("nombre").toString(),jsonObject1.get("direccion").toString(),jsonObject1.get("telefono").toString(),jsonObject1.get("correo").toString()));
+        }
+        final TreeItem<Provider> rootTable= new RecursiveTreeItem<Provider>(providers, RecursiveTreeObject::getChildren);
+        tableProviders.getColumns().setAll(columnCompanyName,columnCompanyAddress,columnCompanyNumber,columnCompanyEmail);
+        tableProviders.setRoot(rootTable);
+        tableProviders.setShowRoot(false);
+    }
+    public void downloadDocumentation(){
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File fileDirectory = directoryChooser.showDialog(null);
+        TreeItem<Vehicle> vehicle = tableVehicles.getSelectionModel().getSelectedItem();
+        //databaseController.guardarArchivo(fileDirectory.getAbsolutePath(),vehicle.getValue().getCarRegistration().getValue().toString(),vehicle.getValue().getDataName().getValue().toString());
+        SaveFileController saveFileController = new SaveFileController(fileDirectory.getAbsolutePath(),vehicle.getValue().getCarRegistration().getValue().toString(),vehicle.getValue().getDataName().getValue().toString());
+        saveFileController.setCallbackPerfomed(new MyCallback() {
+            @Override
+            public void callback(String accion) {
+                tratarMensaje(accion);
+            }
+        });
+        saveFileController.start();
+
     }
 
-    /*public void cargarDatosTabla(){
-        columnName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
-                return param.getValue().getValue().getName();
-            }
-        });
-        columnEmail.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
-                return param.getValue().getValue().emailProperty();
-            }
-        });
-        columnAddress.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
-                return param.getValue().getValue().getAddress();
-            }
-        });
-        columnPhone.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
-                return param.getValue().getValue().getPhone();
-            }
-        });
+    public void tratarMensaje(String mensaje){
+        String codigos[]=mensaje.split("&");
+        switch (Codigos.codigo_cliente(Integer.parseInt(codigos[0]))){
+            case ERROR:
+                mostrarError(Integer.parseInt(codigos[1]));
+                break;
 
-        DatagramSocket dataSocket = null;
-        DatagramPacket packetToSend;
-        DatagramPacket packetIn;
-        String enviar="3&";
-        try {
-            dataSocket = new DatagramSocket();
-            InetAddress address = InetAddress.getByName(preferencias.getDir_ip());
-            byte [] bufOut = enviar.getBytes();
-            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            byte []bufIn = new byte[4096];
-            dataSocket.setBroadcast(true);
-            dataSocket.send(packetToSend);
-            packetIn = new DatagramPacket(bufIn, bufIn.length);
-            dataSocket.receive(packetIn);
-            String recibido = new String(packetIn.getData(), 0, packetIn.getLength());
-            String valores[] = recibido.split("&");
-            if(!valores[0].equals("0")){
+            case ARCHIVO_GUARDADO:
+                System.out.println("Fichero guardado.");
+                textInfo.setText("Fichero guardado");
+                textInfo.setOpacity(1);
+                new Thread(){
+                    @Override
+                    public void run(){
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        textInfo.setOpacity(0);
+                    }
+                }.start();
+                break;
 
-                ObservableList<Employee> employees = FXCollections.observableArrayList();
-                for (int i = 1; i < valores.length; i++) {
-                    System.out.println("Vuelta "+i);
-                    String datosEmployee [] = valores[i].split("#");
-                    employees.add(new Employee(datosEmployee[0],datosEmployee[1],datosEmployee[2],datosEmployee[3]));
-                }
-                final TreeItem<Employee> root = new RecursiveTreeItem<Employee>(employees, RecursiveTreeObject::getChildren);
-                tableEmployees.getColumns().setAll(columnName,columnEmail ,columnAddress,columnPhone);
-                tableEmployees.setRoot(root);
-                tableEmployees.setShowRoot(false);
-            }
-
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
 
+    public void mostrarError(Integer codigo){
 
-    }*/
+        switch (codigo){
+            case 1:
+                textInfo.setOpacity(1);
+                textInfo.setText("No se ha podido descargar el archivo");
+                new Thread(){
+                    @Override
+                    public void run(){
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        textInfo.setOpacity(0);
+                    }
+                }.start();
+
+                break;
+            case 2:
+                System.out.println("No se encuentra el fichero");
+                break;
+        }
+    }
+
 }

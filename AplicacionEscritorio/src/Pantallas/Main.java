@@ -31,17 +31,9 @@ public class Main extends Application  {
 
     public static void main(String[] args) {
         Main m = new Main();
-
         launch(args);
-
     }
 
-    public void mostrarError(String codigo){
-        switch (codigo){
-            case "1":
-                break;
-        }
-    }
 
 
 }

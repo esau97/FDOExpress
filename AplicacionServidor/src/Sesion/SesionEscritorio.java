@@ -73,9 +73,7 @@ public class SesionEscritorio extends Thread{
         String argumentos[] = codigo.split("&");
         switch (Codigos.codigo_servidor(Integer.parseInt(argumentos[0]))){
             case INICIO_SESION:
-
                 respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
-
 
                 String rsp [] = respuesta.split("&");
                 System.out.println(rsp[0]);
@@ -99,12 +97,17 @@ public class SesionEscritorio extends Thread{
             case REGISTRO_VEHICULO:
                 respuesta = bbdd.registrarVehiculo(argumentos);
                 print.println(respuesta);
-                guardarArchivo(argumentos[5]);
+                guardarArchivo(argumentos[1],argumentos[5]);
+            case DESCARGAR_ARCHIVO:
+                respuesta = enviarFile(new File("Ficheros/"+argumentos[1]+"_"+argumentos[2]));
+                break;
+            case REGISTRO_PROVEEDOR:
+                respuesta=bbdd.registrarProveedor(argumentos);
                 break;
         }
         return respuesta;
     }
-    public void guardarArchivo(String nombre){
+    public void guardarArchivo(String matricula,String nombreArchivo){
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -113,7 +116,7 @@ public class SesionEscritorio extends Thread{
             System.out.println("Can't get socket input stream. ");
         }
         try {
-            out = new FileOutputStream(nombre);
+            out = new FileOutputStream("Fichero/"+matricula+"_"+nombreArchivo);
         } catch (FileNotFoundException ex) {
             System.out.println("File not found. ");
         }
@@ -131,6 +134,40 @@ public class SesionEscritorio extends Thread{
             e.printStackTrace();
         }
 
+    }
+    public String enviarFile(File file){
+        String respuesta="";
+        // Get the size of the file
+        long length = file.length();
+        byte[] bytes = new byte[16 * 1024];
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            OutputStream out = socket.getOutputStream();
+            /*RandomAccessFile raf=new RandomAccessFile(file,"rw");
+            byte count=0;
+            long posicion=raf.getFilePointer();
+
+            while(posicion<file.length()){
+                count=raf.readByte();
+                out.write(count);
+                posicion=raf.getFilePointer();
+            }
+            raf.close();*/
+            int count;
+            while ((count = in.read(bytes)) > 0) {
+                System.out.println(count);
+                out.write(bytes, 0, count);
+            }
+            out.close();
+        } catch (FileNotFoundException e) {
+            respuesta="0&2";
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        respuesta="5";
+        return respuesta;
     }
 
 

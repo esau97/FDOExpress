@@ -13,14 +13,20 @@ public class Servidor {
 
     public static void main(String[] args) {
         Servidor serv = new Servidor();
-        BaseDeDatos bd = new BaseDeDatos();
-        bd.cargarDatosTablas();
+
         serv.informacionCompartida = new InformacionCompartida();
         try {
             ServerSocket serverSocket = null;
             boolean listening = true;
             serverSocket = new ServerSocket(4444);
+            new Thread(){
+                @Override
+                public void run(){
+                    BaseDeDatos bd = new BaseDeDatos();
+                    bd.cargarDatosTablas();
+                }
 
+            }.start();
 
             new PeticionesUDP(serv.informacionCompartida).start(); // Este hilo se encarga de gestionar todas
             // las peticiones UDP

@@ -11,6 +11,7 @@ import java.net.Socket;
 public class DatabaseController {
     private Socket socket;
     private Preferencias pref;
+    private MyCallback myCallback;
 
 
     public DatabaseController(){
@@ -86,20 +87,90 @@ public class DatabaseController {
     }
     public void enviarFile(File file){
         // Get the size of the file
-        long length = file.length();
-        byte[] bytes = new byte[16 * 1024];
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
-            OutputStream out = socket.getOutputStream();
-            int count;
-            while ((count = in.read(bytes)) > 0) {
-                out.write(bytes, 0, count);
+        new Thread(){
+            @Override
+            public void run(){
+                long length = file.length();
+                byte[] bytes = new byte[16 * 1024];
+                InputStream in = null;
+                OutputStream out;
+                try {
+                    in = new FileInputStream(file);
+                     out= socket.getOutputStream();
+                    int count;
+                    while ((count = in.read(bytes)) > 0) {
+                        out.write(bytes, 0, count);
+                    }
+                    out.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        }.start();
+
+    }
+    public void guardarArchivo(String ruta,String matricula,String nombreArchivo){
+
+        new Thread(){
+            InputStream in = null;
+            OutputStream out = null;
+            MyCallback myCallback;
+            @Override
+            public void run(){
+                System.out.println("guardando archivo");
+                String respuesta="";
+                PrintWriter pw = null;
+
+                try {
+                    pw = new PrintWriter(socket.getOutputStream(), true);
+                    pw.println("5&"+matricula+"&"+nombreArchivo);
+                    in = socket.getInputStream();
+                } catch (IOException ex) {
+                    System.out.println("Can't get socket input stream. ");
+                }
+                try {
+                    out = new FileOutputStream(ruta+"/"+matricula+"_"+nombreArchivo);
+                } catch (FileNotFoundException ex) {
+                    System.out.println("File not found. ");
+                }
+                byte[] bytes = new byte[16*1024];
+                System.out.println("Recibiendo datos");
+                int count;
+                try{
+                    while ((count = in.read(bytes)) > 0) {
+                        out.write(bytes, 0, count);
+                    }
+                    myCallback.callback("5&");
+                    out.close();
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    myCallback.callback("0&1");
+                }
+                pw.close();
+            }
+            public void setCallbackPerfomed(MyCallback myCallback){
+                this.myCallback=myCallback;
+            }
+        }.start();
+
+    }
+    public String enviarDatosProveedor(String companyName, String email, String fullAddress, String phoneNumber) {
+        String mensaje = 6 +"&"+companyName+"&"+fullAddress+"&"+phoneNumber+"&"+email;
+       try{
+           BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+           PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+           out.println(mensaje);
+           String recibido = in.readLine();
+           in.close();
+           out.close();
+           return recibido;
+       } catch (IOException e) {
+           e.printStackTrace();
+           return "0&4";
+       }
     }
 }

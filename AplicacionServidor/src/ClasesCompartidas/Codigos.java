@@ -6,8 +6,10 @@ public class Codigos {
         INICIO_SESION,
         REGISTRO,
         REGISTRO_VEHICULO,
-        CARGAR_TABLAS,
-        GUARDAR_ARCHIVO
+        CARGAR_TABLAS, //3
+        GUARDAR_ARCHIVO,
+        DESCARGAR_ARCHIVO,
+        REGISTRO_PROVEEDOR
     }
 
     public static recibeServidor codigo_servidor(int num){
