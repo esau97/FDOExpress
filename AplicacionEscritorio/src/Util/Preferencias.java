@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class Preferencias {
-    private String dir_ip="192.168.1.39";
+    private String dir_ip="";
     private int puerto = 4444;
-    private Socket socket;
+
 
     public int getPuerto() {
         return puerto;
@@ -24,19 +24,10 @@ public class Preferencias {
         this.dir_ip = dir_ip;
     }
 
-    public Socket getSocket() {
-        return socket;
-    }
 
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
 
-    public Preferencias(){
-        try {
-            socket = new Socket(getDir_ip(),getPuerto());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Preferencias(String dir_ip){
+        setDir_ip(dir_ip);
+
     }
 }

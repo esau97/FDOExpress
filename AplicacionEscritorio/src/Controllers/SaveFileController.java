@@ -4,18 +4,25 @@ import Util.Preferencias;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class SaveFileController extends Thread{
-    Preferencias preferencias;
+    private Preferencias preferencias;
     private Socket socket;
     private MyCallback myCallback;
     private String ruta,matricula,nombreArchivo;
-    public SaveFileController(String ruta,String matricula,String nombreArchivo){
-        preferencias = new Preferencias();
+    public SaveFileController(DatabaseController databaseController,String ruta,String matricula,String nombreArchivo){
+        preferencias = databaseController.getPref();
         this.ruta=ruta;
         this.matricula=matricula;
         this.nombreArchivo=nombreArchivo;
-        this.socket=preferencias.getSocket();
+        try{
+            this.socket=new Socket(preferencias.getDir_ip(),preferencias.getPuerto());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void run(){
@@ -56,9 +63,7 @@ public class SaveFileController extends Thread{
             pw.close();
         }
         public void setCallbackPerfomed(MyCallback myCallback){
-            System.out.println("Set callback");
             this.myCallback=myCallback;
-            System.out.println("Despues de setear");
         }
 
 }

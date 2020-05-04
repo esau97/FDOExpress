@@ -2,68 +2,124 @@ package Controllers;
 
 import Util.Constantes;
 import Util.Preferencias;
+import javafx.scene.web.WebView;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatabaseController {
     private Socket socket;
     private Preferencias pref;
-    private MyCallback myCallback;
+    private BufferedReader in;
+    private PrintWriter out;
+    private DatagramSocket dataSocket;
+    private InetAddress address = null;
+    private DatagramPacket packetToSend = null;
+    private DatagramPacket packetIn = null;
 
+    private byte[] bufOut;
+    private byte[] bufIn;
 
-    public DatabaseController(){
-        pref = new Preferencias();
-        socket = pref.getSocket();
+    public Preferencias getPref() {
+        return pref;
+    }
+
+    public void setPref(Preferencias pref) {
+        this.pref = pref;
+    }
+
+    public DatabaseController(Preferencias preferencias){
+        pref = preferencias;
+        try {
+            address = InetAddress.getByName(pref.getDir_ip());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String enviarDatos(String email,String contrasena, int accion){
-
+        String recibido="";
+        String enviar="";
         String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(contrasena)));
-        String mensaje=accion+"&"+email+"&"+passwordCodif;
-        Constantes.DATOS_USUARIO.setEmail(email);
-        System.out.println("enviando datos...");
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(mensaje);
-            String recibido = in.readLine();
-            System.out.println(recibido);
-            return recibido;
+        enviar=accion+"&"+email+"&"+passwordCodif;
 
-        } catch (IOException e) {
-            return "0&4";
+        try {
+            dataSocket = new DatagramSocket();
+            bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
+            bufIn = new byte[4096];
+            dataSocket.setBroadcast(true);
+            dataSocket.send(packetToSend);
+            packetIn = new DatagramPacket(bufIn, bufIn.length);
+            dataSocket.receive(packetIn);
+
+            String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+            recibido+=cadena;
+            while(!cadena.equals("finish")){
+                dataSocket.receive(packetIn);
+                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+                if (!cadena.equals("finish")){
+                    recibido+=cadena;
+                }
+            }
+            recibido=recibido.trim();
+
+        } catch (IOException ex) {
+            Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        dataSocket.close();
+        return recibido;
     }
     public String enviarDatos(String fullName,String email,String password, String fullAddress,String phoneNumber,Integer rol){
-
+        String recibido="";
+        String enviar="";
         String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
-        String mensaje=1+"&"+fullName+"&"+email+"&"+passwordCodif+"&"+fullAddress+"&"+phoneNumber+"&"+rol;
 
-        System.out.println("enviando datos...");
+        enviar=1+"&"+fullName+"&"+email+"&"+passwordCodif+"&"+fullAddress+"&"+phoneNumber+"&"+rol;
+
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(mensaje);
-            String recibido = in.readLine();
-            System.out.println(recibido);
-            //tratarMensaje(recibido);
+            dataSocket = new DatagramSocket();
+            bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
+            bufIn = new byte[4096];
+            dataSocket.setBroadcast(true);
+            dataSocket.send(packetToSend);
+            packetIn = new DatagramPacket(bufIn, bufIn.length);
+            dataSocket.receive(packetIn);
 
-            in.close();
-            out.close();
-            return recibido;
-            //stage.close();
-        } catch (Exception e) {
-            return "0&4";
+            String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+            recibido+=cadena;
+            while(!cadena.equals("finish")){
+                dataSocket.receive(packetIn);
+                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+                if (!cadena.equals("finish")){
+                    recibido+=cadena;
+                }
+            }
+            recibido=recibido.trim();
+
+        } catch (IOException ex) {
+            Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        dataSocket.close();
+        return recibido;
     }
+
     public String enviarDatosVehiculo(String matricula, String purchaseDate, String revisionDate, File file,Integer idAdmin){
 
         String mensaje=2+"&"+matricula+"&"+purchaseDate+"&"+revisionDate+"&"+file.getName()+"&"+idAdmin;
         try {
+            Socket socket = new Socket(pref.getDir_ip(),pref.getPuerto());
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(mensaje);
@@ -112,65 +168,53 @@ public class DatabaseController {
         }.start();
 
     }
-    public void guardarArchivo(String ruta,String matricula,String nombreArchivo){
 
-        new Thread(){
-            InputStream in = null;
-            OutputStream out = null;
-            MyCallback myCallback;
-            @Override
-            public void run(){
-                System.out.println("guardando archivo");
-                String respuesta="";
-                PrintWriter pw = null;
-
-                try {
-                    pw = new PrintWriter(socket.getOutputStream(), true);
-                    pw.println("5&"+matricula+"&"+nombreArchivo);
-                    in = socket.getInputStream();
-                } catch (IOException ex) {
-                    System.out.println("Can't get socket input stream. ");
-                }
-                try {
-                    out = new FileOutputStream(ruta+"/"+matricula+"_"+nombreArchivo);
-                } catch (FileNotFoundException ex) {
-                    System.out.println("File not found. ");
-                }
-                byte[] bytes = new byte[16*1024];
-                System.out.println("Recibiendo datos");
-                int count;
-                try{
-                    while ((count = in.read(bytes)) > 0) {
-                        out.write(bytes, 0, count);
-                    }
-                    myCallback.callback("5&");
-                    out.close();
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    myCallback.callback("0&1");
-                }
-                pw.close();
-            }
-            public void setCallbackPerfomed(MyCallback myCallback){
-                this.myCallback=myCallback;
-            }
-        }.start();
-
-    }
     public String enviarDatosProveedor(String companyName, String email, String fullAddress, String phoneNumber) {
-        String mensaje = 6 +"&"+companyName+"&"+fullAddress+"&"+phoneNumber+"&"+email;
-       try{
-           BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-           PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-           out.println(mensaje);
-           String recibido = in.readLine();
-           in.close();
-           out.close();
-           return recibido;
-       } catch (IOException e) {
-           e.printStackTrace();
-           return "0&4";
-       }
+        String recibido="";
+        String enviar = 6 +"&"+companyName+"&"+fullAddress+"&"+phoneNumber+"&"+email;
+        try {
+            dataSocket = new DatagramSocket();
+            bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
+            bufIn = new byte[4096];
+            dataSocket.setBroadcast(true);
+            dataSocket.send(packetToSend);
+            packetIn = new DatagramPacket(bufIn, bufIn.length);
+            dataSocket.receive(packetIn);
+
+            String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+            recibido+=cadena;
+            while(!cadena.equals("finish")){
+                dataSocket.receive(packetIn);
+                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+                if (!cadena.equals("finish")){
+                    recibido+=cadena;
+                }
+            }
+            recibido=recibido.trim();
+
+        } catch (IOException ex) {
+            Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dataSocket.close();
+        return recibido;
+    }
+    public JSONObject obtenerUbicacion(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            out.println("7");
+            String recibido = in.readLine();
+            String argumentos [] = recibido.split("&");
+
+            JSONParser jsonParser = new JSONParser();
+            jsonObject = (JSONObject) jsonParser.parse(argumentos[1]);
+            System.out.println(jsonObject);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 }

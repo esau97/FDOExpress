@@ -1,27 +1,29 @@
 package Pantallas;
 
+import Controllers.LoginController;
+import Controllers.PrincipalController;
+import com.sothawo.mapjfx.Projection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 
 public class Main extends Application  {
 
-    private int codigoUsuario=1;
-    private BufferedReader br;
-    private PrintWriter out;
-    private Socket socket;
-
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("login.fxml"));
+        Parent root = loader.load();
         primaryStage.setTitle("FDO Express");
         Scene scene = new Scene(root, 600, 400);
+        Projection projection = getParameters().getUnnamed().contains("wgs84")
+                ? Projection.WGS_84 : Projection.WEB_MERCATOR;
+        LoginController loginController = loader.getController();
+        loginController.initData(projection);
+
 //        scene.getStylesheets().addAll(getClass().getResource("styles.css").toExternalForm());
         primaryStage.setScene(scene);
 
@@ -31,6 +33,7 @@ public class Main extends Application  {
 
     public static void main(String[] args) {
         Main m = new Main();
+
         launch(args);
     }
 

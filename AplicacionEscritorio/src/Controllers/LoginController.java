@@ -6,9 +6,13 @@ import Util.Constantes;
 import Util.Preferencias;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import com.sothawo.mapjfx.Projection;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import netscape.javascript.JSObject;
@@ -30,19 +35,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
+import java.util.EventListener;
+import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class LoginController {
-    Stage window;
-    Scene principal;
-    ActionEvent actionEvent;
-    KeyEvent keyEvent;
-    String nombre;
-    User user;
+public class LoginController implements Initializable {
+    private Stage window;
+    private Scene principal;
+    private ActionEvent actionEvent;
+    private Projection projection;
+    private KeyEvent keyEvent;
+    private User user;
     int rol = 0;
-    private Socket socket;
+
     private DatabaseController databaseController;
     private double x,y;
-    BufferedReader in;
+
     @FXML
     JFXTextField usuario;
     @FXML
@@ -51,9 +60,11 @@ public class LoginController {
     Button buttonLogin;
     @FXML
     Label labelError;
+    @FXML
+    FontAwesomeIcon configImage;
 
     public LoginController(){
-        databaseController = new DatabaseController();
+
         user = new User();
 
     }
@@ -74,7 +85,7 @@ public class LoginController {
     }
 
     public void iniciarSesion(ActionEvent actionEvent) throws IOException {
-
+        databaseController = new DatabaseController(new Preferencias("192.168.1.39"));
         this.actionEvent = actionEvent;
         String respuesta="";
         respuesta=usuario.getText();
@@ -90,30 +101,12 @@ public class LoginController {
         System.out.println(respuesta);
 
     }
-
-    public void enviarDatos(String email,String contrasena, int accion){
-
-        String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(contrasena)));
-        String mensaje=accion+"&"+email+"&"+passwordCodif;
-        Constantes.DATOS_USUARIO.setEmail(email);
-        System.out.println("enviando datos...");
-        try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(mensaje);
-            String recibido = in.readLine();
-            System.out.println(recibido);
-            tratarMensaje(recibido);
-
-        } catch (Exception e) {
-            labelError.setText("Compruebe si ha escrito bien la direccion IP o si tiene conexion a internet.");
-            labelError.setOpacity(1);
-
-        }
+    public void initData(Projection projection){
+        this.projection = projection;
     }
-
     public void tratarMensaje(String mensaje){
         String codigos[]=mensaje.split("&");
+        System.out.println("Recibido"+mensaje);
         switch (Codigos.codigo_cliente(Integer.parseInt(codigos[0]))){
             case ERROR:
                 mostrarError(Integer.parseInt(codigos[1]));
@@ -122,6 +115,7 @@ public class LoginController {
                 rol=Integer.parseInt(codigos[1]);
                 user.setName(codigos[2]);
                 user.setCodUser(Integer.parseInt(codigos[3]));
+                System.out.println("recibo"+mensaje);
                 JSONParser jsonParser = new JSONParser();
                 JSONObject jsonObject=null;
                 try{
@@ -165,14 +159,14 @@ public class LoginController {
                 loader.setLocation(getClass().getResource("/Pantallas/principal_admin.fxml"));
                 root = loader.load();
                 PrincipalController principalController = loader.getController();
-                principalController.initData(user,databaseController,jsonObject);
+                principalController.initData(user,databaseController,jsonObject,projection);
 
                 principal =  new Scene(root);
             }else if(rol==4){
                 loader.setLocation(getClass().getResource("/Pantallas/principal_gerente.fxml"));
                 root = loader.load();
                 PrincipalController principalController = loader.getController();
-                principalController.initData(user,databaseController,jsonObject);
+                principalController.initData(user,databaseController,jsonObject,projection);
                 principal =  new Scene(root);
             }
 
@@ -211,5 +205,51 @@ public class LoginController {
 
         alert.showAndWait();
     }
+    public boolean formatoCorrectoCorreo(String email){
+        Pattern pattern = Pattern
+                .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
+        Matcher mather = pattern.matcher(email);
+
+        if (mather.find() == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        configImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                // TODO Auto-generated method stub
+                Parent root = null;
+                FXMLLoader loader = new FXMLLoader();
+
+                try {
+                    loader.setLocation(getClass().getResource("/Pantallas/settings.fxml"));
+                    root=loader.load();
+                    principal =  new Scene(root);
+
+                    SettingsController settingsController = loader.getController();
+                    settingsController.initData();
+                    settingsController.setCallbackPerfomed(new MyCallback() {
+                        @Override
+                        public void callback(String accion) {
+                            databaseController = new DatabaseController(new Preferencias(accion));
+                        }
+                    });
+                    Stage stage = new Stage();
+                    stage.initStyle(StageStyle.UNDECORATED);
+                    stage.setScene(principal);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+    }
 }

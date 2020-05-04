@@ -1,9 +1,11 @@
 package BaseDatos;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -56,6 +58,12 @@ public class BaseDeDatos {
                 pps.setInt(6,Integer.parseInt(argumentos[6]));
 
                 if(pps.executeUpdate()>0){
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            cargarDatosTablas();
+                        }
+                    }.start();
                     respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5];
                 }else{
                     respuesta="0&2";
@@ -91,6 +99,12 @@ public class BaseDeDatos {
                 pps.setInt(5,Integer.parseInt(codAdmin));
 
                 if(pps.executeUpdate()>0){
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            cargarDatosTablas();
+                        }
+                    }.start();
                     respuesta="6&";
                 }else{
                     respuesta="0&2";
@@ -142,6 +156,35 @@ public class BaseDeDatos {
 
         return false;
     }
+    public void obtenerUbicacion(){
+        JSONObject ubicacionObject = new JSONObject();
+        JSONArray ubicacionArray = new JSONArray();
+
+        String consulta1="SELECT latitud,longitud,matricula FROM ubicacion";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultado = statement.executeQuery(consulta1);
+            while (resultado.next()){
+                JSONObject ubObject = new JSONObject();
+                ubObject.put("latitud",resultado.getDouble(1));
+                ubObject.put("longitud",resultado.getDouble(2));
+                ubObject.put("matricula",resultado.getString(3));
+                ubicacionArray.add(ubObject);
+            }
+            ubicacionObject.put("Ubicaciones",ubicacionArray);
+            FileWriter fileWriter = new FileWriter("Ficheros/ubicaciones.json");
+            fileWriter.write(ubicacionObject.toJSONString());
+            fileWriter.flush();
+            fileWriter.close();
+
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String devolverDatosEmpleados(){
         String respuesta="";
         String consulta1="SELECT nombre,email,direccion,tfno FROM usuario WHERE rol=1 or rol=2";
@@ -164,7 +207,7 @@ public class BaseDeDatos {
 
         return respuesta;
     }
-    public void cargarDatosTablas() {
+    public synchronized void cargarDatosTablas() {
         JSONObject root = new JSONObject();
         root.put("Empleados",cargarDatosEmpleados(root));
         root.put("Vehiculos",cargarDatosVehiculos(root));
@@ -269,7 +312,13 @@ public class BaseDeDatos {
                 pps.setInt(3,Integer.parseInt(argumentos[3]));
                 pps.setString(4,argumentos[4]);
                 if(pps.executeUpdate()>0){
-                    respuesta="7&";
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            cargarDatosTablas();
+                        }
+                    }.start();
+                    respuesta="7&"+argumentos[1]+"&"+argumentos[2]+"&"+argumentos[3]+"&"+argumentos[4];
                 }else{
                     respuesta="0&2";
                 }

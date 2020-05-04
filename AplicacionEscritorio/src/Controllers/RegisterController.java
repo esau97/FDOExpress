@@ -6,6 +6,8 @@ import Entity.User;
 import Entity.Vehicle;
 import Util.Codigos;
 import com.jfoenix.controls.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,6 +24,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterController implements Initializable {
     Stage stage;
@@ -97,23 +101,24 @@ public class RegisterController implements Initializable {
         makeStageDragable();
     }
     public void register(ActionEvent actionEvent) {
-
-        String name= textName.getText().trim();
-        String lastName = textLName.getText().trim();
-        String fullName = name+" "+lastName;
-        String email = textEmail.getText().trim();
-        String password = textPassword.getText().trim();
-        String address= textAddress.getText().trim();
-        String zipCode= textCode.getText().trim();
-        String fullAddress = address +" "+zipCode;
-        String phoneNumber = textNumber.getText().trim();
-        tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber,rol));
-
+        if(formatoCorrectoCorreo(textEmail.getText().trim())){
+            String name= textName.getText().trim();
+            String lastName = textLName.getText().trim();
+            String fullName = name+" "+lastName;
+            String email = textEmail.getText().trim();
+            String password = textPassword.getText().trim();
+            String address= textAddress.getText().trim();
+            String zipCode= textCode.getText().trim();
+            String fullAddress = address +" "+zipCode;
+            String phoneNumber = textNumber.getText().trim();
+            tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber,rol));
+        }
+        Node node = (Node)actionEvent.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
         //stage.close();
 
-
     }
-
 
     public void tratarMensaje(String mensaje){
         String codigos[]=mensaje.split("&");
@@ -171,7 +176,49 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if(textNumber!=null && textCode!=null){
+            textNumber.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                    String newValue) {
+                    if (textNumber.getText().length() > 9) {
+                        String s = textNumber.getText().substring(0, 9);
+                        textNumber.setText(s);
+                    }
+                    if (!newValue.matches("\\d*")) {
+                        textNumber.setText(newValue.replaceAll("[^\\d]", ""));
+                    }
+                }
+            });
+            textCode.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                    String newValue) {
+                    if (textCode.getText().length() > 5) {
+                        String s = textCode.getText().substring(0, 5);
+                        textCode.setText(s);
+                    }
+                    if (!newValue.matches("\\d*")) {
+                        textCode.setText(newValue.replaceAll("[^\\d]", ""));
+                    }
+                }
+            });
+        }
 
+
+    }
+    public boolean formatoCorrectoCorreo(String email){
+        Pattern pattern = Pattern
+                .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+        Matcher mather = pattern.matcher(email);
+
+        if (mather.find() == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
     public void registerProvider(ActionEvent actionEvent){
         if(actionEvent.getSource()==registerProvider){
@@ -219,6 +266,8 @@ public class RegisterController implements Initializable {
             String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
             tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
+            Node node = (Node)actionEvent.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
             stage.close();
         }else{
             textInfo.setOpacity(1);

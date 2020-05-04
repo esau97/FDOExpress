@@ -44,6 +44,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             bufIn = new byte[256];
             dataSocket.setBroadcast(true);
             dataSocket.send(packetToSend);
+
             packetIn = new DatagramPacket(bufIn, bufIn.length);
             dataSocket.receive(packetIn);
             recibido = new String(packetIn.getData(), 0, packetIn.getLength());

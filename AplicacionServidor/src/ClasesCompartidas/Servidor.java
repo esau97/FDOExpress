@@ -1,12 +1,11 @@
 package ClasesCompartidas;
 
 import BaseDatos.BaseDeDatos;
-import Sesion.SesionEscritorio;
+import Sesion.PeticionesTCP;
 import Sesion.PeticionesUDP;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Servidor {
     private InformacionCompartida informacionCompartida;
@@ -18,25 +17,27 @@ public class Servidor {
         try {
             ServerSocket serverSocket = null;
             boolean listening = true;
-            serverSocket = new ServerSocket(4444);
+            serverSocket = new ServerSocket(6666);
             new Thread(){
                 @Override
                 public void run(){
                     BaseDeDatos bd = new BaseDeDatos();
                     bd.cargarDatosTablas();
+                    bd.obtenerUbicacion();
                 }
 
             }.start();
 
             new PeticionesUDP(serv.informacionCompartida).start(); // Este hilo se encarga de gestionar todas
+            new PeticionesTCP().start();
             // las peticiones UDP
-            //new ComprobarRegistros().start();
-            while (listening){
+
+            /*while (listening){
                 Socket cliente = serverSocket.accept();
                 new SesionEscritorio(cliente,serv.informacionCompartida).start();
                 System.out.println("Lanzando hilo sesion Escritorio");
-            }
-            serverSocket.close();
+            }*/
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }

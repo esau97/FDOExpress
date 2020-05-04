@@ -5,13 +5,12 @@ import Entity.Provider;
 import Entity.User;
 import Entity.Vehicle;
 import Util.Codigos;
-import Util.ModelTable;
 import Util.Preferencias;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import com.sothawo.mapjfx.Projection;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableListValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +25,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -36,14 +34,10 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
-import netscape.javascript.JSObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.*;
 import java.util.ResourceBundle;
@@ -54,7 +48,6 @@ public class PrincipalController implements Initializable {
     private Stage window;
     private Scene principal;
     private User usuario;
-    private Preferencias preferencias;
     private DatabaseController databaseController;
     private JSONObject jsonObject;
     @FXML
@@ -62,7 +55,7 @@ public class PrincipalController implements Initializable {
     @FXML
     VBox orderItem = null;
     @FXML
-    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,btnRefresh,btnAddCompany;
+    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,btnRefresh,btnAddCompany,btnSignOut,btnLocation;
     @FXML
     private Pane pnlOrders,pnlCustomers,pnlEmployees,pnlVehicles;
     @FXML
@@ -91,11 +84,12 @@ public class PrincipalController implements Initializable {
     private TreeTableColumn<Provider, String> columnCompanyName,columnCompanyAddress,columnCompanyNumber,columnCompanyEmail;
     @FXML
     private JFXComboBox<String> comboBoxVehicles,comboBoxEmployees,comboBoxCompany;
+    private Projection projection;
 
-
-    public void initData(User user, DatabaseController databaseController, JSONObject jsonObject) {
+    public void initData(User user, DatabaseController databaseController, JSONObject jsonObject,Projection projection) {
         this.usuario=user;
         labelName.setText(usuario.getName());
+        this.projection=projection;
         this.databaseController=databaseController;
         this.jsonObject=jsonObject;
         this.employees = FXCollections.observableArrayList();
@@ -119,7 +113,6 @@ public class PrincipalController implements Initializable {
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        preferencias= new Preferencias();
         pnlEmployees.toFront();
         pnlOrders.setVisible(false);
         pnlVehicles.setVisible(false);
@@ -217,7 +210,12 @@ public class PrincipalController implements Initializable {
 
     }
     public void handleClicks(ActionEvent actionEvent) {
-
+        if(actionEvent.getSource()==btnSignOut){
+            // Enviar al servidor petición de desconexión
+            Stage stage = (Stage)btnSignOut.getScene().getWindow();
+            stage.close();
+            //System.exit(0);
+        }
         if(actionEvent.getSource()==btnCustomers){
             pnlCustomers.setStyle("-fx-background-color : #fff");
             pnlCustomers.toFront();
@@ -253,6 +251,26 @@ public class PrincipalController implements Initializable {
                 Stage stage = new Stage();
                 stage.setTitle("Adding employees");
                 stage.initStyle(StageStyle.UNDECORATED);
+                stage.setScene(principal);
+                stage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(actionEvent.getSource() == btnLocation ){
+            Parent root = null;
+            FXMLLoader loader = new FXMLLoader();
+            try {
+                loader.setLocation(getClass().getResource("/Pantallas/location.fxml"));
+                root = loader.load();
+                principal =  new Scene(root,925,540);
+                MapController mapController = loader.getController();
+
+                mapController.initMapAndControls(databaseController,projection);
+                Stage stage = new Stage();
+                stage.setTitle("Location");
+
                 stage.setScene(principal);
                 stage.show();
 
@@ -443,7 +461,7 @@ public class PrincipalController implements Initializable {
         File fileDirectory = directoryChooser.showDialog(null);
         TreeItem<Vehicle> vehicle = tableVehicles.getSelectionModel().getSelectedItem();
         //databaseController.guardarArchivo(fileDirectory.getAbsolutePath(),vehicle.getValue().getCarRegistration().getValue().toString(),vehicle.getValue().getDataName().getValue().toString());
-        SaveFileController saveFileController = new SaveFileController(fileDirectory.getAbsolutePath(),vehicle.getValue().getCarRegistration().getValue().toString(),vehicle.getValue().getDataName().getValue().toString());
+        SaveFileController saveFileController = new SaveFileController(databaseController,fileDirectory.getAbsolutePath(),vehicle.getValue().getCarRegistration().getValue().toString(),vehicle.getValue().getDataName().getValue().toString());
         saveFileController.setCallbackPerfomed(new MyCallback() {
             @Override
             public void callback(String accion) {

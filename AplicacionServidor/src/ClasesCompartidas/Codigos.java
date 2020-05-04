@@ -9,7 +9,8 @@ public class Codigos {
         CARGAR_TABLAS, //3
         GUARDAR_ARCHIVO,
         DESCARGAR_ARCHIVO,
-        REGISTRO_PROVEEDOR
+        REGISTRO_PROVEEDOR, //6
+        OBTENER_UBICACION
     }
 
     public static recibeServidor codigo_servidor(int num){

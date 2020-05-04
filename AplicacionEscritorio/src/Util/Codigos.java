@@ -8,8 +8,9 @@ public class Codigos {
         REGISTRO, //3
         DATOS_TABLAS,
         ARCHIVO_GUARDADO,
-        REGISTRO_VEHICULO,
-        REGISTRO_PROVEEDOR
+        REGISTRO_VEHICULO, //6
+        REGISTRO_PROVEEDOR,
+        OBTENER_UBICACION
     }
     public static CodigoRecibeCliente codigo_cliente(int num){
         CodigoRecibeCliente[] cod = CodigoRecibeCliente.values();
