@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SIGN UP"
+            android:text="SIGN IN"
             android:textAlignment="center"
             android:textColor="#FFF"
             android:textSize="40sp"
@@ -134,12 +134,10 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btlogin"
-                    android:text="Sign Up"
+                    android:text="Sign In"
                     android:textColor="#FFF"
                     android:layout_marginRight="5dp"
                     />
-
-
 
 
             </LinearLayout>

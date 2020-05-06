@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.fdoexpress.MenuActivity;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 //Si el login es correcto se mostraría al cliente el activity menu
                 saveLoginState(argumentos[4],argumentos[5]);
                 Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
-                Intent intent   = new Intent(MainActivity.this, MenuSlideActivity.class);
+                Intent intent   = new Intent(MainActivity.this, MenuActivity.class);
 
                 ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                 startActivity(intent,activityOptions.toBundle());
