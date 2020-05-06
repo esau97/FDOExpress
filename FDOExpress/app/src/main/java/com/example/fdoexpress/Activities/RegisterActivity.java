@@ -1,4 +1,4 @@
-package com.example.fdoexpress;
+package com.example.fdoexpress.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.fdoexpress.PeticionListener;
+import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
 
 import org.apache.commons.codec.binary.Hex;

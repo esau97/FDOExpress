@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import netscape.javascript.JSObject;
@@ -62,6 +63,9 @@ public class LoginController implements Initializable {
     Label labelError;
     @FXML
     FontAwesomeIcon configImage;
+    @FXML
+    private AnchorPane pnlParent;
+    private double xOffset=0,yOffset=0;
 
     public LoginController(){
 
@@ -103,6 +107,7 @@ public class LoginController implements Initializable {
     }
     public void initData(Projection projection){
         this.projection = projection;
+        //makeStageDragable();
     }
     public void tratarMensaje(String mensaje){
         String codigos[]=mensaje.split("&");
@@ -218,6 +223,19 @@ public class LoginController implements Initializable {
             return false;
         }
     }
+    public void makeStageDragable(){
+
+        pnlParent.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+        pnlParent.setOnMouseDragged(event -> {
+            window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            window.setX(event.getScreenX()-xOffset);
+            window.setY(event.getScreenY()-yOffset);
+
+        });
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -237,6 +255,7 @@ public class LoginController implements Initializable {
                     settingsController.setCallbackPerfomed(new MyCallback() {
                         @Override
                         public void callback(String accion) {
+                            System.out.println(accion);
                             databaseController = new DatabaseController(new Preferencias(accion));
                         }
                     });

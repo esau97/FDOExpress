@@ -34,10 +34,6 @@ public class DatabaseController {
         return pref;
     }
 
-    public void setPref(Preferencias pref) {
-        this.pref = pref;
-    }
-
     public DatabaseController(Preferencias preferencias){
         pref = preferencias;
         try {
@@ -57,12 +53,17 @@ public class DatabaseController {
             dataSocket = new DatagramSocket();
             bufOut = enviar.getBytes(); //In this program, no information is set by the client
             packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            bufIn = new byte[4096];
+            System.out.println("Envio "+enviar);
             dataSocket.setBroadcast(true);
             dataSocket.send(packetToSend);
-            packetIn = new DatagramPacket(bufIn, bufIn.length);
-            dataSocket.receive(packetIn);
 
+            byte[] last = "finish".getBytes();
+            packetToSend = new DatagramPacket(last, last.length, address, 5555);
+            dataSocket.send(packetToSend);
+            bufIn = new byte[4096];
+            packetIn = new DatagramPacket(bufIn, bufIn.length);
+
+            dataSocket.receive(packetIn);
             String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
             recibido+=cadena;
             while(!cadena.equals("finish")){
@@ -91,12 +92,14 @@ public class DatabaseController {
             dataSocket = new DatagramSocket();
             bufOut = enviar.getBytes(); //In this program, no information is set by the client
             packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            bufIn = new byte[4096];
             dataSocket.setBroadcast(true);
             dataSocket.send(packetToSend);
+            byte[] last = "finish".getBytes();
+            packetToSend = new DatagramPacket(last, last.length, address, 5555);
+            dataSocket.send(packetToSend);
+            bufIn = new byte[4096];
             packetIn = new DatagramPacket(bufIn, bufIn.length);
             dataSocket.receive(packetIn);
-
             String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
             recibido+=cadena;
             while(!cadena.equals("finish")){

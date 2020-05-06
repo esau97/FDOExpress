@@ -5,9 +5,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="260.0" prefWidth="240.0" style="-fx-background-color: #48A5EA;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SettingsController">
+<AnchorPane fx:id="pnlParent" prefHeight="260.0" prefWidth="240.0" style="-fx-background-color: #2000ee;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SettingsController">
    <children>
-      <JFXTextField fx:id="textIP" alignment="CENTER" layoutX="48.0" layoutY="95.0" promptText="Direccion IP" />
+      <JFXTextField id="textIP" fx:id="textIP" alignment="CENTER" focusColor="#6a81c6" layoutX="48.0" layoutY="95.0" promptText="Direccion IP" styleClass="textIP" stylesheets="@../styles.css" unFocusColor="WHITE" />
       <Button fx:id="saveIP" layoutX="97.0" layoutY="185.0" mnemonicParsing="false" onAction="#handleClicks" style="-fx-background-color: #FFF;" text="Save" />
       <FontAwesomeIcon fx:id="closeImage" glyphName="TIMES" layoutX="209.0" layoutY="25.0" />
    </children>

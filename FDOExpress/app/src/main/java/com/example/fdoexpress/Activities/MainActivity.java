@@ -1,4 +1,4 @@
-package com.example.fdoexpress;
+package com.example.fdoexpress.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
@@ -9,9 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
+import com.example.fdoexpress.PeticionListener;
+import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.Utils.Constantes;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String nombre = editText.getText().toString().trim();
                 String password = editPass.getText().toString().trim();
-                String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
+                final String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
                 String enviar = 0 +"&"+ nombre +"&"+ passwordCodif;
                 Log.i("Contraseña",passwordCodif);
 
@@ -88,13 +89,14 @@ public class MainActivity extends AppCompatActivity {
     public void tratarMensaje(String codigo) {
         String respuesta = "";
         String argumentos[] = codigo.split("&");
+        System.out.println("Recibido"+codigo);
         int num = Integer.parseInt(argumentos[0]);
         switch (Codigos.codigo_cliente(num)) {
             case LOGIN_CORRECTO:
                 //Si el login es correcto se mostraría al cliente el activity menu
-                saveLoginState(argumentos[3],argumentos[4]);
+                saveLoginState(argumentos[4],argumentos[5]);
                 Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
-                Intent intent   = new Intent(MainActivity.this,MenuActivity.class);
+                Intent intent   = new Intent(MainActivity.this, MenuSlideActivity.class);
 
                 ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                 startActivity(intent,activityOptions.toBundle());

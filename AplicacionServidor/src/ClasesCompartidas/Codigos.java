@@ -10,7 +10,8 @@ public class Codigos {
         GUARDAR_ARCHIVO,
         DESCARGAR_ARCHIVO,
         REGISTRO_PROVEEDOR, //6
-        OBTENER_UBICACION
+        OBTENER_UBICACION,
+        NUEVOS_PEDIDOS
     }
 
     public static recibeServidor codigo_servidor(int num){

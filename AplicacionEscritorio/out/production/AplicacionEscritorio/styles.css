@@ -16,3 +16,9 @@
 #btnAdd{
 -fx-background-color:#fff
 }
+
+.textIP{
+    -fx-text-inner-color:#FFF;
+    -fx-prompt-text-fill:#FFF;
+
+}

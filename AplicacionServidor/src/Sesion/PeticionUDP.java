@@ -8,6 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -25,13 +26,15 @@ public class PeticionUDP extends Thread{
     private int port;
     private InetAddress address;
     private InformacionCompartida informacionCompartida;
+    private String mensajeRecibido;
 
-    public PeticionUDP(DatagramPacket packetIn, DatagramSocket dataSocket, InformacionCompartida informacionCompartida) {
+    public PeticionUDP(DatagramPacket packetIn, DatagramSocket dataSocket, InformacionCompartida informacionCompartida,String mensajeRecibido) {
         this.informacionCompartida = informacionCompartida;
+        this.recibido = mensajeRecibido;
         bbdd=new BaseDeDatos();
         this.dataSocket = dataSocket;
         paquete_entrada=packetIn;
-        recibido = new String(paquete_entrada.getData(), 0, paquete_entrada.getLength());
+        //recibido = new String(paquete_entrada.getData(), 0, paquete_entrada.getLength());
         address = paquete_entrada.getAddress();
         port = paquete_entrada.getPort();
     }
@@ -45,7 +48,7 @@ public class PeticionUDP extends Thread{
             System.out.println("Recibido"+recibido);
             enviar=tratarMensaje(recibido);
             bufOut=enviar.getBytes();
-            packetOut = new DatagramPacket(bufOut, bufOut.length, address, port);
+
             int maxValue=0;
             while(maxValue<=bufOut.length){
                 byte[] slice = Arrays.copyOfRange(bufOut, maxValue, maxValue+4096);
@@ -93,11 +96,17 @@ public class PeticionUDP extends Thread{
                     }
                 }
                 break;
+            case REGISTRO_VEHICULO:
+                break;
             case CARGAR_TABLAS:
                 System.out.println("CARGANDO TABLAS");
                 respuesta = bbdd.devolverDatosEmpleados();
                 break;
 
+            case GUARDAR_ARCHIVO:
+                break;
+            case DESCARGAR_ARCHIVO:
+                break;
             case REGISTRO_PROVEEDOR:
                 respuesta=bbdd.registrarProveedor(argumentos);
                 break;
@@ -106,11 +115,25 @@ public class PeticionUDP extends Thread{
                 try {
                     JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
                     respuesta+="8&"+root.toJSONString();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 } catch (ParseException e) {
                     e.printStackTrace();
+                }catch (IOException e) {
+                    e.printStackTrace();
                 }
+                break;
+            case NUEVOS_PEDIDOS:
+                JSONParser jsonParser = new JSONParser();
+                try{
+                    JSONObject root = (JSONObject) jsonParser.parse(new FileReader("Ficheros/ubicaciones.json"));
+                    respuesta = bbdd.altaNuevosPedidos(root);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
         }
 

@@ -1,15 +1,12 @@
 package BaseDatos;
 
-import com.sun.xml.internal.rngom.parse.host.Base;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 /*
  * Se realizan tanto las consultas como las modificaciones de la base de datos.
@@ -184,7 +181,6 @@ public class BaseDeDatos {
             e.printStackTrace();
         }
     }
-
     public String devolverDatosEmpleados(){
         String respuesta="";
         String consulta1="SELECT nombre,email,direccion,tfno FROM usuario WHERE rol=1 or rol=2";
@@ -329,5 +325,48 @@ public class BaseDeDatos {
             respuesta="0&3";
         }
         return respuesta;
+    }
+    public String obtenerCodProveedor(String nombreProveedor){
+        String codigo="";
+        try {
+            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("SELECT cod_proveedor FROM proveedor WHERE nombre=?");
+            pps.setString(1,nombreProveedor);
+            ResultSet result=pps.executeQuery();
+            while(result.next()){
+               codigo=result.getString(1);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return codigo;
+    }
+    public String altaNuevosPedidos(JSONObject jsonPedidos) {
+        JSONObject root = jsonPedidos;
+        JSONArray array = (JSONArray) root.get("Pedidos");
+        String nombreProveedor = root.get("Nombre Proveedor").toString();
+
+        String nombre_destinatario,direccion_envio,numeroTfno,cod_proveedor;
+        cod_proveedor=obtenerCodProveedor(nombreProveedor);
+        for(int i = 0 ; i < array.size() ; i++) {
+            JSONObject jsonPedido = (JSONObject) array.get(i);
+            nombre_destinatario=jsonPedido.get("nombre_destinatario").toString();
+            direccion_envio=jsonPedido.get("direccion_envio").toString();
+            numeroTfno=jsonPedido.get("numeroTfno").toString();
+            try{
+                PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO mercancia (direccion_envio,nombre_destinatario,numeroTfno,cod_proveedor) VALUES (?,?,?,?)");
+                pps.setString(1, direccion_envio);
+                pps.setString(2, nombre_destinatario);
+                pps.setString(3, numeroTfno);
+                pps.setInt(4,Integer.parseInt(cod_proveedor));
+
+                if(pps.executeUpdate()>0){
+
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+        }
+        return "";
     }
 }
