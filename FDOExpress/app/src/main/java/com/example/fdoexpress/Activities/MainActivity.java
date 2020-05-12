@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.fdoexpress.MenuActivity;
+import com.example.fdoexpress.MenuTrabajadorActivity;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
@@ -23,6 +24,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.io.BufferedReader;
 import java.net.Socket;
 
+/**
+ * Tengo que crear un activity al que le paso la direccion IP y almacenarla
+ * en el SharedPreferences para poder ser usada posteriormente.
+ */
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             },enviar);
             log.execute();
         }
+
 
         blogin = this.findViewById(R.id.blogin);
         bregister = this.findViewById(R.id.bregister);
@@ -95,14 +101,27 @@ public class MainActivity extends AppCompatActivity {
         switch (Codigos.codigo_cliente(num)) {
             case LOGIN_CORRECTO:
                 //Si el login es correcto se mostraría al cliente el activity menu
-                saveLoginState(argumentos[4],argumentos[5]);
-                Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
-                Intent intent   = new Intent(MainActivity.this, MenuActivity.class);
+                // Además el servidor me devuelve una lista con todos los pedidos
+                // por lo que debo cargar los datos en el recyclerView
+                if(argumentos[1].equals("2")){
+                    saveLoginState(argumentos[4],argumentos[7],argumentos[8]);
+                    Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
+                    Intent intent   = new Intent(MainActivity.this, MenuActivity.class);
+                    intent.putExtra("JSON",argumentos[6]);
+                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                    startActivity(intent,activityOptions.toBundle());
 
-                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
-                startActivity(intent,activityOptions.toBundle());
+                    finish();
+                }else if(argumentos[1].equals("3")){
+                    saveLoginState(argumentos[4],argumentos[5],argumentos[6]);
+                    Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
+                    Intent intent   = new Intent(MainActivity.this, MenuTrabajadorActivity.class);
+                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                    startActivity(intent,activityOptions.toBundle());
 
-                finish();
+                    finish();
+                }
+
                 break;
             case REGISTRADO:
                 Log.i("Registro","Registrado con éxito");
@@ -128,10 +147,12 @@ public class MainActivity extends AppCompatActivity {
         return preferences.getBoolean(Constantes.PREFERENCE_LOGIN_STATE,false);
     }
 
-    public void saveLoginState(String name, String password){
+    public void saveLoginState(String tfno,String name, String password){
         preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,true).apply();
         preferences.edit().putString(Constantes.USER_NAME,name).apply();
         preferences.edit().putString(Constantes.USER_PASSWORD,password).apply();
+        preferences.edit().putString(Constantes.USER_PHONE,tfno).apply();
+        //preferences.edit().putString(Constantes.USER_TYPE,tipo);
         preferences.edit().commit();
     }
 }

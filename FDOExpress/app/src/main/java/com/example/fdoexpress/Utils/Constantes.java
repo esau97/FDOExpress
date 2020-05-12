@@ -5,4 +5,7 @@ public class Constantes {
     public static String PREFERENCE_LOGIN_STATE="login.state";
     public static String USER_NAME ="user.name";
     public static String USER_PASSWORD ="user.password";
+    public static String USER_PHONE = "user.phone";
+    public static String USER_TYPE ="user.type";
+    public static String DIRECCION_IP="direccion_ip";
 }

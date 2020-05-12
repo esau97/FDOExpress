@@ -7,6 +7,8 @@ import org.json.simple.JSONObject;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /*
  * Se realizan tanto las consultas como las modificaciones de la base de datos.
@@ -25,13 +27,13 @@ public class BaseDeDatos {
 
         Connection connection=(Connection) cn.getConnection();
         try{
-            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("Select rol,nombre,cod from usuario where email=? && contrasena=?");
+            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("Select rol,nombre,cod,tfno from usuario where email=? && contrasena=?");
             pps.setString(1, email);
             pps.setString(2, contrasena);
 
             ResultSet result=pps.executeQuery();
             while(result.next()){
-                respuesta="1&"+result.getInt(1)+"&"+result.getString(2)+"&"+result.getInt(3);
+                respuesta="1&"+result.getInt(1)+"&"+result.getString(2)+"&"+result.getInt(3)+"&"+result.getInt(4);
                 return respuesta;
             }
             respuesta="0&1";
@@ -180,6 +182,39 @@ public class BaseDeDatos {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public String ubicacionPedido(String codigoPedido){
+        String respuesta="";
+        JSONObject ubicacionObject = new JSONObject();
+        JSONArray ubicacionArray = new JSONArray();
+        // TODO:Primero debemos obtener el codigo de transporte
+        String consulta1="select latitud,longitud from ubicacion u where u.matricula = (select matricula from vehiculo where cod_veh = (select t.vehiculo FROM merc_tran mt, transporte t WHERE cod_transporte=t.cod_transp AND mt.cod_mercancia=? AND t.fecha=?));";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(consulta1);
+            statement.setInt(1,Integer.parseInt(codigoPedido));
+
+            statement.setString(2,LocalDate.now().toString());
+            ResultSet resultado = statement.executeQuery();
+            while (resultado.next()){
+                JSONObject ubObject = new JSONObject();
+                ubObject.put("latitud",resultado.getDouble(1));
+                ubObject.put("longitud",resultado.getDouble(2));
+                ubicacionArray.add(ubObject);
+            }
+            ubicacionObject.put("Ubicaciones",ubicacionArray);
+
+            if (ubicacionArray!=null){
+                respuesta=ubicacionObject.toJSONString();
+            }else{
+
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+        return respuesta;
     }
     public String devolverDatosEmpleados(){
         String respuesta="";
@@ -368,5 +403,72 @@ public class BaseDeDatos {
 
         }
         return "";
+    }
+    public String devolverPedidosActivos(){
+        String respuesta="";
+        JSONObject root = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        //TODO: Añadir número de teléfono para poder realizar las peticiones
+        String consulta1="select cod_mercancia,nom_proveedor from mercancia where tfno_usuario =?;";
+        String consulta2="select fecha,cod_estado from historial where cod_mercancia=? ORDER BY fecha DESC limit 1;";
+        try {
+            PreparedStatement statement = connection.prepareStatement(consulta1);
+            PreparedStatement st = connection.prepareStatement(consulta2);
+            statement.setInt(1,738492039);
+            ResultSet resultado = statement.executeQuery();
+            int codigo;
+            ResultSet resultado1;
+            while (resultado.next()){
+
+                st.setInt(1,resultado.getInt(1));
+                resultado1 = st.executeQuery();
+                while (resultado1.next()){
+                    JSONObject pedido = new JSONObject();
+                    pedido.put("codigo_mercancia",resultado.getString(1));
+                    pedido.put("nombre_proveedor",resultado.getString(2));
+                    pedido.put("fecha",resultado1.getString(1));
+                    pedido.put("cod_estado",resultado1.getInt(2));
+                    jsonArray.add(pedido);
+                }
+            }
+            if(jsonArray!=null){
+                root.put("pedidos",jsonArray);
+                respuesta="&5&"+root.toJSONString();
+            }else{
+                respuesta="0&errorPedidos";
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+        return respuesta;
+    }
+    public String devolverPedidos(){
+        String respuesta="";
+        JSONObject root = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        String consulta1="SELECT direccion_envio,cod_proveedor FROM mercancia m,usuario u WHERE m.tfno_usuario=u.tfno AND u.email=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(consulta1);
+            ResultSet resultado = statement.executeQuery();
+            while (resultado.next()){
+                JSONObject pedido = new JSONObject();
+                pedido.put("direccion_envio",resultado.getString(1));
+                pedido.put("cod_proveedor",resultado.getInt(1));
+                jsonArray.add(pedido);
+            }
+            if(jsonArray!=null){
+                root.put("pedidos",jsonArray);
+                respuesta="codigoPedidos&"+root.toJSONString();
+            }else{
+                respuesta="0&errorPedidos";
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+        return respuesta;
     }
 }

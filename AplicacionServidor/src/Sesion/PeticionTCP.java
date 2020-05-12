@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class PeticionTCP extends Thread{
     private Socket cliente;
@@ -60,13 +61,30 @@ public class PeticionTCP extends Thread{
                 try {
                     JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
                     respuesta+="8&"+root.toJSONString();
+                    boolean connected = true;
+                    out.println(respuesta);
+                    while (connected){
+
+                        System.out.println("bucle");
+                        Thread.sleep(25000);
+                        bbdd.obtenerUbicacion();
+
+                        root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
+                        respuesta="8&"+root.toJSONString();
+                        System.out.println("Envio respuesta "+respuesta);
+                        out.println(respuesta);
+                    }
                     System.out.println(respuesta);
                 } catch (IOException e) {
+                    System.out.println("Socket cerrado");
                     e.printStackTrace();
                 } catch (ParseException e) {
                     e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 break;
+
         }
         return respuesta;
     }

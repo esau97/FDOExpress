@@ -1,5 +1,6 @@
 package Controllers;
 
+import Util.Preferencias;
 import com.sothawo.mapjfx.*;
 import com.sothawo.mapjfx.event.MapViewEvent;
 import com.sothawo.mapjfx.offline.OfflineCache;
@@ -8,8 +9,15 @@ import javafx.fxml.FXML;
 import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.TreeMap;
 
 public class MapController {
@@ -21,17 +29,7 @@ public class MapController {
     private TreeMap<String,Marker> marcadoresVehiculos;
     public MapController() {
         marcadoresVehiculos = new TreeMap<>();
-        //DatabaseController databaseController = new DatabaseController();
-
-        JSONObject jsonObject = databaseController.obtenerUbicacion();
-        JSONArray jsonArray = (JSONArray) jsonObject.get("Ubicaciones");
-        for (int i = 0; i < jsonArray.size() ; i++) {
-            JSONObject jsonObject1 = (JSONObject) jsonArray.get(i);
-            double latitud=Double.parseDouble(jsonObject1.get("latitud").toString());
-            double longitud = Double.parseDouble(jsonObject1.get("longitud").toString());
-
-            marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
-        }
+        //DatabaseController databaseController = new DatabaseController(new Preferencias("192.168.137.123"));
 
         markerPuertoReal = Marker.createProvided(Marker.Provided.BLUE).setPosition(coordPuertoReal).setVisible(
                 false);
@@ -42,6 +40,68 @@ public class MapController {
     public void initMapAndControls(DatabaseController databaseController,Projection projection){
         final OfflineCache offlineCache = mapView.getOfflineCache();
         this.databaseController = databaseController;
+
+        /*JSONObject jsonObject = databaseController.obtenerUbicacion();
+        JSONArray jsonArray = (JSONArray) jsonObject.get("Ubicaciones");
+        for (int i = 0; i < jsonArray.size() ; i++) {
+            JSONObject jsonObject1 = (JSONObject) jsonArray.get(i);
+            double latitud=Double.parseDouble(jsonObject1.get("latitud").toString());
+            double longitud = Double.parseDouble(jsonObject1.get("longitud").toString());
+
+            marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
+        }*/
+        new Thread(){
+            @Override
+            public void run(){
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    Socket socket = new Socket(databaseController.getPref().getDir_ip(),4444);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                    out.println("7");
+                    boolean connected=true;
+
+                    while (connected){
+                        System.out.println("en bucle");
+                        String recibido = in.readLine();
+                        String argumentos [] = recibido.split("&");
+                        JSONParser jsonParser = new JSONParser();
+                        jsonObject = (JSONObject) jsonParser.parse(argumentos[1]);
+                        JSONArray jsonArray = (JSONArray) jsonObject.get("Ubicaciones");
+                        System.out.println(jsonObject);
+                        for (int i = 0; i < jsonArray.size() ; i++) {
+                            JSONObject jsonObject1 = (JSONObject) jsonArray.get(i);
+                            double latitud=Double.parseDouble(jsonObject1.get("latitud").toString());
+                            double longitud = Double.parseDouble(jsonObject1.get("longitud").toString());
+
+                            marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
+                        }
+                        addMarkers();
+                        Thread.sleep(20000);
+                    }
+
+                    socket.close();
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            public void addMarkers(){
+                System.out.println("Añadiendo marcadores");
+                for (String obj : marcadoresVehiculos.keySet()) {
+                    Marker marker = marcadoresVehiculos.get(obj);
+                    marker.setVisible(true);
+                    mapView.addMarker(marker);
+                    System.out.println(obj);
+                }
+            }
+        }.start();
+
         final String cacheDir = System.getProperty("java.io.tmpdir") + "/mapjfx-cache";
         mapView.setCustomMapviewCssURL(getClass().getResource("/custom_mapview.css"));
         mapView.initializedProperty().addListener((observable, oldValue, newValue) -> {
@@ -121,5 +181,30 @@ public class MapController {
         }
 
 
+    }
+
+    public JSONObject obtenerUbicacion(){
+        JSONObject jsonObject = new JSONObject();
+
+        try{
+            Socket socket = new Socket(databaseController.getPref().getDir_ip(),4444);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println("7");
+            String recibido = in.readLine();
+            String argumentos [] = recibido.split("&");
+
+            JSONParser jsonParser = new JSONParser();
+            jsonObject = (JSONObject) jsonParser.parse(argumentos[1]);
+            System.out.println(jsonObject);
+            socket.close();
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 }

@@ -6,7 +6,9 @@ public class Codigos {
         ERROR,
         LOGIN_CORRECTO,
         CERRAR_SESION,
-        REGISTRADO
+        REGISTRADO,
+        NUEVA_UBICACION,
+        PEDIDOS_ACTIVOS
 
 
     }

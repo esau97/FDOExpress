@@ -51,6 +51,13 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             dataSocket.receive(packetIn);
             recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
             accion=recibido+"&"+argumentos[1]+"&"+argumentos[2];
+            while(!recibido.equals("finish")){
+                dataSocket.receive(packetIn);
+                recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+                if (!recibido.equals("finish")){
+                    accion+=recibido;
+                }
+            }
             accion=accion.trim();
         } catch (IOException ex) {
             Logger.getLogger(LoginRegisterAsyncTask.class.getName()).log(Level.SEVERE, null, ex);
@@ -58,8 +65,6 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
         dataSocket.close();
         return recibido;
     }
-
-
 
     @Override
     public void onPostExecute(String resultado){

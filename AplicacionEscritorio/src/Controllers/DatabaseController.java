@@ -34,7 +34,7 @@ public class DatabaseController {
         return pref;
     }
 
-    public DatabaseController(Preferencias preferencias){
+    public DatabaseController(Preferencias preferencias) {
         pref = preferencias;
         try {
             address = InetAddress.getByName(pref.getDir_ip());
@@ -205,6 +205,9 @@ public class DatabaseController {
     public JSONObject obtenerUbicacion(){
         JSONObject jsonObject = new JSONObject();
         try{
+            Socket socket = new Socket(pref.getDir_ip(),4444);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
             out.println("7");
             String recibido = in.readLine();
             String argumentos [] = recibido.split("&");
@@ -212,7 +215,9 @@ public class DatabaseController {
             JSONParser jsonParser = new JSONParser();
             jsonObject = (JSONObject) jsonParser.parse(argumentos[1]);
             System.out.println(jsonObject);
-
+            socket.close();
+            in.close();
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {

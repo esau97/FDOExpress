@@ -91,6 +91,7 @@ public class PrincipalController implements Initializable {
         labelName.setText(usuario.getName());
         this.projection=projection;
         this.databaseController=databaseController;
+
         this.jsonObject=jsonObject;
         this.employees = FXCollections.observableArrayList();
         cargarDatosTabla(jsonObject);
@@ -266,7 +267,6 @@ public class PrincipalController implements Initializable {
                 root = loader.load();
                 principal =  new Scene(root,925,540);
                 MapController mapController = loader.getController();
-
                 mapController.initMapAndControls(databaseController,projection);
                 Stage stage = new Stage();
                 stage.setTitle("Location");

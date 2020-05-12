@@ -89,11 +89,18 @@ public class PeticionUDP extends Thread{
                     try {
                         JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/tablas.json"));
                         respuesta+="&"+root.toJSONString();
+                        // TODO: cambiar el codigo en el lado escritorio
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+                    //Compruebo si se ha logueado correctamente y si el usuario
+                    // es un receptor, si es así obtengo sus pedidos.
+                }else if(rsp[0].equals("1") && rsp[1].equals("2")){
+                    informacionCompartida.setListaLogueados(argumentos[1]);
+                    respuesta+=bbdd.devolverPedidosActivos();
+                    System.out.println("Pedidos activos "+respuesta);
                 }
                 break;
             case REGISTRO_VEHICULO:
@@ -134,6 +141,17 @@ public class PeticionUDP extends Thread{
                     e.printStackTrace();
                 }
 
+                break;
+            case OBTENER_PEDIDOS_ACTIVOS:
+                respuesta=bbdd.devolverPedidosActivos();
+                break;
+            case OBTENER_HISTORIAL_PEDIDOS:
+                respuesta=bbdd.devolverPedidos();
+                break;
+
+            case OBTENER_UBICACION_PEDIDO:
+                respuesta = "4&"+ bbdd.ubicacionPedido(argumentos[1]);
+                System.out.println("Envio respuesta "+respuesta);
                 break;
         }
 

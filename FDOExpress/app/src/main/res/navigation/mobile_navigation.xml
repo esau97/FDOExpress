@@ -17,7 +17,7 @@
     </fragment>
     <fragment
             android:id="@+id/nav_home_second"
-            android:name="com.example.fdoexpress.ui.home.HomeSecondFragment"
+            android:name="com.example.fdoexpress.ui.home.HomeMapFragment"
             android:label="@string/home_second"
             tools:layout="@layout/fragment_home_second">
         <action

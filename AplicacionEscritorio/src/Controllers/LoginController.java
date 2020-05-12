@@ -68,9 +68,7 @@ public class LoginController implements Initializable {
     private double xOffset=0,yOffset=0;
 
     public LoginController(){
-
         user = new User();
-
     }
     @FXML
     void keyPressed(KeyEvent event) {
@@ -89,7 +87,7 @@ public class LoginController implements Initializable {
     }
 
     public void iniciarSesion(ActionEvent actionEvent) throws IOException {
-        databaseController = new DatabaseController(new Preferencias("192.168.1.39"));
+        databaseController = new DatabaseController(new Preferencias("192.168.1.52"));
         this.actionEvent = actionEvent;
         String respuesta="";
         respuesta=usuario.getText();
@@ -124,7 +122,7 @@ public class LoginController implements Initializable {
                 JSONParser jsonParser = new JSONParser();
                 JSONObject jsonObject=null;
                 try{
-                    jsonObject = (JSONObject) jsonParser.parse(codigos[4]);
+                    jsonObject = (JSONObject) jsonParser.parse(codigos[5]);
                     System.out.println(jsonObject);
                 } catch (ParseException e) {
                     e.printStackTrace();

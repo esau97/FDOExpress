@@ -11,7 +11,11 @@ public class Codigos {
         DESCARGAR_ARCHIVO,
         REGISTRO_PROVEEDOR, //6
         OBTENER_UBICACION,
-        NUEVOS_PEDIDOS
+        NUEVOS_PEDIDOS,
+        OBTENER_PEDIDOS_ACTIVOS, //9
+        OBTENER_HISTORIAL_PEDIDOS,
+        OBTENER_UBICACION_PEDIDO,
+        PETICION_UBICACION_TERMINADA
     }
 
     public static recibeServidor codigo_servidor(int num){
