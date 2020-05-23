@@ -1,11 +1,21 @@
 package Controllers;
 
 import Util.Preferencias;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXTextField;
 import com.sothawo.mapjfx.*;
 import com.sothawo.mapjfx.event.MapViewEvent;
 import com.sothawo.mapjfx.offline.OfflineCache;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.animation.Transition;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,18 +33,26 @@ import java.util.TreeMap;
 public class MapController {
     @FXML
     private MapView mapView;
+    private boolean connected;
+
+    private Thread hiloControlador;
 
     private DatabaseController databaseController;
 
+    @FXML
+    private JFXCheckBox cbTodos;
+
+    @FXML
+    private FontAwesomeIcon imageBuscar;
+
+    @FXML
+    private JFXTextField textMatricula;
+
     private TreeMap<String,Marker> marcadoresVehiculos;
+
     public MapController() {
         marcadoresVehiculos = new TreeMap<>();
         //DatabaseController databaseController = new DatabaseController(new Preferencias("192.168.137.123"));
-
-        markerPuertoReal = Marker.createProvided(Marker.Provided.BLUE).setPosition(coordPuertoReal).setVisible(
-                false);
-        // no position for click marker yet
-        markerClick = Marker.createProvided(Marker.Provided.ORANGE).setVisible(false);
     }
 
     public void initMapAndControls(DatabaseController databaseController,Projection projection){
@@ -50,16 +68,22 @@ public class MapController {
 
             marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
         }*/
+
+
+        hiloControlador =
         new Thread(){
+            private PrintWriter out;
             @Override
             public void run(){
+                connected = true;
                 JSONObject jsonObject = new JSONObject();
+                Coordinate nuevaPosicion;
                 try{
                     Socket socket = new Socket(databaseController.getPref().getDir_ip(),4444);
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                    out = new PrintWriter(socket.getOutputStream(), true);
                     out.println("7");
-                    boolean connected=true;
+                    int cont=0;
 
                     while (connected){
                         System.out.println("en bucle");
@@ -73,21 +97,34 @@ public class MapController {
                             JSONObject jsonObject1 = (JSONObject) jsonArray.get(i);
                             double latitud=Double.parseDouble(jsonObject1.get("latitud").toString());
                             double longitud = Double.parseDouble(jsonObject1.get("longitud").toString());
-
-                            marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
+                            nuevaPosicion = new Coordinate(latitud,longitud);
+                            if(cont!=0){
+                                animateClickMarker(marcadoresVehiculos.get(jsonObject1.get("matricula").toString()).getPosition(),nuevaPosicion,marcadoresVehiculos.get(jsonObject1.get("matricula")));
+                            }else{
+                                marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
+                            }
+                            //marcadoresVehiculos.get(jsonObject1.get("matricula").toString()).setPosition(nuevaPosicion);
+                            //marcadoresVehiculos.put(jsonObject1.get("matricula").toString(),Marker.createProvided(Marker.Provided.BLUE).setPosition((new Coordinate(latitud,longitud))));
                         }
-                        addMarkers();
+                        if (cont==0){
+                            addMarkers();
+                            cont++;
+                        }
                         Thread.sleep(20000);
+                        out.println("7");
                     }
-
+                    // Envío el código 0 para cuando se termine la conexión
+                    // out.println("0");
                     socket.close();
                     in.close();
                     out.close();
-                } catch (IOException e) {
+                } catch (InterruptedException e) {
+                    connected=false;
+                    out.println("0");
+                    e.printStackTrace();
+                }catch (IOException e) {
                     e.printStackTrace();
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -100,9 +137,9 @@ public class MapController {
                     System.out.println(obj);
                 }
             }
-        }.start();
+        };
+        hiloControlador.start();
 
-        final String cacheDir = System.getProperty("java.io.tmpdir") + "/mapjfx-cache";
         mapView.setCustomMapviewCssURL(getClass().getResource("/custom_mapview.css"));
         mapView.initializedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -111,6 +148,21 @@ public class MapController {
         });
         MapType mapType = MapType.OSM;
 
+
+        cbTodos.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(newValue){
+                    for (String clave : marcadoresVehiculos.keySet()) {
+                        marcadoresVehiculos.get(clave).setVisible(true);
+                    }
+                }else{
+                    for (String clave : marcadoresVehiculos.keySet()) {
+                        marcadoresVehiculos.get(clave).setVisible(false);
+                    }
+                }
+            }
+        });
         mapView.setMapType(mapType);
         mapView.initialize(Configuration.builder()
                 .projection(projection)
@@ -118,33 +170,13 @@ public class MapController {
                 .build());
     }
 
-    private static final int ZOOM_DEFAULT = 14;
-    private final Marker markerPuertoReal;
-    private final Marker markerClick;
+    private static final int ZOOM_DEFAULT = 10;
+
     private static final Coordinate coordPuertoReal = new Coordinate(36.5281889, -6.190111111111111);
 
-    private void setupEventHandlers() {
-        // add an event handler for singleclicks, set the click marker to the new position when it's visible
-        mapView.addEventHandler(MapViewEvent.MAP_CLICKED, event -> {
-            event.consume();
-            final Coordinate newPosition = event.getCoordinate().normalize();
-            //labelEvent.setText("Event: map clicked at: " + newPosition);
-
-            if (markerClick.getVisible()) {
-                final Coordinate oldPosition = markerClick.getPosition();
-                markerClick.setVisible(true);
-                if (oldPosition != null) {
-                    animateClickMarker(oldPosition, newPosition);
-                } else {
-                    markerClick.setPosition(newPosition);
-                    // adding can only be done after coordinate is set
-                    mapView.addMarker(markerClick);
-                }
-            }
-        });
-    }
-    private void animateClickMarker(Coordinate oldPosition, Coordinate newPosition) {
+    private void animateClickMarker(Coordinate oldPosition, Coordinate newPosition, Marker marcador) {
         // animate the marker to the new position
+        System.out.println("Cambiando posicion");
         final Transition transition = new Transition() {
             private final Double oldPositionLongitude = oldPosition.getLongitude();
             private final Double oldPositionLatitude = oldPosition.getLatitude();
@@ -153,14 +185,14 @@ public class MapController {
 
             {
                 setCycleDuration(Duration.seconds(1.0));
-                setOnFinished(evt -> markerClick.setPosition(newPosition));
+                setOnFinished(evt -> marcador.setPosition(newPosition));
             }
 
             @Override
             protected void interpolate(double v) {
                 final double latitude = oldPosition.getLatitude() + v * deltaLatitude;
                 final double longitude = oldPosition.getLongitude() + v * deltaLongitude;
-                markerClick.setPosition(new Coordinate(latitude, longitude));
+                marcador.setPosition(new Coordinate(latitude, longitude));
             }
         };
         transition.play();
@@ -171,7 +203,7 @@ public class MapController {
         mapView.setZoom(ZOOM_DEFAULT);
         mapView.setCenter(coordPuertoReal);
         // add the markers to the map - they are still invisible
-        mapView.addMarker(markerPuertoReal);
+        cbTodos.setDisable(false);
 
         for (String obj : marcadoresVehiculos.keySet()) {
             Marker marker = marcadoresVehiculos.get(obj);
@@ -183,28 +215,29 @@ public class MapController {
 
     }
 
-    public JSONObject obtenerUbicacion(){
-        JSONObject jsonObject = new JSONObject();
-
-        try{
-            Socket socket = new Socket(databaseController.getPref().getDir_ip(),4444);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println("7");
-            String recibido = in.readLine();
-            String argumentos [] = recibido.split("&");
-
-            JSONParser jsonParser = new JSONParser();
-            jsonObject = (JSONObject) jsonParser.parse(argumentos[1]);
-            System.out.println(jsonObject);
-            socket.close();
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
+    public void shutdown(){
+        // Método que se ejecuta cuando la ventana ha sido cerrada
+        connected=false;
+        // Interrumpo el hilo que se encargaba de la conexión con el servidor para solicitar los datos de la nueva
+        // ubicación de cada vehículo.
+        hiloControlador.interrupt();
     }
+
+    public void buscarVehiculo(){
+        //cbTodos.selectedProperty().setValue(false);
+        String matricula = textMatricula.getText();
+        Marker marcador;
+        if(!matricula.equals("") && marcadoresVehiculos.containsKey(matricula)){
+            //cbTodos.selectedProperty().setValue(false);
+            for (String clave : marcadoresVehiculos.keySet()) {
+                marcadoresVehiculos.get(clave).setVisible(!marcadoresVehiculos.get(clave).getVisible());
+            }
+            marcador = marcadoresVehiculos.get(matricula);
+            marcador.setVisible(true);
+            mapView.setCenter(marcador.getPosition());
+        }
+
+
+    }
+
 }

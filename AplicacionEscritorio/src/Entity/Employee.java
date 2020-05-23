@@ -10,12 +10,27 @@ public class Employee extends RecursiveTreeObject<Employee> {
     StringProperty email;
     StringProperty address;
     StringProperty phone;
+    StringProperty ruta;
 
-    public Employee(String name, String email, String address, String phone) {
+    public Employee(String name, String email, String address, String phone, String ruta) {
         this.name = new SimpleStringProperty(name) ;
         this.email = new SimpleStringProperty(email);
         this.address = new SimpleStringProperty(address);
         this.phone = new SimpleStringProperty(phone);
+        this.ruta = new SimpleStringProperty(ruta);
+
+    }
+
+    public ObservableValue<String> getRuta() {
+        return ruta;
+    }
+
+    public StringProperty rutaProperty() {
+        return ruta;
+    }
+
+    public void setRuta(String ruta) {
+        this.ruta.set(ruta);
     }
 
     public ObservableValue<String> getName() {

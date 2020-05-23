@@ -21,7 +21,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
     InetAddress address = null;
     DatagramPacket packetToSend = null;
     DatagramPacket packetIn = null;
-    private String dir_ip="192.168.1.52";
+    private String dir_ip="192.168.1.39";
     DatagramSocket dataSocket;
     String enviar;
     private PeticionListener listener;
@@ -41,7 +41,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             address = InetAddress.getByName(dir_ip);
             bufOut = enviar.getBytes(); //In this program, no information is set by the client
             packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            bufIn = new byte[256];
+            bufIn = new byte[4096];
             dataSocket.setBroadcast(true);
             dataSocket.send(packetToSend);
             byte[] last = "finish".getBytes();

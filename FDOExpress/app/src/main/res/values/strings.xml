@@ -12,8 +12,8 @@
     <string name="menu_history">History</string>
     <string name="menu_logout">Log out</string>
 
-    <string name="home_second">Home Second</string>
-    <string name="menu_gallery">Gallery</string>
+    <string name="home_second">Mapa</string>
+    <string name="menu_orders">Pedidos</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>

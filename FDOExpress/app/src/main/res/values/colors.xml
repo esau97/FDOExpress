@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="colorBlue">#2FB4FF</color>
+    <color name="enReparto">#4CAF50</color>
+    <color name="ausente">#FF9800</color>
+    <color name="pendiente">#FFEB3B</color>
+    <color name="entregado">#2196F3</color>
 </resources>

@@ -22,6 +22,7 @@ import com.example.fdoexpress.Adapter.PedidoViewModel;
 import com.example.fdoexpress.Pedido;
 
 import com.example.fdoexpress.R;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +73,19 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
     @Override
     public void onButtonClicked(View v, Pedido pedido) {
         if(v.getId()==R.id.order_list){
-            Toast.makeText(getActivity(), "Pulsado pedido, nº Pedido"+pedido.getcSeguimiento(), Toast.LENGTH_SHORT).show();
-            Log.i("Boton","Pulsado mapas");
-            HomeFragmentDirections.ActionHomeFragmentToHomeSecondFragment action =
-                    HomeFragmentDirections.actionHomeFragmentToHomeSecondFragment
-                            (pedido.getcSeguimiento());
-            NavHostFragment.findNavController(HomeFragment.this)
-                    .navigate(action);
+            if(pedido.getEstado()=="En reparto"){
+                Toast.makeText(getActivity(), "Pulsado pedido, nº Pedido"+pedido.getcSeguimiento(), Toast.LENGTH_SHORT).show();
+                Log.i("Boton","Pulsado mapas");
+                HomeFragmentDirections.ActionHomeFragmentToHomeSecondFragment action =
+                        HomeFragmentDirections.actionHomeFragmentToHomeSecondFragment
+                                (pedido.getcSeguimiento());
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(action);
+            }else {
+                Snackbar.make(v, "Para visualizar un pedido, éste debe estar en reparto.", Snackbar.LENGTH_LONG)
+                        .show();
+            }
+
         }
         
     }

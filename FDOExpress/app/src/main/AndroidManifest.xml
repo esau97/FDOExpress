@@ -7,6 +7,7 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,7 +17,8 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+    >
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -35,12 +37,21 @@
         <activity
                 android:name=".MenuActivity"
                 android:label="@string/title_activity_menu"
-                android:theme="@style/NoActionBar">
+                android:theme="@style/NoActionBar"
+                android:configChanges="orientation"
+                android:screenOrientation="portrait"
+        >
         </activity>
 
-        <activity android:name=".Activities.RegisterActivity"/>
-        <activity android:name=".MenuTrabajadorActivity"/>
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.RegisterActivity"
+                  android:configChanges="orientation"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".MenuTrabajadorActivity"
+                  android:configChanges="orientation"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.MainActivity"
+                  android:configChanges="orientation"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

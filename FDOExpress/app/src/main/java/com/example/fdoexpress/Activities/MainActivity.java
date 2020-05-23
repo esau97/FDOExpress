@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
                     finish();
                 }else if(argumentos[1].equals("3")){
+                    System.out.println("RECIBIDO"+codigo);
                     saveLoginState(argumentos[4],argumentos[5],argumentos[6]);
                     Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
                     Intent intent   = new Intent(MainActivity.this, MenuTrabajadorActivity.class);

@@ -10,7 +10,9 @@ public class Codigos {
         ARCHIVO_GUARDADO,
         REGISTRO_VEHICULO, //6
         REGISTRO_PROVEEDOR,
-        OBTENER_UBICACION
+        OBTENER_UBICACION,
+        CAMBIAR_RUTA,      //9
+        RUTAS_ASIGNADAS
     }
     public static CodigoRecibeCliente codigo_cliente(int num){
         CodigoRecibeCliente[] cod = CodigoRecibeCliente.values();

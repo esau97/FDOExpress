@@ -36,6 +36,7 @@ public class PeticionTCP extends Thread{
             mensaje=tratarMensaje(respuesta);
             System.out.println("Envio"+mensaje);
             //Enviamos una respuesta al cliente
+
             out.println(mensaje);
             cliente.close();
         } catch (IOException e) {
@@ -66,21 +67,23 @@ public class PeticionTCP extends Thread{
                     while (connected){
 
                         System.out.println("bucle");
-                        Thread.sleep(25000);
                         bbdd.obtenerUbicacion();
-
                         root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
                         respuesta="8&"+root.toJSONString();
                         System.out.println("Envio respuesta "+respuesta);
+
                         out.println(respuesta);
+                        if(in.readLine().equals("0")){
+                            connected=false;
+                        }
                     }
                     System.out.println(respuesta);
-                } catch (IOException e) {
+                } catch (SocketException e){
+                    Thread.interrupted();
                     System.out.println("Socket cerrado");
+                }catch (IOException e) {
                     e.printStackTrace();
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 break;

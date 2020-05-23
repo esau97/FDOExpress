@@ -157,13 +157,23 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
         ) {
             @Override
             public void handleOnBackPressed() {
-                // TODO: Añadir funcionalidad al botón backpressed
-                orderLocation.interrupt();
-                Toast.makeText(context, "Back pulsado", Toast.LENGTH_SHORT).show();
+                // Cuando el botón back es pulsado volvemos al fragment anterior
+                // y se llama al método on destroyView encargado de interrumpir el hilo
+                // que mantenía la comunicación con el servidor.
+                NavHostFragment.findNavController(HomeMapFragment.this).navigateUp();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(
                 this, // LifecycleOwner
                 callback);
     }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // TODO: Añadir funcionalidad al botón backpressed
+        Toast.makeText(this.getContext(), "Back pulsado", Toast.LENGTH_SHORT).show();
+        // Interrumpo el hilo
+        orderLocation.interrupt();
+    }
+
 }

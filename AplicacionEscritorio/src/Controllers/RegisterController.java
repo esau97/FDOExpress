@@ -133,7 +133,7 @@ public class RegisterController implements Initializable {
                     Thread.sleep(1000);
                     textInfo.setOpacity(0);
 
-                    TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4]));
+                    TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4],codigos[5]));
                     //tableEmployees.getRoot().getParent().getChildren().add(newEmployee);
                     if (tableEmployees!=null){
                         tableEmployees.getRoot().getChildren().add(newEmployee);
@@ -231,7 +231,6 @@ public class RegisterController implements Initializable {
             tratarMensaje(databaseController.enviarDatosProveedor(companyName,email,fullAddress,phoneNumber));
         }
     }
-
     public void registerVehicle(ActionEvent actionEvent) {
 
         if(actionEvent.getSource()==btnChoose){

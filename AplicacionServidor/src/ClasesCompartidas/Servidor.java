@@ -27,21 +27,14 @@ public class Servidor {
                 }
 
             }.start();
-
-            new PeticionesUDP(serv.informacionCompartida).start(); // Este hilo se encarga de gestionar todas
+            // Este hilo se encarga de gestionar todas las peticiones UDP
+            new PeticionesUDP(serv.informacionCompartida).start();
+            // Este hilo se encarga de gestionar todas las peticiones TCP
             new PeticionesTCP().start();
-            // las peticiones UDP
-
-            /*while (listening){
-                Socket cliente = serverSocket.accept();
-                new SesionEscritorio(cliente,serv.informacionCompartida).start();
-                System.out.println("Lanzando hilo sesion Escritorio");
-            }*/
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-
 
 }

@@ -43,7 +43,7 @@ public class PeticionUDP extends Thread{
         String enviar;
         byte bufOut[] ;
         DatagramPacket packetOut;
-
+        System.out.println("NUEVA PETICION UDP");
         try {
             System.out.println("Recibido"+recibido);
             enviar=tratarMensaje(recibido);
@@ -109,11 +109,6 @@ public class PeticionUDP extends Thread{
                 System.out.println("CARGANDO TABLAS");
                 respuesta = bbdd.devolverDatosEmpleados();
                 break;
-
-            case GUARDAR_ARCHIVO:
-                break;
-            case DESCARGAR_ARCHIVO:
-                break;
             case REGISTRO_PROVEEDOR:
                 respuesta=bbdd.registrarProveedor(argumentos);
                 break;
@@ -129,18 +124,7 @@ public class PeticionUDP extends Thread{
                 }
                 break;
             case NUEVOS_PEDIDOS:
-                JSONParser jsonParser = new JSONParser();
-                try{
-                    JSONObject root = (JSONObject) jsonParser.parse(new FileReader("Ficheros/ubicaciones.json"));
-                    respuesta = bbdd.altaNuevosPedidos(root);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                respuesta = bbdd.altaNuevosPedidos(argumentos[1]);
                 break;
             case OBTENER_PEDIDOS_ACTIVOS:
                 respuesta=bbdd.devolverPedidosActivos();
@@ -152,6 +136,17 @@ public class PeticionUDP extends Thread{
             case OBTENER_UBICACION_PEDIDO:
                 respuesta = "4&"+ bbdd.ubicacionPedido(argumentos[1]);
                 System.out.println("Envio respuesta "+respuesta);
+                break;
+            case CAMBIAR_ESTADO_PEDIDO:
+                // Recibo por argumentos una descripcion dada por el repartidor, el nuevo estado
+                // y el codigo del pedido
+                respuesta = bbdd.cambiarEstadoPedido(argumentos[1],argumentos[2],argumentos[3],argumentos[4]);
+                break;
+            case ASIGNAR_PEDIDOS_RECOGER:
+                respuesta = bbdd.asignarRutas();
+                break;
+            case MODIFICAR_RUTA:
+                respuesta = bbdd.cambiarRuta(argumentos[1],argumentos[2]);
                 break;
         }
 

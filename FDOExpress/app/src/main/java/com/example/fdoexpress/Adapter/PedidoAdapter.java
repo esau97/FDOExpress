@@ -1,6 +1,7 @@
 package com.example.fdoexpress.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
     private Context context;
     private List<Pedido> pedidoList;
     private OnButtonClickedListener listener;
+    private ViewGroup parent;
     public PedidoAdapter(Context context, List<Pedido> objects, OnButtonClickedListener listener) {
         this.context=context;
         this.pedidoList=objects;
@@ -30,6 +32,8 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
     public PedidoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.order_list, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
+        this.parent=parent;
+
         return viewHolder;
     }
 
@@ -41,6 +45,21 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
         viewHolder.proveedor.setText(pedido.getProveedor());
         viewHolder.estado.setText(pedido.getEstado());
         viewHolder.fecha.setText(pedido.getFecha());
+
+        switch (pedido.getEstado()){
+            case "En reparto":
+                viewHolder.linearEstado.setBackgroundColor(parent.getResources().getColor(R.color.enReparto));
+                break;
+            case "Ausente":
+                viewHolder.linearEstado.setBackgroundColor(parent.getResources().getColor(R.color.ausente));
+                break;
+            case "Entregado":
+                viewHolder.linearEstado.setBackgroundColor(parent.getResources().getColor(R.color.entregado));
+                break;
+            default:
+                viewHolder.linearEstado.setBackgroundColor(parent.getResources().getColor(R.color.pendiente));
+                break;
+        }
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,10 +75,13 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
         public TextView estado;
         public TextView fecha;
         public LinearLayout linearLayout;
+        public LinearLayout linearEstado;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
             linearLayout = itemView.findViewById(R.id.order_list);
+            linearEstado = itemView.findViewById(R.id.color_estado);
             seguimiento = (TextView) itemView.findViewById(R.id.tvSeguimiento);
             proveedor = (TextView) itemView.findViewById(R.id.tvProveedor);
             estado = (TextView) itemView.findViewById(R.id.textViewEstado);

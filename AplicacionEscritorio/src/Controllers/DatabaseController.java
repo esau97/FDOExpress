@@ -1,8 +1,6 @@
 package Controllers;
 
-import Util.Constantes;
 import Util.Preferencias;
-import javafx.scene.web.WebView;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONObject;
@@ -10,10 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.Socket;
+import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +21,7 @@ public class DatabaseController {
     private InetAddress address = null;
     private DatagramPacket packetToSend = null;
     private DatagramPacket packetIn = null;
+    private MyCallback callback;
 
     private byte[] bufOut;
     private byte[] bufIn;
@@ -38,7 +34,10 @@ public class DatabaseController {
         pref = preferencias;
         try {
             address = InetAddress.getByName(pref.getDir_ip());
-        } catch (IOException e) {
+            System.out.println("Guardando IP");
+        } catch (UnknownHostException unknownHostException){
+            System.out.println("Error al introducir la direccion IP");
+        }catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -74,11 +73,16 @@ public class DatabaseController {
                 }
             }
             recibido=recibido.trim();
+            System.out.println("Recibido"+recibido);
+            callback.callback(recibido);
 
+        } catch (UnknownHostException unknownHostException){
+            System.out.println("Error al introducir la IP");
         } catch (IOException ex) {
             Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
         }
         dataSocket.close();
+
         return recibido;
     }
     public String enviarDatos(String fullName,String email,String password, String fullAddress,String phoneNumber,Integer rol){
@@ -224,5 +228,53 @@ public class DatabaseController {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    public String actualizarRutas(){
+        String recibido="";
+        String enviar = 14+"&";
+        try {
+            dataSocket = new DatagramSocket();
+            bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
+            bufIn = new byte[4096];
+            dataSocket.setBroadcast(true);
+            dataSocket.send(packetToSend);
+            byte[] last = "finish".getBytes();
+            packetToSend = new DatagramPacket(last, last.length, address, 5555);
+            dataSocket.send(packetToSend);
+
+        } catch (IOException ex) {
+            Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dataSocket.close();
+        return recibido;
+    }
+
+    public String modificarRuta(String nRuta,String tfno){
+        String recibido="";
+
+        String enviar = 15 +"&"+ nRuta +"&"+ tfno;
+        try {
+            dataSocket = new DatagramSocket();
+            bufOut = enviar.getBytes(); //In this program, no information is set by the client
+            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
+            bufIn = new byte[4096];
+            dataSocket.setBroadcast(true);
+            dataSocket.send(packetToSend);
+            byte[] last = "finish".getBytes();
+            packetToSend = new DatagramPacket(last, last.length, address, 5555);
+            dataSocket.send(packetToSend);
+
+        } catch (IOException ex) {
+            Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dataSocket.close();
+
+        return recibido;
+    }
+
+    public void setCallbackPerformed(MyCallback callback){
+        this.callback=callback;
     }
 }

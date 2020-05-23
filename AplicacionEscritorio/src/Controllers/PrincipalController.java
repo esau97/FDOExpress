@@ -7,13 +7,17 @@ import Entity.Vehicle;
 import Util.Codigos;
 import Util.Preferencias;
 import com.jfoenix.controls.*;
+import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.sothawo.mapjfx.Projection;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +29,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.cell.CheckBoxTreeTableCell;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -55,7 +61,10 @@ public class PrincipalController implements Initializable {
     @FXML
     VBox orderItem = null;
     @FXML
-    private Button btnOrders,btnCustomers,btnAddEmployee,btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,btnRefresh,btnAddCompany,btnSignOut,btnLocation;
+    private Button btnOrders,btnCustomers,btnAddEmployee,
+            btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,
+            btnRefresh,btnAddCompany,btnSignOut,btnLocation,
+            asignarRuta,btnActualizarRuta;
     @FXML
     private Pane pnlOrders,pnlCustomers,pnlEmployees,pnlVehicles;
     @FXML
@@ -69,7 +78,7 @@ public class PrincipalController implements Initializable {
     @FXML
     private FontAwesomeIcon downloadIcon;
     @FXML
-    Text textInfo;
+    Text textInfo,textInfo2;
     @FXML
     private JFXTreeTableView<Employee> tableEmployees;
     @FXML
@@ -77,7 +86,7 @@ public class PrincipalController implements Initializable {
     @FXML
     private JFXTreeTableView<Provider> tableProviders;
     @FXML
-    private TreeTableColumn<Employee, String > columnName,columnEmail,columnAddress,columnPhone;
+    private TreeTableColumn<Employee, String > columnName,columnEmail,columnAddress,columnPhone,columnRuta;
     @FXML
     private TreeTableColumn<Vehicle, String > columnRegistration,columnPurchase,columnRevision,columnDocumentation;
     @FXML
@@ -98,19 +107,6 @@ public class PrincipalController implements Initializable {
         cargarDatosVehiculos(jsonObject);
         cargarDatosProveedores(jsonObject);
         //makeStageDragable();
-    }
-    public void makeStageDragable(){
-
-        pnlParent.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
-        });
-        pnlParent.setOnMouseDragged(event -> {
-            window = (Stage) ((Node)event.getSource()).getScene().getWindow();
-            window.setX(event.getScreenX()-xOffset);
-            window.setY(event.getScreenY()-yOffset);
-
-        });
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -240,6 +236,50 @@ public class PrincipalController implements Initializable {
             System.out.println("Cargando datos");
             //cargarDatosTabla();
         }
+        if(actionEvent.getSource()==btnActualizarRuta){
+            databaseController.actualizarRutas();
+        }
+        if(actionEvent.getSource() == asignarRuta){
+            Parent root = null;
+            FXMLLoader loader = new FXMLLoader();
+            try {
+                if (tableEmployees.getSelectionModel().getSelectedItem()!=null){
+                    TreeItem<Employee> employeeTreeItem = tableEmployees.getSelectionModel().getSelectedItem();
+                    loader.setLocation(getClass().getResource("/Pantallas/set_ruta.fxml"));
+                    root = loader.load();
+                    // Debemos hacer un callback para que nos devuelva el nuevo valor de la ruta
+                    // del trabajador para mostrarlo en la tabla
+                    RutaController rutaController = loader.getController();
+                    rutaController.initData(employeeTreeItem,databaseController);
+
+                    principal =  new Scene(root,700,390);
+                    Stage stage = new Stage();
+                    stage.setTitle("Setting rutes");
+                    stage.initStyle(StageStyle.UNDECORATED);
+                    stage.setScene(principal);
+                    stage.show();
+                }else{
+                    textInfo.setText("Debes seleccionar un empleado");
+
+                    textInfo.setOpacity(1);
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            textInfo.setOpacity(0);
+                        }
+                    }.start();
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if(actionEvent.getSource() == btnAddEmployee ){
             Parent root = null;
             FXMLLoader loader = new FXMLLoader();
@@ -265,13 +305,14 @@ public class PrincipalController implements Initializable {
             try {
                 loader.setLocation(getClass().getResource("/Pantallas/location.fxml"));
                 root = loader.load();
-                principal =  new Scene(root,925,540);
+                principal =  new Scene(root,1000,600);
                 MapController mapController = loader.getController();
                 mapController.initMapAndControls(databaseController,projection);
                 Stage stage = new Stage();
                 stage.setTitle("Location");
-
+                stage.setResizable(false);
                 stage.setScene(principal);
+                stage.setOnHidden(e -> mapController.shutdown());
                 stage.show();
 
             } catch (IOException e) {
@@ -356,10 +397,18 @@ public class PrincipalController implements Initializable {
                 return param.getValue().getValue().getAddress();
             }
         });
+        
         columnPhone.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
                 return param.getValue().getValue().getPhone();
+            }
+        });
+
+        columnRuta.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
+                return param.getValue().getValue().getRuta();
             }
         });
 
@@ -369,12 +418,24 @@ public class PrincipalController implements Initializable {
             ObservableList<Employee> employees = FXCollections.observableArrayList();
             for(int i = 0 ; i < array.size() ; i++) {
                 JSONObject jsonObject1 = (JSONObject) array.get(i);
-                employees.add(new Employee(jsonObject1.get("nombre").toString(),jsonObject1.get("email").toString(),jsonObject1.get("direccion").toString(),jsonObject1.get("telefono").toString()));
+                employees.add(new Employee(jsonObject1.get("nombre").toString(),jsonObject1.get("email").toString(),jsonObject1.get("direccion").toString(),jsonObject1.get("telefono").toString(),(jsonObject1.get("ruta"))!=null?jsonObject1.get("ruta").toString():"No tiene ruta asignada"));
             }
             final TreeItem<Employee> rootTable= new RecursiveTreeItem<Employee>(employees, RecursiveTreeObject::getChildren);
-            tableEmployees.getColumns().setAll(columnName,columnEmail ,columnAddress,columnPhone);
+            tableEmployees.getColumns().setAll(columnName,columnEmail ,columnAddress,columnPhone,columnRuta);
             tableEmployees.setRoot(rootTable);
             tableEmployees.setShowRoot(false);
+
+            employees.addListener(new ListChangeListener<Employee>() {
+                @Override
+                public void onChanged(Change<? extends Employee> c) {
+                    while(c.next()){
+                        if(c.wasUpdated()){
+                            TreeItem<Employee> employeeTreeItem = tableEmployees.getSelectionModel().getSelectedItem();
+                            System.out.println("Nuevo dato "+ employeeTreeItem.getValue().getAddress());
+                        }
+                    }
+                }
+            });
 
 
 
@@ -496,6 +557,22 @@ public class PrincipalController implements Initializable {
                 }.start();
                 break;
 
+            case RUTAS_ASIGNADAS:
+                textInfo2.setOpacity(1);
+                textInfo2.setText("Rutas asignadas");
+                new Thread(){
+                    @Override
+                    public void run(){
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        textInfo2.setOpacity(0);
+                    }
+                }.start();
+                break;
+
         }
     }
 
@@ -520,6 +597,22 @@ public class PrincipalController implements Initializable {
                 break;
             case 2:
                 System.out.println("No se encuentra el fichero");
+                break;
+            case 3:
+                textInfo2.setOpacity(1);
+                textInfo2.setText("No hay ningún pedido pendiente");
+                new Thread(){
+                    @Override
+                    public void run(){
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        textInfo2.setOpacity(0);
+                    }
+                }.start();
+                System.out.println("No hay ningún pedido que asignar");
                 break;
         }
     }

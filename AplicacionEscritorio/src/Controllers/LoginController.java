@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.sothawo.mapjfx.Projection;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -67,6 +68,7 @@ public class LoginController implements Initializable {
     private AnchorPane pnlParent;
     private double xOffset=0,yOffset=0;
 
+    private Preferencias preferencias;
     public LoginController(){
         user = new User();
     }
@@ -87,19 +89,50 @@ public class LoginController implements Initializable {
     }
 
     public void iniciarSesion(ActionEvent actionEvent) throws IOException {
-        databaseController = new DatabaseController(new Preferencias("192.168.1.52"));
+        //preferencias.setDir_ip("192.168.1.52");
+        databaseController = new DatabaseController(new Preferencias("192.168.1.39"));
         this.actionEvent = actionEvent;
         String respuesta="";
         respuesta=usuario.getText();
 
         String user = usuario.getText().toString();
         String pass = passwordField.getText().toString();
-        if(!user.equals("") && !pass.equals("")){
-            tratarMensaje(databaseController.enviarDatos(user,pass,0));
-            //enviarDatos(user,pass,0);
-        }else {
-            showError("Error","Debe introducir el usuario y la contraseña");
+        if (preferencias.getDir_ip()!=""){
+            if(!user.equals("") && !pass.equals("")){
+
+                databaseController.setCallbackPerformed(new MyCallback() {
+                    @Override
+                    public void callback(String accion) {
+                        tratarMensaje(accion);
+                    }
+                });
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        databaseController.enviarDatos(user, pass, 0);
+                    }
+                });
+                //tratarMensaje(databaseController.enviarDatos(user,pass,0));
+                //enviarDatos(user,pass,0);
+            }else {
+                showError("Error","Debe introducir el usuario y la contraseña");
+            }
+        }else{
+            labelError.setText("Debes introducir la direccion IP");
+            labelError.setOpacity(1);
+            new Thread(){
+                @Override
+                public void run(){
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    labelError.setOpacity(0);
+                }
+            }.start();
         }
+
         System.out.println(respuesta);
 
     }
@@ -166,9 +199,10 @@ public class LoginController implements Initializable {
 
                 principal =  new Scene(root);
             }else if(rol==4){
-                loader.setLocation(getClass().getResource("/Pantallas/principal_gerente.fxml"));
+                loader.setLocation(getClass().getResource("/Pantallas/principal_gerente2.fxml"));
                 root = loader.load();
                 PrincipalController principalController = loader.getController();
+                System.out.println(databaseController.getPref().getDir_ip());
                 principalController.initData(user,databaseController,jsonObject,projection);
                 principal =  new Scene(root);
             }
@@ -191,6 +225,7 @@ public class LoginController implements Initializable {
                     window.setY(event.getSceneY()-y);
                 });*/
                 window.centerOnScreen();
+                window.setResizable(false);
                 window.show();
             }
 
@@ -236,6 +271,7 @@ public class LoginController implements Initializable {
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        preferencias = new Preferencias();
         configImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -250,12 +286,10 @@ public class LoginController implements Initializable {
 
                     SettingsController settingsController = loader.getController();
                     settingsController.initData();
-                    settingsController.setCallbackPerfomed(new MyCallback() {
-                        @Override
-                        public void callback(String accion) {
-                            System.out.println(accion);
-                            databaseController = new DatabaseController(new Preferencias(accion));
-                        }
+                    settingsController.setCallbackPerfomed(accion -> {
+                        System.out.println(accion);
+                        preferencias.setDir_ip(accion);
+                        databaseController = new DatabaseController(preferencias);
                     });
                     Stage stage = new Stage();
                     stage.initStyle(StageStyle.UNDECORATED);

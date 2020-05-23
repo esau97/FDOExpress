@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class Preferencias {
-    private String dir_ip="192.168.1.52";
+    private String dir_ip="";
     private int puerto = 4444;
+
+    public Preferencias() {
+
+    }
 
 
     public int getPuerto() {
