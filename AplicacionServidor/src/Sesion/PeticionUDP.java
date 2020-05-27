@@ -58,7 +58,8 @@ public class PeticionUDP extends Thread{
                 dataSocket.send(packetOut);
                 System.out.println("Enviando"+new String(packetOut.getData(), 0, packetOut.getLength()));
             }
-            byte[] last = "finish".getBytes();
+
+            byte []last = "finish".getBytes();
             packetOut = new DatagramPacket(last, last.length, address, port);
             dataSocket.send(packetOut);
 

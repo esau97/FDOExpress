@@ -46,9 +46,13 @@ public class HistoryTask extends AsyncTask<String,Void, String> {
             packetIn = new DatagramPacket(bufIn, bufIn.length);
             dataSocket.receive(packetIn);
             recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+            System.out.println("He recibido"+recibido);
             if(!recibido.equals("finish")){
                 accion=recibido;
+            }else{
+                accion="0&";
             }
+
             while(!recibido.equals("finish")){
                 dataSocket.receive(packetIn);
                 recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();

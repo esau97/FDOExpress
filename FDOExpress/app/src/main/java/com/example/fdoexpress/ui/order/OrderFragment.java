@@ -74,13 +74,10 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
     @Override
     public void onButtonClicked(View v, Pedido pedido) {
         if(v.getId()==R.id.order_list){
-                Toast.makeText(getActivity(), "Pulsado pedido, nº Pedido"+pedido.getcSeguimiento(), Toast.LENGTH_SHORT).show();
-                Log.i("Boton","Pulsado mapas");
                 OrderFragmentDirections.ActionOrderFragmentToOrderHistoryFragment action =
                         OrderFragmentDirections.actionOrderFragmentToOrderHistoryFragment(pedido.getcSeguimiento());
                 NavHostFragment.findNavController(OrderFragment.this)
                         .navigate(action);
-
         }
 
     }

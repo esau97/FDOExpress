@@ -51,9 +51,10 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             dataSocket.receive(packetIn);
             recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
             if(!recibido.equals("finish")){
-                accion=recibido;
+                accion=recibido+"&"+argumentos[1]+"&"+argumentos[2];
+            }else{
+                accion="0&";
             }
-            accion=recibido+"&"+argumentos[1]+"&"+argumentos[2];
             while(!recibido.equals("finish")){
                 dataSocket.receive(packetIn);
                 recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
