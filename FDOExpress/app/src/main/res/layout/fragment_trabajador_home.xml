@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+    >
+        <SurfaceView
+                android:id="@+id/camera_view"
+                android:layout_width="0dp"
+                android:layout_weight="0.8"
+                android:layout_height="300dp"
+                android:layout_gravity="center_horizontal"
+        />
+    </LinearLayout>
+
+    <Spinner
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
+            android:id="@+id/spinnerEstado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="20dp"
+    >
+        <TextView
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descripcion"
+        />
+        <EditText
+                android:id="@+id/edit_descripcion"
+                android:hint="Escriba una breve descripción si es necesario."
+                android:layout_width="match_parent"
+                android:scrollbarStyle="insideInset"
+                android:layout_height="wrap_content"/>
+
+        <ProgressBar
+                android:layout_marginTop="20dp"
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+
+        />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

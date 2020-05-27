@@ -14,22 +14,19 @@ public class PedidoViewModel extends ViewModel {
     private Application application;
     private String respuesta ;
 
-    public LiveData<List<Pedido>> getPedido(String JSON){
+    public LiveData<List<Pedido>> getPedidoActivos(String JSON){
 
         if(listaPedido==null){
             listaPedido=new MutableLiveData<>();
             respuesta=JSON;
-            loadPedidos();
+            loadPedidosActivos();
         }
 
         return listaPedido;
     }
     public void loadPedidosActivos(){
-
-    }
-
-    public void loadPedidos(){
         List<Pedido>lista=QueryUtils.obtenerPedidosActivos(respuesta);
         listaPedido.setValue(lista);
     }
+
 }

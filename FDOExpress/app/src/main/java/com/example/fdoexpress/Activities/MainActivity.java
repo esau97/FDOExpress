@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 // Además el servidor me devuelve una lista con todos los pedidos
                 // por lo que debo cargar los datos en el recyclerView
                 if(argumentos[1].equals("2")){
-                    saveLoginState(argumentos[4],argumentos[7],argumentos[8]);
+                    saveLoginState(argumentos[1],argumentos[4],argumentos[7],argumentos[8]);
                     Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
                     Intent intent   = new Intent(MainActivity.this, MenuActivity.class);
                     intent.putExtra("JSON",argumentos[6]);
@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }else if(argumentos[1].equals("3")){
                     System.out.println("RECIBIDO"+codigo);
-                    saveLoginState(argumentos[4],argumentos[5],argumentos[6]);
+                    saveLoginState(argumentos[1],argumentos[4],argumentos[5],argumentos[6]);
                     Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
-                    Intent intent   = new Intent(MainActivity.this, MenuTrabajadorActivity.class);
+                    Intent intent  = new Intent(MainActivity.this, MenuTrabajadorActivity.class);
                     ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                     startActivity(intent,activityOptions.toBundle());
 
@@ -148,11 +148,12 @@ public class MainActivity extends AppCompatActivity {
         return preferences.getBoolean(Constantes.PREFERENCE_LOGIN_STATE,false);
     }
 
-    public void saveLoginState(String tfno,String name, String password){
+    public void saveLoginState(String codigoUsuario,String tfno,String name, String password){
         preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,true).apply();
         preferences.edit().putString(Constantes.USER_NAME,name).apply();
         preferences.edit().putString(Constantes.USER_PASSWORD,password).apply();
         preferences.edit().putString(Constantes.USER_PHONE,tfno).apply();
+        preferences.edit().putString(Constantes.USER_CODE,codigoUsuario).apply();
         //preferences.edit().putString(Constantes.USER_TYPE,tipo);
         preferences.edit().commit();
     }

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:showIn="navigation_view">
+      tools:showIn="navigation_view_trabajador">
 
     <group android:checkableBehavior="single">
         <item
-                android:id="@+id/nav_home"
+                android:id="@+id/trab_home"
                 android:icon="@drawable/ic_home"
                 android:title="@string/menu_home"/>
         <item
                 android:id="@+id/nav_orders"
                 android:icon="@drawable/ic_list_alt"
                 android:title="@string/menu_orders"/>
-        <!--
         <item
-                android:id="@+id/nav_slideshow"
+                android:id="@+id/nav_logOut"
                 android:icon="@drawable/ic_icons8_sign_out_32"
-                android:title="@string/menu_slideshow"/> -->
+                android:title="Log Out"/>
     </group>
 </menu>

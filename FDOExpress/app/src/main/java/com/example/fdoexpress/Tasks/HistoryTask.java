@@ -1,12 +1,8 @@
 package com.example.fdoexpress.Tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
-
 import com.example.fdoexpress.PeticionListener;
-import com.example.fdoexpress.Utils.Codigos;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,7 +10,7 @@ import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
+public class HistoryTask extends AsyncTask<String,Void, String> {
 
     byte[] bufOut;
     byte[] bufIn;
@@ -27,7 +23,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
     private PeticionListener listener;
     String accion;
 
-    public LoginRegisterAsyncTask(PeticionListener listener,String enviar){
+    public HistoryTask(PeticionListener listener,String enviar){
         this.enviar=enviar;
         this.listener=listener;
     }
@@ -53,7 +49,6 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             if(!recibido.equals("finish")){
                 accion=recibido;
             }
-            accion=recibido+"&"+argumentos[1]+"&"+argumentos[2];
             while(!recibido.equals("finish")){
                 dataSocket.receive(packetIn);
                 recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();

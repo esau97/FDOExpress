@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
 
     public void mostrarDatos(String json){
         pedidoViewModel = new ViewModelProvider(this).get(PedidoViewModel.class);
-        pedidoViewModel.getPedido(json).observe(getViewLifecycleOwner(), new Observer<List<Pedido>>() {
+        pedidoViewModel.getPedidoActivos(json).observe(getViewLifecycleOwner(), new Observer<List<Pedido>>() {
             @Override
             public void onChanged(List<Pedido> pedidos) {
                 pedidoList.clear();

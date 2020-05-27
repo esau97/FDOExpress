@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/trabajador_navigation"
+            app:startDestination="@+id/trab_home">
+
+    <fragment
+            android:id="@+id/trab_home"
+            android:name="com.example.fdoexpress.uiTrabajador.home.TrabajadorHomeFragment"
+            android:label="@string/menu_home"
+            tools:layout="@layout/fragment_trabajador_home">
+    </fragment>
+
+    <fragment
+            android:id="@+id/nav_orders"
+            android:name="com.example.fdoexpress.uiTrabajador.order.TrabajadorOrderFragment"
+            android:label="@string/menu_orders"
+            tools:layout="@layout/fragment_order"/>
+
+</navigation>

@@ -1,120 +1,114 @@
 package com.example.fdoexpress;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import com.example.fdoexpress.Activities.MainActivity;
+import com.example.fdoexpress.Utils.Constantes;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.material.navigation.NavigationView;
 
 import java.io.IOException;
 
 public class MenuTrabajadorActivity extends AppCompatActivity {
-    private SurfaceView cameraView;
-    private BarcodeDetector barcodeDetector;
-    private CameraSource cameraSource;
-    private Spinner spinner;
-    private String token;
+
+    private AppBarConfiguration mAppBarConfiguration;
+
+    // TODO : Crear el hilo para cuando el trabajador abra la app vaya enviando la
+    //  localización al servidor
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_trabajador);
-        spinner = findViewById(R.id.spinnerEstado);
-        String lista [] = {"1.- Pendiente", "2.- En tránsito"};
-        ArrayAdapter<String> valoresSpinner = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, lista);
-        valoresSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(valoresSpinner);
-        cameraView=findViewById(R.id.camera_view);
-        barcodeDetector =
-                new BarcodeDetector.Builder(getApplicationContext())
-                        .setBarcodeFormats(Barcode.QR_CODE)
-                        .build();
-        cameraSource =
-                new CameraSource.Builder(getApplicationContext(),
-                        barcodeDetector).setRequestedPreviewSize(1600, 1024)
-                        .setAutoFocusEnabled(true)
-                        .build();
-
-        cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        /*FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                // verifico si el usuario dio los permisos para la camara
-                if (ActivityCompat.checkSelfPermission(MenuTrabajadorActivity.this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        // verificamos la version de Android que sea al menos la M para mostrar
-                        // el dialog de la solicitud de la camara
-                        if (shouldShowRequestPermissionRationale(
-                                Manifest.permission.CAMERA)) ;
-                        requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                7);
-                    }
-                    return;
-                } else {
-                    try {
-
-                        cameraSource.start(cameraView.getHolder());//TODO: Hacer que inicie la camara incluso si se le acaba de dar el permiso
-                    } catch (IOException ie) {
-                        Log.e("CAMERA SOURCE", ie.getMessage());
-                    }
-                }
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
+        });*/
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_trabajador);
+        final NavigationView navigationView = findViewById(R.id.nav_view_trabajador);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
 
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
-            }
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.trab_home, R.id.nav_orders, R.id.nav_logOut)
+                .setDrawerLayout(drawer)
+                .build();
 
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                cameraSource.stop();
-            }
-        });
 
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
-            @Override
-            public void release() {
+        //System.out.println("Pedidos"+jsonPedidos);
 
-            }
 
-            @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections) {
-                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_trabajador_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
 
-                if (barcodes.size() > 0) {
-                    // obtenemos el token
-                    token = barcodes.valueAt(0).displayValue.toString();
-                    // verificamos que el token anterior no se igual al actual
-                    // esto es util para evitar multiples llamadas empleando el mismo token
-                    Log.i("token", token);
-                    try {
-
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    // guardamos el ultimo token procesado
-                }
-            }
-        });
 
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+
+        getMenuInflater().inflate(R.menu.menu2, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logOut:
+                SharedPreferences preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
+                preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,false).apply();
+
+                Intent intent   = new Intent(MenuTrabajadorActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_trabajador_fragment);
+
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
 }

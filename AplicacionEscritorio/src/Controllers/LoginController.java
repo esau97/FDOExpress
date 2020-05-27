@@ -148,19 +148,39 @@ public class LoginController implements Initializable {
                 mostrarError(Integer.parseInt(codigos[1]));
                 break;
             case LOGIN_CORRECTO:
-                rol=Integer.parseInt(codigos[1]);
-                user.setName(codigos[2]);
-                user.setCodUser(Integer.parseInt(codigos[3]));
-                System.out.println("recibo"+mensaje);
-                JSONParser jsonParser = new JSONParser();
-                JSONObject jsonObject=null;
-                try{
-                    jsonObject = (JSONObject) jsonParser.parse(codigos[5]);
-                    System.out.println(jsonObject);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                int codigoUsuario = Integer.parseInt(codigos[3]);
+                if(codigoUsuario==1 || codigoUsuario==4){
+                    rol=Integer.parseInt(codigos[1]);
+                    user.setName(codigos[2]);
+
+                    user.setCodUser(Integer.parseInt(codigos[3]));
+
+                    System.out.println("recibo"+mensaje);
+                    JSONParser jsonParser = new JSONParser();
+                    JSONObject jsonObject=null;
+                    try{
+                        jsonObject = (JSONObject) jsonParser.parse(codigos[5]);
+                        System.out.println(jsonObject);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    mostrarNuevaVentana(jsonObject);
+                }else{
+                    labelError.setText("Compruebe que el usuario o la contraseña sean correctos.");
+                    labelError.setOpacity(1);
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            labelError.setOpacity(0);
+                        }
+                    }.start();
                 }
-                mostrarNuevaVentana(jsonObject);
+
                 break;
         }
     }
@@ -191,31 +211,32 @@ public class LoginController implements Initializable {
         FXMLLoader loader = new FXMLLoader();
 
         try {
-            if(rol==1){
-                loader.setLocation(getClass().getResource("/Pantallas/principal_admin.fxml"));
-                root = loader.load();
-                PrincipalController principalController = loader.getController();
-                principalController.initData(user,databaseController,jsonObject,projection);
+            if(rol==1 || rol==4){
+                if(rol==1){
+                    loader.setLocation(getClass().getResource("/Pantallas/principal_admin.fxml"));
+                    root = loader.load();
+                    PrincipalController principalController = loader.getController();
+                    principalController.initData(user,databaseController,jsonObject,projection);
 
-                principal =  new Scene(root);
-            }else if(rol==4){
-                loader.setLocation(getClass().getResource("/Pantallas/principal_gerente2.fxml"));
-                root = loader.load();
-                PrincipalController principalController = loader.getController();
-                System.out.println(databaseController.getPref().getDir_ip());
-                principalController.initData(user,databaseController,jsonObject,projection);
-                principal =  new Scene(root);
-            }
+                    principal =  new Scene(root);
+                }else if(rol==4){
+                    loader.setLocation(getClass().getResource("/Pantallas/principal_gerente.fxml"));
+                    root = loader.load();
+                    PrincipalController principalController = loader.getController();
+                    System.out.println(databaseController.getPref().getDir_ip());
+                    principalController.initData(user,databaseController,jsonObject,projection);
+                    principal =  new Scene(root);
+                }
 
-            if(actionEvent!=null){
-                window = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-                window.setScene(principal);
+                if(actionEvent!=null){
+                    window = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+                    window.setScene(principal);
 
-            }else if(keyEvent!=null){
-                window = (Stage) ((Node)keyEvent.getSource()).getScene().getWindow();
-                window.setScene(principal);
-            }
-            if(window!=null){
+                }else if(keyEvent!=null){
+                    window = (Stage) ((Node)keyEvent.getSource()).getScene().getWindow();
+                    window.setScene(principal);
+                }
+                if(window!=null){
                 /*root.setOnMousePressed(event ->{
                     x = event.getX();
                     y = event.getY();
@@ -224,9 +245,12 @@ public class LoginController implements Initializable {
                     window.setX(event.getSceneX()-x);
                     window.setY(event.getSceneY()-y);
                 });*/
-                window.centerOnScreen();
-                window.setResizable(false);
-                window.show();
+                    window.centerOnScreen();
+                    window.setResizable(false);
+                    window.show();
+                }
+            }else{
+
             }
 
         } catch (IOException e) {

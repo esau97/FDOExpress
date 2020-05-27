@@ -50,6 +50,7 @@ public class PeticionUDP extends Thread{
             bufOut=enviar.getBytes();
 
             int maxValue=0;
+            System.out.println("Buffer a enviar es "+bufOut.length);
             while(maxValue<=bufOut.length){
                 byte[] slice = Arrays.copyOfRange(bufOut, maxValue, maxValue+4096);
                 maxValue+=4096;
@@ -60,6 +61,7 @@ public class PeticionUDP extends Thread{
             byte[] last = "finish".getBytes();
             packetOut = new DatagramPacket(last, last.length, address, port);
             dataSocket.send(packetOut);
+
 
         } catch (IOException ex) {
             Logger.getLogger(PeticionUDP.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,7 +101,8 @@ public class PeticionUDP extends Thread{
                     // es un receptor, si es así obtengo sus pedidos.
                 }else if(rsp[0].equals("1") && rsp[1].equals("2")){
                     informacionCompartida.setListaLogueados(argumentos[1]);
-                    respuesta+=bbdd.devolverPedidosActivos();
+                    String [] cod = respuesta.split("&");
+                    respuesta+=bbdd.devolverPedidosActivos(cod[4]);
                     System.out.println("Pedidos activos "+respuesta);
                 }
                 break;
@@ -127,7 +130,7 @@ public class PeticionUDP extends Thread{
                 respuesta = bbdd.altaNuevosPedidos(argumentos[1]);
                 break;
             case OBTENER_PEDIDOS_ACTIVOS:
-                respuesta=bbdd.devolverPedidosActivos();
+                //respuesta=bbdd.devolverPedidosActivos();
                 break;
             case OBTENER_HISTORIAL_PEDIDOS:
                 respuesta=bbdd.devolverPedidos();
@@ -135,18 +138,20 @@ public class PeticionUDP extends Thread{
 
             case OBTENER_UBICACION_PEDIDO:
                 respuesta = "4&"+ bbdd.ubicacionPedido(argumentos[1]);
-                System.out.println("Envio respuesta "+respuesta);
                 break;
             case CAMBIAR_ESTADO_PEDIDO:
                 // Recibo por argumentos una descripcion dada por el repartidor, el nuevo estado
                 // y el codigo del pedido
-                respuesta = bbdd.cambiarEstadoPedido(argumentos[1],argumentos[2],argumentos[3],argumentos[4]);
+                respuesta = bbdd.cambiarEstadoPedido(argumentos);
                 break;
             case ASIGNAR_PEDIDOS_RECOGER:
                 respuesta = bbdd.asignarRutas();
                 break;
             case MODIFICAR_RUTA:
                 respuesta = bbdd.cambiarRuta(argumentos[1],argumentos[2]);
+                break;
+            case HISTORIAL_PEDIDOS:
+                respuesta = bbdd.historialPedidos(argumentos[1]);
                 break;
         }
 

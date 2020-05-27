@@ -18,7 +18,8 @@ public class Codigos {
         PETICION_UBICACION_TERMINADA,   //12
         CAMBIAR_ESTADO_PEDIDO,
         ASIGNAR_PEDIDOS_RECOGER,
-        MODIFICAR_RUTA                  //15
+        MODIFICAR_RUTA,                 //15
+        HISTORIAL_PEDIDOS
     }
 
     public static recibeServidor codigo_servidor(int num){

@@ -59,7 +59,9 @@ public class OrderLocation extends Thread{
                 dataSocket.send(packetToSend);
                 dataSocket.receive(packetIn);
                 cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-                recibido+=cadena;
+                if(!cadena.equals("finish")){
+                    recibido+=cadena;
+                }
                 while(!cadena.equals("finish")){
                     dataSocket.receive(packetIn);
                     cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();

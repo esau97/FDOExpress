@@ -77,7 +77,6 @@ public class PeticionTCP extends Thread{
                             connected=false;
                         }
                     }
-                    System.out.println(respuesta);
                 } catch (SocketException e){
                     Thread.interrupted();
                     System.out.println("Socket cerrado");

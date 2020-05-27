@@ -27,7 +27,7 @@ public class BaseDeDatos {
     }
 
     public String iniciarSesion(String email,String contrasena){
-        String respuesta="";
+        String respuesta="0&";
 
         Connection connection=(Connection) cn.getConnection();
         try{
@@ -45,7 +45,7 @@ public class BaseDeDatos {
         return respuesta;
     }
     public String registro(String [] argumentos){
-        String respuesta ="";
+        String respuesta ="0&";
         String usuario,password;
         usuario=argumentos[2];
         password=argumentos[3];
@@ -194,7 +194,7 @@ public class BaseDeDatos {
         String respuesta="";
         JSONObject ubicacionObject = new JSONObject();
         JSONArray ubicacionArray = new JSONArray();
-        // TODO:Primero debemos obtener el codigo de transporte
+
         String consulta1="select latitud,longitud from ubicacion u where u.matricula = (select matricula from vehiculo where cod_veh = (select t.vehiculo FROM merc_tran mt, transporte t WHERE cod_transporte=t.cod_transp AND mt.cod_mercancia=? AND t.fecha=?));";
 
         try {
@@ -428,7 +428,7 @@ public class BaseDeDatos {
         return "";
     }
     // Devuelvo los pedidos que aún no han sido entregados.
-    public String devolverPedidosActivos(){
+    public String devolverPedidosActivos(String numero){
         String respuesta="";
         JSONObject root = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -438,7 +438,7 @@ public class BaseDeDatos {
         try {
             PreparedStatement statement = connection.prepareStatement(consulta1);
             PreparedStatement st = connection.prepareStatement(consulta2);
-            statement.setInt(1,738492039);
+            statement.setInt(1,Integer.parseInt(numero));
             ResultSet resultado = statement.executeQuery();
             int codigo;
             ResultSet resultado1;
@@ -630,22 +630,28 @@ public class BaseDeDatos {
         return respuesta;
     }
     // En este método cambio el estado del pedido.
-    public String cambiarEstadoPedido(String estado,String codigoPedido,String descripcion,String codTrabajador){
+    public String cambiarEstadoPedido(String [] argumentos){
+
+        String estado=argumentos[1],codigoPedido=argumentos[2],descripcion=argumentos[6],codTrabajador=argumentos[7];
         String respuesta="";
-        // TODO: Hacer substring de la cadena del estado en el lado del trabajador
-        // TODO: El trabajador selecciona un estado del comboBox por ejemplo: 1.- Pendiente
+
         try{
             PreparedStatement pps = connection.prepareStatement("INSERT INTO historial (descripcion,fecha,cod_estado,cod_mercancia) VALUES (?,?,?,?)");
             pps.setString(1,descripcion);
             pps.setString(2,LocalDate.now().toString());
             pps.setInt(3,Integer.parseInt(estado));
             pps.setInt(4,Integer.parseInt(codigoPedido));
-            pps.executeQuery();
-            // Compruebo el estado del pedido, si está en reparto asigno el pedido al trabajador
-            if(estado.equals("4")){
-                respuesta = asignarPedido(Integer.parseInt(codigoPedido),Integer.parseInt(codTrabajador));
-                //new ComprobarPedidos(direccion,Integer.parseInt(codigoPedido),codTrabajador).start();
+            if(pps.executeUpdate()>0){
+                // Compruebo el estado del pedido, si está en reparto asigno el pedido al trabajador
+                if(estado.equals("4")){
+                    respuesta = asignarPedido(Integer.parseInt(codigoPedido),Integer.parseInt(codTrabajador));
+                    //new ComprobarPedidos(direccion,Integer.parseInt(codigoPedido),codTrabajador).start();
+                }
+                respuesta="6";
+            }else{
+                respuesta="0&1";
             }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -654,13 +660,13 @@ public class BaseDeDatos {
     public synchronized String asignarPedido(Integer codigoPedido,Integer codigoTrabajador){
         String respuesta = "";
         try{
-            PreparedStatement pps = connection.prepareStatement("SELECT cod_trans,limite FROM transporte WHERE trabajador=? AND fecha=? AND tipo=2");
+            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo=2");
             pps.setInt(1,codigoTrabajador);
 
             pps.setString(2,LocalDate.now().toString());
             ResultSet result=pps.executeQuery();
             if(result.next()){
-                if(result.getInt(2)<100){
+                if(0<100){
                     PreparedStatement pps2 = connection.prepareStatement("INSERT INTO merc_tran (cod_transporte,cod_mercancia) VALUES (?,?) ");
                     pps2.setInt(1,result.getInt(1));
                     pps2.setInt(2,codigoPedido);
@@ -679,6 +685,7 @@ public class BaseDeDatos {
                     // Con este método obtengo las claves primarias generadas al hacer
                     // la insercion de una nueva tupla en la tabla transportes.
                     ResultSet keys = pps2.getGeneratedKeys();
+                    keys.next();
                     PreparedStatement pps3 = connection.prepareStatement("INSERT INTO merc_tran (cod_transporte,cod_mercancia) VALUES (?,?) ");
                     pps3.setInt(1,keys.getInt(1));
                     pps3.setInt(2,codigoPedido);
@@ -766,4 +773,36 @@ public class BaseDeDatos {
         }
         return respuesta;
     }
+
+    public String historialPedidos(String codigoPedido){
+        String respuesta="";
+        JSONObject root = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        String consulta1="SELECT descripcion, fecha,e.cod_estado FROM historial h, estados e WHERE h.cod_estado=e.cod_estado AND h.cod_mercancia=?;";
+        try {
+            PreparedStatement statement = connection.prepareStatement(consulta1);
+            statement.setInt(1,Integer.parseInt(codigoPedido));
+            ResultSet resultado = statement.executeQuery();
+            while (resultado.next()){
+                JSONObject pedido = new JSONObject();
+                pedido.put("fecha",resultado.getString(2));
+                pedido.put("descripcion",resultado.getString(1));
+                pedido.put("cod_estado",resultado.getInt(3));
+                jsonArray.add(pedido);
+            }
+            if(jsonArray!=null){
+                root.put("historial",jsonArray);
+                respuesta="7&"+root.toJSONString();
+            }else{
+                respuesta="0&errorPedidos";
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from usuario");
+            throwables.printStackTrace();
+        }
+        return respuesta;
+    }
+
+    // TODO: Añadir funcionalidad cuando un pedido está en estado Ausente.
 }

@@ -114,7 +114,7 @@ public class MapController {
                         out.println("7");
                     }
                     // Envío el código 0 para cuando se termine la conexión
-                    // out.println("0");
+                    out.println("0");
                     socket.close();
                     in.close();
                     out.close();
@@ -224,13 +224,13 @@ public class MapController {
     }
 
     public void buscarVehiculo(){
-        //cbTodos.selectedProperty().setValue(false);
+        cbTodos.selectedProperty().setValue(false);
         String matricula = textMatricula.getText();
         Marker marcador;
         if(!matricula.equals("") && marcadoresVehiculos.containsKey(matricula)){
             //cbTodos.selectedProperty().setValue(false);
             for (String clave : marcadoresVehiculos.keySet()) {
-                marcadoresVehiculos.get(clave).setVisible(!marcadoresVehiculos.get(clave).getVisible());
+                marcadoresVehiculos.get(clave).setVisible(false);
             }
             marcador = marcadoresVehiculos.get(matricula);
             marcador.setVisible(true);

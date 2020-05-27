@@ -19,7 +19,7 @@ public class Main extends Application  {
         loader.setLocation(getClass().getResource("login.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("FDO Express");
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 800, 600);
         Projection projection = getParameters().getUnnamed().contains("wgs84")
                 ? Projection.WGS_84 : Projection.WEB_MERCATOR;
         LoginController loginController = loader.getController();

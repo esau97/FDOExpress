@@ -132,11 +132,9 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
         MarkerOptions mk = new MarkerOptions().position(puertoReal).title("Marker in Puerto Real");
         orderMarker = mMap.addMarker(mk);
 
-
         orderLocation = new OrderLocation(new PeticionListener() {
             @Override
             public void callback(final String accion) {
-
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -167,10 +165,10 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
                 this, // LifecycleOwner
                 callback);
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // TODO: Añadir funcionalidad al botón backpressed
         Toast.makeText(this.getContext(), "Back pulsado", Toast.LENGTH_SHORT).show();
         // Interrumpo el hilo
         orderLocation.interrupt();
