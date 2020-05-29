@@ -1,39 +1,33 @@
 package com.example.fdoexpress.Tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
+
 import com.example.fdoexpress.PeticionListener;
+import com.example.fdoexpress.Utils.Codigos;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
+public class MainAsyncTask extends AsyncTask<String,Void, String> {
 
-    byte[] bufOut;
-    byte[] bufIn;
-    InetAddress address = null;
-    DatagramPacket packetToSend = null;
-    DatagramPacket packetIn = null;
     private String dir_ip="192.168.1.39";
-    DatagramSocket dataSocket;
-    String enviar;
+
+    private String enviar;
     private PeticionListener listener;
     private PrintWriter out;
     private Socket socket;
-    String accion;
+    private String accion;
 
-    public LoginRegisterAsyncTask(PeticionListener listener, String enviar) {
+    public MainAsyncTask(PeticionListener listener, String enviar) {
         this.enviar=enviar;
         this.listener=listener;
 
-    }
-
-    public LoginRegisterAsyncTask(PeticionListener listener, String enviar, Socket socket){
-        this.enviar=enviar;
-        this.listener=listener;
-        this.socket=socket;
     }
 
     @Override
@@ -47,7 +41,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
             String argumentos [] = enviar.split("&");
 
             respuesta=in.readLine();
-            accion=respuesta+"&"+argumentos[1]+"&"+argumentos[2];
+            accion=respuesta;
 
         } catch (SocketException e){
             accion="0&2";

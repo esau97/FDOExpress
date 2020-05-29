@@ -30,6 +30,9 @@ public class HistoryViewModel extends ViewModel {
             listaPedido = new MutableLiveData<>();
             respuesta = JSON;
             loadPedidos();
+        }else{
+            respuesta=JSON;
+            loadPedidos();
         }
         return listaPedido;
     }

@@ -457,7 +457,7 @@ public class BaseDeDatos {
             }
             if(jsonArray!=null){
                 root.put("pedidos",jsonArray);
-                respuesta="&5&"+root.toJSONString();
+                respuesta="5&"+root.toJSONString();
             }else{
                 respuesta="0&errorPedidos";
             }
@@ -802,6 +802,45 @@ public class BaseDeDatos {
             throwables.printStackTrace();
         }
         return respuesta;
+    }
+    public String pedidosReparto(String codigo){
+        String respuesta = "";
+        int codigoTrabajador = Integer.parseInt(codigo);
+        JSONObject root = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        String consulta = "select mt.cod_mercancia from merc_tran mt, transporte t WHERE mt.cod_transporte=t.cod_transp  AND t.trabajador=? AND t.fecha=? AND tipo=2;";
+        String consulta2= "select m.nombre_destinatario,m.direccion_envio,m.cod_mercancia,m.nom_proveedor from mercancia m WHERE m.cod_mercancia=?; ";
+        try{
+            PreparedStatement pps = connection.prepareStatement(consulta);
+            pps.setInt(1,codigoTrabajador);
+            PreparedStatement pps2 = connection.prepareStatement(consulta2);
+            pps.setString(2,LocalDate.now().toString());
+
+            ResultSet result=pps.executeQuery();
+            ResultSet datosPedido ;
+            while(result.next()){
+                pps2.setInt(1,result.getInt(1));
+                datosPedido = pps2.executeQuery();
+                if(datosPedido.next()){
+                    JSONObject pedido = new JSONObject();
+
+                    pedido.put("nombre_destinatario",datosPedido.getString(1));
+                    pedido.put("direccion_envio",datosPedido.getString(2));
+                    pedido.put("cod_mercancia",datosPedido.getString(3));
+                    pedido.put("nombre_proveedor",datosPedido.getString(4));
+                    pedido.put("cod_estado",4);
+                    jsonArray.add(pedido);
+                }
+            }
+            if(jsonArray!=null){
+                root.put("pedidos",jsonArray);
+            }
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return root.toJSONString();
     }
 
     // TODO: Añadir funcionalidad cuando un pedido está en estado Ausente.

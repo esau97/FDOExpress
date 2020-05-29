@@ -14,14 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.fdoexpress.Adapter.HistoryAdapter;
 import com.example.fdoexpress.Adapter.HistoryPedido;
-import com.example.fdoexpress.Adapter.PedidoAdapter;
-import com.example.fdoexpress.Pedido;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.HistoryTask;
-import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
+import com.example.fdoexpress.Tasks.MainAsyncTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.ui.home.HomeMapFragmentArgs;
 
@@ -35,6 +34,7 @@ public class OrderHistoryFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<HistoryPedido> pedidoList;
     private HistoryAdapter historyAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Nullable
@@ -50,9 +50,25 @@ public class OrderHistoryFragment extends Fragment {
         pedidoList=new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         historyAdapter = new HistoryAdapter(getContext(),pedidoList);
+        swipeRefreshLayout = mView.findViewById(R.id.swLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                String enviar = "10&"+codigoPedido;
+                MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
+                    @Override
+                    public void callback(String accion) {
+                        tratarMensaje(accion);
+                    }
+                },enviar);
+                log.execute();
+            }
+        });
         recyclerView.setAdapter(historyAdapter);
-        String enviar = "16&"+codigoPedido;
-        HistoryTask log = new HistoryTask(new PeticionListener() {
+        String enviar = "10&"+codigoPedido;
+        MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
             @Override
             public void callback(final String accion) {
                 getActivity().runOnUiThread(new Runnable() {
@@ -70,8 +86,6 @@ public class OrderHistoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Log.i("Codigo",codigoPedido);
     }
 
     public void tratarMensaje(String recibido){
@@ -81,7 +95,12 @@ public class OrderHistoryFragment extends Fragment {
             case HISTORIAL_PEDIDOS:
                 mostrarDatos(argumentos[1]);
                 System.out.println(argumentos[1]);
+                swipeRefreshLayout.setRefreshing(false);
                 break;
+            case ERROR:
+
+                break;
+
         }
     }
     public void mostrarDatos(String json){

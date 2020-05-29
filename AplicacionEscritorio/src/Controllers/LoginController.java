@@ -148,11 +148,10 @@ public class LoginController implements Initializable {
                 mostrarError(Integer.parseInt(codigos[1]));
                 break;
             case LOGIN_CORRECTO:
-                int codigoUsuario = Integer.parseInt(codigos[3]);
-                if(codigoUsuario==1 || codigoUsuario==4){
-                    rol=Integer.parseInt(codigos[1]);
-                    user.setName(codigos[2]);
 
+                rol=Integer.parseInt(codigos[1]);
+                if(rol==1 || rol==4){
+                    user.setName(codigos[2]);
                     user.setCodUser(Integer.parseInt(codigos[3]));
 
                     System.out.println("recibo"+mensaje);
@@ -209,7 +208,6 @@ public class LoginController implements Initializable {
     public void mostrarNuevaVentana(JSONObject jsonObject){
         Parent root=null;
         FXMLLoader loader = new FXMLLoader();
-
         try {
             if(rol==1 || rol==4){
                 if(rol==1){

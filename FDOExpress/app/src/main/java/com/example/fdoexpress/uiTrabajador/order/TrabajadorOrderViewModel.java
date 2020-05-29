@@ -1,4 +1,4 @@
-package com.example.fdoexpress.ui.order;
+package com.example.fdoexpress.uiTrabajador.order;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -8,13 +8,12 @@ import com.example.fdoexpress.Utils.QueryUtils;
 
 import java.util.List;
 
-public class OrderViewModel extends ViewModel {
-
+public class TrabajadorOrderViewModel extends ViewModel {
     private MutableLiveData<String> mText;
     private static MutableLiveData<List<Pedido>> listaPedido;
     private String respuesta ;
 
-    public OrderViewModel() {
+    public TrabajadorOrderViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is order history fragment");
     }
@@ -35,7 +34,7 @@ public class OrderViewModel extends ViewModel {
         return listaPedido;
     }
     public void loadPedidos(){
-        List<Pedido>lista= QueryUtils.obtenerPedidos(respuesta);
+        List<Pedido>lista= QueryUtils.obtenerPedidosReparto(respuesta);
         listaPedido.setValue(lista);
     }
 }

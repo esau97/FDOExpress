@@ -49,9 +49,12 @@ public class MapController {
     private JFXTextField textMatricula;
 
     private TreeMap<String,Marker> marcadoresVehiculos;
+    private TreeMap<String,MapLabel> labelVehiculos;
+
 
     public MapController() {
         marcadoresVehiculos = new TreeMap<>();
+        labelVehiculos = new TreeMap<>();
         //DatabaseController databaseController = new DatabaseController(new Preferencias("192.168.137.123"));
     }
 
@@ -130,10 +133,14 @@ public class MapController {
             }
             public void addMarkers(){
                 System.out.println("Añadiendo marcadores");
+                MapLabel mapLabel;
                 for (String obj : marcadoresVehiculos.keySet()) {
                     Marker marker = marcadoresVehiculos.get(obj);
                     marker.setVisible(true);
                     mapView.addMarker(marker);
+                    mapLabel=new MapLabel(obj,10, -10).setVisible(true).setCssClass("orange-label");
+                    labelVehiculos.put(obj,mapLabel);
+                    marker.attachLabel(mapLabel);
                     System.out.println(obj);
                 }
             }
@@ -155,10 +162,12 @@ public class MapController {
                 if(newValue){
                     for (String clave : marcadoresVehiculos.keySet()) {
                         marcadoresVehiculos.get(clave).setVisible(true);
+                        labelVehiculos.get(clave).setVisible(true);
                     }
                 }else{
                     for (String clave : marcadoresVehiculos.keySet()) {
                         marcadoresVehiculos.get(clave).setVisible(false);
+                        labelVehiculos.get(clave).setVisible(false);
                     }
                 }
             }
@@ -208,6 +217,7 @@ public class MapController {
         for (String obj : marcadoresVehiculos.keySet()) {
             Marker marker = marcadoresVehiculos.get(obj);
             marker.setVisible(true);
+            labelVehiculos.get(obj).setVisible(true);
             mapView.addMarker(marker);
             System.out.println(obj);
         }

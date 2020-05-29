@@ -7,6 +7,24 @@ public class Pedido implements Serializable {
     private String estado;
     private String fecha;
     private String cSeguimiento;
+    private String nombreDestinatario;
+    private String direccion;
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getNombreDestinatario() {
+        return nombreDestinatario;
+    }
+
+    public void setNombreDestinatario(String nombreDestinatario) {
+        this.nombreDestinatario = nombreDestinatario;
+    }
 
     public String getProveedor() {
         return proveedor;
@@ -45,6 +63,15 @@ public class Pedido implements Serializable {
         comprobarEstado(estado);
         this.fecha = fecha;
         this.cSeguimiento = cSeguimiento;
+    }
+
+    public Pedido(String proveedor, int estado, String fecha, String cSeguimiento,String nombreDestinatario, String direccion) {
+        this.proveedor = proveedor;
+        comprobarEstado(estado);
+        this.fecha = fecha;
+        this.cSeguimiento = cSeguimiento;
+        this.nombreDestinatario = nombreDestinatario;
+        this.direccion = direccion;
     }
 
     public Pedido() {

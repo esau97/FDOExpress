@@ -64,12 +64,11 @@ public class MenuTrabajadorActivity extends AppCompatActivity {
 
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.trab_home, R.id.nav_orders, R.id.nav_logOut)
+                R.id.trab_home, R.id.nav_orders)
                 .setDrawerLayout(drawer)
                 .build();
 
 
-        //System.out.println("Pedidos"+jsonPedidos);
 
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_trabajador_fragment);

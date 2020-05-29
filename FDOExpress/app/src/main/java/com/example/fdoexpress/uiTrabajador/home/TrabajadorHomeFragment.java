@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.os.*;
 import android.util.Log;
 import android.util.SparseArray;
@@ -18,10 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import com.example.fdoexpress.MenuTrabajadorActivity;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
-import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
+import com.example.fdoexpress.Tasks.MainAsyncTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.Utils.Constantes;
 import com.google.android.gms.vision.CameraSource;
@@ -132,7 +130,7 @@ public class TrabajadorHomeFragment extends Fragment {
                     preferences = getActivity().getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
 
                     String enviar = "13&"+text.substring(0,1)+"&"+token+"&"+preferences.getString(Constantes.USER_CODE,"");
-                    LoginRegisterAsyncTask log = new LoginRegisterAsyncTask(new PeticionListener() {
+                    MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
                         @Override
                         public void callback(String accion) {
                             tratarMensaje(accion);

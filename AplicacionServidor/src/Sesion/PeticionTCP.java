@@ -48,7 +48,35 @@ public class PeticionTCP extends Thread{
         String respuesta="";
         String argumentos[] = codigo.split("&");
         switch (Codigos.codigo_servidor(Integer.parseInt(argumentos[0]))){
+            case INICIO_SESION:
+                System.out.println("INICIO SESION");
+                respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
+                System.out.println(respuesta);
+                String rsp [] = respuesta.split("&");
+                // Si el usuario se ha loqueado correctamente lo almaceno en una lista
+                if (rsp[0].equals("1") && (rsp[1].equals("1")||rsp[1].equals("4"))){
 
+                    JSONParser parser = new JSONParser();
+                    try {
+                        JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/tablas.json"));
+                        respuesta+="&"+root.toJSONString();
+                        // TODO: cambiar el codigo en el lado escritorio
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    //Compruebo si se ha logueado correctamente y si el usuario
+                    // es un receptor, si es así obtengo sus pedidos.
+                }else if(rsp[0].equals("1") && rsp[1].equals("2")){
+
+                    String [] cod = respuesta.split("&");
+                    respuesta+="&"+bbdd.devolverPedidosActivos(cod[4]);
+                }else if(rsp[0].equals("1") && rsp[1].equals("3")){
+                    String [] cod = respuesta.split("&");
+                    respuesta+="&"+bbdd.pedidosReparto(cod[3]);
+                }
+                break;
             case REGISTRO_VEHICULO:
                 respuesta = bbdd.registrarVehiculo(argumentos);
                 out.println(respuesta);
@@ -65,7 +93,6 @@ public class PeticionTCP extends Thread{
                     boolean connected = true;
                     out.println(respuesta);
                     while (connected){
-
                         System.out.println("bucle");
                         bbdd.obtenerUbicacion();
                         root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
@@ -77,6 +104,7 @@ public class PeticionTCP extends Thread{
                             connected=false;
                         }
                     }
+                    System.out.println("Cerrando sesion");
                 } catch (SocketException e){
                     Thread.interrupted();
                     System.out.println("Socket cerrado");
@@ -85,6 +113,24 @@ public class PeticionTCP extends Thread{
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                break;
+            case OBTENER_PEDIDOS_ACTIVOS:
+                respuesta=bbdd.devolverPedidosActivos(argumentos[1]);
+                break;
+
+            case OBTENER_UBICACION_PEDIDO:
+                respuesta = "4&"+ bbdd.ubicacionPedido(argumentos[1]);
+                break;
+            case HISTORIAL_PEDIDOS:
+                respuesta = bbdd.historialPedidos(argumentos[1]);
+                break;
+            case CAMBIAR_ESTADO_PEDIDO:
+                // Recibo por argumentos una descripcion dada por el repartidor, el nuevo estado
+                // y el codigo del pedido
+                respuesta = bbdd.cambiarEstadoPedido(argumentos);
+                break;
+            case PEDIDOS_REPARTIR:
+                respuesta = "5&"+bbdd.pedidosReparto(argumentos[1]);
                 break;
 
         }

@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
-import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
+import com.example.fdoexpress.Tasks.MainAsyncTask;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
                 String enviar = 1 +"&"+ name +"&"+ username + "&"+passwordCodif+"&"+address+"&"+tfn+"&3";
 
-                LoginRegisterAsyncTask log = new LoginRegisterAsyncTask(new PeticionListener() {
+                MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
                     @Override
                     public void callback(String accion) {
 

@@ -16,6 +16,7 @@ import com.example.fdoexpress.MenuTrabajadorActivity;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
+
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.Utils.Constantes;
 
@@ -33,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
     String recibido = "";
     int codigoUsuario = 1;
-    Socket socket;
+
     static EditText editText;
     static EditText editPass;
     Button blogin;
     Button bregister;
     private BufferedReader in;
     private SharedPreferences preferences ;
-
+    private Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +51,17 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
 
         if(getLoginState()){
-            String enviar = 0 +"&"+preferences.getString(Constantes.USER_NAME,"")+"&"+preferences.getString(Constantes.USER_PASSWORD,"");
-            LoginRegisterAsyncTask log = new LoginRegisterAsyncTask(new PeticionListener() {
-                @Override
-                public void callback(String accion) {
-                    tratarMensaje(accion);
-                }
-            },enviar);
-            log.execute();
+
+                String enviar = 0 +"&"+preferences.getString(Constantes.USER_NAME,"")+"&"+preferences.getString(Constantes.USER_PASSWORD,"");
+                LoginRegisterAsyncTask log = new LoginRegisterAsyncTask(new PeticionListener() {
+                    @Override
+                    public void callback(String accion) {
+                        tratarMensaje(accion);
+                    }
+                },enviar);
+                log.execute();
+
+
         }
 
 
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 LoginRegisterAsyncTask log = new LoginRegisterAsyncTask(new PeticionListener() {
                     @Override
                     public void callback(String accion) {
-                        tratarMensaje(accion);
+                        tratarMensaje(accion+"&"+passwordCodif);
                     }
                 },enviar);
                 log.execute();
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         int num = Integer.parseInt(argumentos[0]);
         switch (Codigos.codigo_cliente(num)) {
             case LOGIN_CORRECTO:
+                System.out.println("Acabado de recibir"+codigo);
                 //Si el login es correcto se mostraría al cliente el activity menu
                 // Además el servidor me devuelve una lista con todos los pedidos
                 // por lo que debo cargar los datos en el recyclerView
@@ -114,9 +119,10 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }else if(argumentos[1].equals("3")){
                     System.out.println("RECIBIDO"+codigo);
-                    saveLoginState(argumentos[1],argumentos[4],argumentos[5],argumentos[6]);
+                    saveLoginState(argumentos[3],argumentos[4],argumentos[6],argumentos[7]);
                     Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
                     Intent intent  = new Intent(MainActivity.this, MenuTrabajadorActivity.class);
+                    intent.putExtra("JSON",argumentos[5]);
                     ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                     startActivity(intent,activityOptions.toBundle());
 
@@ -139,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
                 preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,false).apply();
                 preferences.edit().commit();
                 Toast.makeText(this, "El usuario o la contraseña son incorrectos", Toast.LENGTH_SHORT).show();
+                break;
+            case 2:
+                Toast.makeText(this, "Conexión con servidor no disponible.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

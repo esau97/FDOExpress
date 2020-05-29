@@ -6,14 +6,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.home.HomeFragment"
-
 >
-
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/rvPedidos"
-            android:background="#9A9A9A"
+            android:layout_height="match_parent">
 
-    />
+            <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/rvPedidos"
+                    android:background="#9A9A9A"
+
+            />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

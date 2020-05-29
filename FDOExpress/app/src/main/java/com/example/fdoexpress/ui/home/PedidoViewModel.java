@@ -1,4 +1,4 @@
-package com.example.fdoexpress.Adapter;
+package com.example.fdoexpress.ui.home;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
@@ -18,6 +18,9 @@ public class PedidoViewModel extends ViewModel {
 
         if(listaPedido==null){
             listaPedido=new MutableLiveData<>();
+            respuesta=JSON;
+            loadPedidosActivos();
+        }else{
             respuesta=JSON;
             loadPedidosActivos();
         }

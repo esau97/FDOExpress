@@ -48,7 +48,8 @@ public class PeticionUDP extends Thread{
             System.out.println("Recibido"+recibido);
             enviar=tratarMensaje(recibido);
             bufOut=enviar.getBytes();
-
+            // TODO: cambiar peticion UDP para recibir cadenas de bytes pequeñas
+            //  y solo enviar un paquete
             int maxValue=0;
             System.out.println("Buffer a enviar es "+bufOut.length);
             while(maxValue<=bufOut.length){
@@ -62,6 +63,8 @@ public class PeticionUDP extends Thread{
             byte []last = "finish".getBytes();
             packetOut = new DatagramPacket(last, last.length, address, port);
             dataSocket.send(packetOut);
+
+            System.out.println("Lo ultimo enviado es finish");
 
 
         } catch (IOException ex) {
@@ -103,12 +106,11 @@ public class PeticionUDP extends Thread{
                 }else if(rsp[0].equals("1") && rsp[1].equals("2")){
                     informacionCompartida.setListaLogueados(argumentos[1]);
                     String [] cod = respuesta.split("&");
-                    respuesta+=bbdd.devolverPedidosActivos(cod[4]);
+                    respuesta+="&"+bbdd.devolverPedidosActivos(cod[4]);
                     System.out.println("Pedidos activos "+respuesta);
                 }
                 break;
-            case REGISTRO_VEHICULO:
-                break;
+
             case CARGAR_TABLAS:
                 System.out.println("CARGANDO TABLAS");
                 respuesta = bbdd.devolverDatosEmpleados();
@@ -130,12 +132,6 @@ public class PeticionUDP extends Thread{
             case NUEVOS_PEDIDOS:
                 respuesta = bbdd.altaNuevosPedidos(argumentos[1]);
                 break;
-            case OBTENER_PEDIDOS_ACTIVOS:
-                //respuesta=bbdd.devolverPedidosActivos();
-                break;
-            case OBTENER_HISTORIAL_PEDIDOS:
-                respuesta=bbdd.devolverPedidos();
-                break;
 
             case OBTENER_UBICACION_PEDIDO:
                 respuesta = "4&"+ bbdd.ubicacionPedido(argumentos[1]);
@@ -145,14 +141,12 @@ public class PeticionUDP extends Thread{
                 // y el codigo del pedido
                 respuesta = bbdd.cambiarEstadoPedido(argumentos);
                 break;
+
             case ASIGNAR_PEDIDOS_RECOGER:
                 respuesta = bbdd.asignarRutas();
                 break;
             case MODIFICAR_RUTA:
                 respuesta = bbdd.cambiarRuta(argumentos[1],argumentos[2]);
-                break;
-            case HISTORIAL_PEDIDOS:
-                respuesta = bbdd.historialPedidos(argumentos[1]);
                 break;
         }
 

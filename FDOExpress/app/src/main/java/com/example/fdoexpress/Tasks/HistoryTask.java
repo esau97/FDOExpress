@@ -62,7 +62,7 @@ public class HistoryTask extends AsyncTask<String,Void, String> {
             }
             accion=accion.trim();
         } catch (IOException ex) {
-            Logger.getLogger(LoginRegisterAsyncTask.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainAsyncTask.class.getName()).log(Level.SEVERE, null, ex);
         }
         dataSocket.close();
         return recibido;

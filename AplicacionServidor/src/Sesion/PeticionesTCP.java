@@ -23,7 +23,7 @@ public class PeticionesTCP extends Thread{
             while (listening){
                 Socket cliente = serverSocket.accept();
                 new PeticionTCP(cliente).start();
-                System.out.println("Lanzando hilo sesion Escritorio");
+                System.out.println("Lanzando hilo sesion TCP");
             }
         } catch (IOException e) {
             e.printStackTrace();

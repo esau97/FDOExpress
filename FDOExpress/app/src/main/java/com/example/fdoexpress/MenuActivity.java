@@ -18,7 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class MenuActivity extends AppCompatActivity {
 
-    private String jsonPedidos;
+
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -27,30 +27,18 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        Bundle extra = getIntent().getExtras();
-        if(extra!=null){
-            jsonPedidos = (String) extra.get("JSON");
-        }
+
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_orders, R.id.nav_slideshow)
                 .setDrawerLayout(drawer)
                 .build();
 
-
-        //System.out.println("Pedidos"+jsonPedidos);
 
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -72,7 +60,6 @@ public class MenuActivity extends AppCompatActivity {
             case R.id.logOut:
                 SharedPreferences preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
                 preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,false).apply();
-
                 Intent intent   = new Intent(MenuActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
