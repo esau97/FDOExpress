@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -708,8 +709,8 @@ public class BaseDeDatos {
 
         try{
             PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo=1");
+
             pps.setInt(1,codigoTrabajador);
-            LocalDate localDate = LocalDate.now();
             pps.setString(2,LocalDate.now().toString());
             ResultSet result=pps.executeQuery();
             if(result.next()){
@@ -773,7 +774,33 @@ public class BaseDeDatos {
         }
         return respuesta;
     }
+    public String actualizarUbicacion(String [] argumentos){
+        String respuesta="";
+        // Obtengo la matricula que lleva el trabajador el día de hoy, si ya se ha asociado el vehículo
+        // modifico la ubicacion con los nuevos valores
+        String consulta1="SELECT matricula FROM vehiculo WHERE cod_veh = (SELECT vehiculo FROM transporte WHERE fecha=? AND trabajador=? LIMIT 1)";
+        String consulta2="UPDATE ubicacion SET latitud=?,longitud=? WHERE matricula=?";
+        try{
+            PreparedStatement select = connection.prepareStatement(consulta1);
+            select.setString(1,LocalDate.now().toString());
+            select.setInt(2,Integer.parseInt(argumentos[3]));
+            ResultSet rs = select.executeQuery();
+            rs.next();
+            if(rs!=null){
+                PreparedStatement update = connection.prepareStatement(consulta2);
+                update.setBigDecimal(1,new BigDecimal(argumentos[1]));
+                update.setBigDecimal(2,new BigDecimal(argumentos[2]));
+                update.setString(3,rs.getString(1));
+                if(update.executeUpdate()>0){
+                    respuesta="";
+                }
+            }
 
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return respuesta;
+    }
     public String historialPedidos(String codigoPedido){
         String respuesta="";
         JSONObject root = new JSONObject();
@@ -843,5 +870,29 @@ public class BaseDeDatos {
         return root.toJSONString();
     }
 
+    public String asignarVehiculo(String matricula,String codigoTrabajador){
+        String respuesta = "";
+        try {
+            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo=2");
+            pps.setInt(1, Integer.parseInt(codigoTrabajador));
+            pps.setString(2, LocalDate.now().toString());
+            ResultSet result = pps.executeQuery();
+
+            if (result.next()) {
+                PreparedStatement update = connection.prepareStatement("UPDATE transporte SET vehiculo=(SELECT cod_veh FROM vehiculo WHERE matricula=?) WHERE cod_transp=?");
+                update.setString(1, matricula);
+                update.setInt(2,result.getInt(1));
+                if(update.executeUpdate()>0){
+                    respuesta="8&";
+                }else{
+                    respuesta="0&";
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return respuesta;
+    }
     // TODO: Añadir funcionalidad cuando un pedido está en estado Ausente.
 }

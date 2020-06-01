@@ -27,7 +27,6 @@ public class MainAsyncTask extends AsyncTask<String,Void, String> {
     public MainAsyncTask(PeticionListener listener, String enviar) {
         this.enviar=enviar;
         this.listener=listener;
-
     }
 
     @Override

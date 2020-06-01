@@ -172,6 +172,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
         Toast.makeText(this.getContext(), "Back pulsado", Toast.LENGTH_SHORT).show();
         // Interrumpo el hilo
         orderLocation.interrupt();
+        mapView.onDestroy();
     }
 
 }

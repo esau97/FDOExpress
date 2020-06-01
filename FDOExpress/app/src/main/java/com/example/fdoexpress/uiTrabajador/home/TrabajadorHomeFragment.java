@@ -1,25 +1,27 @@
 package com.example.fdoexpress.uiTrabajador.home;
 
 import android.Manifest;
+
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.*;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
-import android.widget.ArrayAdapter;
+import android.widget.*;
 
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.MainAsyncTask;
+import com.example.fdoexpress.Tasks.UpdateLocationTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.Utils.Constantes;
 import com.google.android.gms.vision.CameraSource;
@@ -45,15 +47,17 @@ public class TrabajadorHomeFragment extends Fragment {
     private EditText editText;
 
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         root = inflater.inflate(R.layout.fragment_trabajador_home, container, false);
         spinner = root.findViewById(R.id.spinnerEstado);
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         progressBar = root.findViewById(R.id.progress_bar);
         editText = root.findViewById(R.id.edit_descripcion);
         progressBar.setVisibility(View.GONE);
-        String lista [] = {"1.- Pendiente", "2.- En tránsito", "3.- En instalaciones", "4.- En reparto", "5.- Entregado", "6.- Ausente"};
+        String lista [] = {"1.- Pendiente", "2.- En tránsito", "3.- En instalaciones", "4.- En reparto", "5.- Entregado", "6.- Ausente","7.- Asociar vehículo"};
         ArrayAdapter<String> valoresSpinner = new ArrayAdapter<String>(root.getContext(),
                 android.R.layout.simple_spinner_item, lista);
         valoresSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -126,10 +130,16 @@ public class TrabajadorHomeFragment extends Fragment {
 
                     String text = spinner.getSelectedItem().toString();
 
-                    token+="&"+editText.getText().toString();;
                     preferences = getActivity().getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
+                    String enviar="";
+                    if(!text.substring(0,1).equals("7")){
+                        token+="&"+editText.getText().toString();
+                        enviar = "13&"+text.substring(0,1)+"&"+token+"&"+preferences.getString(Constantes.USER_CODE,"");
+                    }else{
+                        enviar = "17&"+token+"&"+preferences.getString(Constantes.USER_CODE,"");
+                    }
 
-                    String enviar = "13&"+text.substring(0,1)+"&"+token+"&"+preferences.getString(Constantes.USER_CODE,"");
+
                     MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
                         @Override
                         public void callback(String accion) {
@@ -148,11 +158,14 @@ public class TrabajadorHomeFragment extends Fragment {
                 }
             }
         });
+
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
     }
 
     public void tratarMensaje(String codigo){
@@ -177,6 +190,50 @@ public class TrabajadorHomeFragment extends Fragment {
                 Snackbar.make(root, "Se ha producido un error al cambiar el estado del pedido.", Snackbar.LENGTH_LONG)
                         .show();
                 break;
+        }
+    }
+
+    public void pedirPermiso (final String permiso, final int REQUEST_CODE) {
+
+        /*
+        * if (ContextCompat.checkSelfPermission(getActivity(),
+            Manifest.permission.RECORD_AUDIO) + ContextCompat
+            .checkSelfPermission(getActivity(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            != PackageManager.PERMISSION_GRANTED) {
+        * */
+        if (shouldShowRequestPermissionRationale(
+                Manifest.permission.CAMERA)) ;
+        requestPermissions(new String[]{Manifest.permission.CAMERA},
+                7);
+        if (ContextCompat.checkSelfPermission(getActivity(), permiso) + ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getActivity(), "You have already granted this permission!", Toast.LENGTH_SHORT).show();
+            /*UpdateLocationTask updateLocationTask = new UpdateLocationTask();
+            updateLocationTask.execute();*/
+
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                new AlertDialog.Builder(getActivity().getApplicationContext())
+                        .setTitle("Se necesita permiso")
+                        .setMessage("Es requerido para el correcto funcionamiento de la aplicación")
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(getActivity(), new String[]{permiso}, REQUEST_CODE);
+                            }
+                        })
+                        .setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create().show();
+
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{permiso}, REQUEST_CODE);
+                Toast.makeText(getActivity(), "You should granted this permission!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

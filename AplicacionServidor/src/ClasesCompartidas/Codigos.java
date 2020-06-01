@@ -19,7 +19,9 @@ public class Codigos {
         CAMBIAR_ESTADO_PEDIDO,
         ASIGNAR_PEDIDOS_RECOGER,
         MODIFICAR_RUTA,                 //15
-        PEDIDOS_REPARTIR
+        PEDIDOS_REPARTIR,
+        ASIGNAR_VEHICULO,
+        ACTUALIZAR_UBICACION
 
     }
 

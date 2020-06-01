@@ -10,7 +10,8 @@ public class Codigos {
         NUEVA_UBICACION,
         PEDIDOS_ACTIVOS,
         PEDIDO_ANADIDO, // 6
-        HISTORIAL_PEDIDOS
+        HISTORIAL_PEDIDOS,
+        VEHICULO_ASIGNADO
 
     }
     public static CodigoRecibeCliente codigo_cliente(int num){

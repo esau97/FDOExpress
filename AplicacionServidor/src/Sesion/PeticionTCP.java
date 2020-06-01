@@ -132,7 +132,12 @@ public class PeticionTCP extends Thread{
             case PEDIDOS_REPARTIR:
                 respuesta = "5&"+bbdd.pedidosReparto(argumentos[1]);
                 break;
-
+            case ASIGNAR_VEHICULO:
+                respuesta = ""+bbdd.asignarVehiculo(argumentos[1],argumentos[2]);
+                break;
+            case ACTUALIZAR_UBICACION:
+                respuesta = bbdd.actualizarUbicacion(argumentos);
+                break;
         }
         return respuesta;
     }
