@@ -13,7 +13,7 @@
     </fragment>
 
     <fragment
-            android:id="@+id/nav_orders"
+            android:id="@+id/nav_orders_trabajador"
             android:name="com.example.fdoexpress.uiTrabajador.order.TrabajadorOrderFragment"
             android:label="@string/menu_orders"
             tools:layout="@layout/fragment_order"/>

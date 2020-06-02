@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 // por lo que debo cargar los datos en el recyclerView
                 if(argumentos[1].equals("2")){
                     saveLoginState(argumentos[1],argumentos[4],argumentos[7],argumentos[8]);
-                    Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Login Correcto Receptor", Toast.LENGTH_SHORT).show();
                     Intent intent   = new Intent(MainActivity.this, MenuActivity.class);
                     intent.putExtra("JSON",argumentos[6]);
                     ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);

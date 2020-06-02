@@ -94,6 +94,15 @@ public class Pedido implements Serializable {
             case 5:
                 setEstado("Entregado");
                 break;
+            case 6:
+                setEstado("Ausente");
+                break;
+            case 7:
+                setEstado("Devolucion");
+                break;
+            case 8:
+                setEstado("Recogida en almacén");
+                break;
         }
     }
 }

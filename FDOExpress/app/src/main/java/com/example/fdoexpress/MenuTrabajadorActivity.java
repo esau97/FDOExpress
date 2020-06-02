@@ -1,66 +1,37 @@
 package com.example.fdoexpress;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.example.fdoexpress.Activities.MainActivity;
-import com.example.fdoexpress.Tasks.MainAsyncTask;
 import com.example.fdoexpress.Tasks.MyLocationServices;
 import com.example.fdoexpress.Tasks.UpdateLocationTask;
 import com.example.fdoexpress.Utils.Constantes;
 import com.google.android.gms.location.*;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.android.material.navigation.NavigationView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,7 +63,7 @@ public class MenuTrabajadorActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.trab_home, R.id.nav_orders)
+                R.id.trab_home, R.id.nav_orders_trabajador)
                 .setDrawerLayout(drawer)
                 .build();
 

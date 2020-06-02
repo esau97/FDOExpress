@@ -17,7 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.example.fdoexpress.Adapter.TrabajadorOrderAdapter;
+import com.example.fdoexpress.Adapter.PedidoAdapter;
 import com.example.fdoexpress.Pedido;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
@@ -30,10 +30,10 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class OrderFragment extends Fragment implements TrabajadorOrderAdapter.OnButtonClickedListener{
+public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonClickedListener{
 
     private OrderViewModel orderViewModel;
-    private TrabajadorOrderAdapter trabajadorOrderAdapter;
+    private PedidoAdapter pedidoAdapter;
     private List<Pedido> pedidoList;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -66,8 +66,8 @@ public class OrderFragment extends Fragment implements TrabajadorOrderAdapter.On
         });
         pedidoList=new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        trabajadorOrderAdapter = new TrabajadorOrderAdapter(getContext(),pedidoList,this);
-        recyclerView.setAdapter(trabajadorOrderAdapter);
+        pedidoAdapter = new PedidoAdapter(getContext(),pedidoList,this);
+        recyclerView.setAdapter(pedidoAdapter);
         Bundle bundle = getActivity().getIntent().getExtras();
         if(bundle!=null){
             mostrarDatos(bundle.get("JSON").toString());
@@ -83,7 +83,7 @@ public class OrderFragment extends Fragment implements TrabajadorOrderAdapter.On
                 pedidoList.clear();
                 if(pedidos!=null){
                     pedidoList.addAll(pedidos);
-                    trabajadorOrderAdapter.notifyDataSetChanged();
+                    pedidoAdapter.notifyDataSetChanged();
                 }
             }
         });

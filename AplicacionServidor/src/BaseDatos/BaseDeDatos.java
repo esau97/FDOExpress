@@ -645,9 +645,12 @@ public class BaseDeDatos {
             if(pps.executeUpdate()>0){
                 // Compruebo el estado del pedido, si está en reparto asigno el pedido al trabajador
                 if(estado.equals("4")){
-                    respuesta = asignarPedido(Integer.parseInt(codigoPedido),Integer.parseInt(codTrabajador));
+                    asignarPedido(Integer.parseInt(codigoPedido),Integer.parseInt(codTrabajador));
                     //new ComprobarPedidos(direccion,Integer.parseInt(codigoPedido),codTrabajador).start();
-                }
+                }else if(estado.equals("6")){
+                    guardarAusente(Integer.parseInt(codigoPedido));
+                } // Comprobar si el estado es entregado, si es así compruebo si antes estaba marcado como
+                // ausente y elimino la tupla en la bbdd
                 respuesta="6";
             }else{
                 respuesta="0&1";
@@ -868,6 +871,52 @@ public class BaseDeDatos {
             throwables.printStackTrace();
         }
         return root.toJSONString();
+    }
+    public void guardarAusente(int codigoPedido){
+
+        String consulta = "SELECT cod,intentos FROM pedidos_ausentes WHERE cod_pedido=?";
+        try{
+            PreparedStatement select = connection.prepareStatement(consulta);
+            select.setInt(1,codigoPedido);
+            ResultSet rs = select.executeQuery();
+            if(rs.next()){
+                if(rs.getInt(2)>=3){
+                    // TODO: Comprobamos si se ha intentado repartir más de 3 veces el pedido, si es así
+                    //  el pedido pasará al estado Recogida en almacén para que sea el cliente el encargado
+                    //  de recoger el pedido en nuestras instalaciones
+                    PreparedStatement pps = connection.prepareStatement("INSERT INTO historial (descripcion,fecha,cod_estado,cod_mercancia) VALUES (?,?,?,?)");
+                    pps.setString(1,"El pedido se ha intentado entregar 3 veces pero no había nadie." +
+                            "Se ruega que pase por el almacén para recoger el pedido.");
+                    pps.setString(2,LocalDate.now().toString());
+                    pps.setInt(3,8);
+                    pps.setInt(4,codigoPedido);
+                    if(pps.executeUpdate()>0) {
+
+                    }
+                }else{
+                    String consulta1 = "UPDATE pedidos_ausentes p1 SET p1.fecha=?,p1.intentos=p1.intentos+1 WHERE p1.cod=?";
+                    PreparedStatement update = connection.prepareStatement(consulta1);
+                    update.setString(1,LocalDate.now().toString());
+                    update.setInt(2,rs.getInt(1));
+                    if(update.executeUpdate()>0){
+                        // Pedido actualizado
+                    }
+                }
+
+            }else{
+                String consulta1 = "INSERT INTO pedidos_ausentes (cod_pedidos,fecha,intentos) VALUES (?,?,1)";
+                PreparedStatement insert = connection.prepareStatement(consulta1);
+                insert.setInt(1,codigoPedido);
+                insert.setString(2,LocalDate.now().toString());
+                if(insert.executeUpdate()>0){
+                    // Pedido actualizado y añadido a la tabla pedidosPendientes
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
     }
 
     public String asignarVehiculo(String matricula,String codigoTrabajador){

@@ -35,7 +35,7 @@ public class MenuActivity extends AppCompatActivity {
 
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_orders, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_orders)
                 .setDrawerLayout(drawer)
                 .build();
 
