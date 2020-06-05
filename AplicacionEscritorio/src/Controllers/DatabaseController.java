@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DatabaseController {
-    private Socket socket;
+
     private Preferencias pref;
     private BufferedReader in;
     private PrintWriter out;
@@ -136,19 +136,18 @@ public class DatabaseController {
             String argumentosRecibidos[] = recibido.split("&");
 
             if(!argumentosRecibidos[0].equals("0")){
-                enviarFile(file);
+                enviarFile(file,matricula,socket,in,out);
             }
             System.out.println("Después de enviar los datos del fichero");
-            in.close();
-            out.close();
+
             return recibido;
             //stage.close();
         } catch (Exception e) {
             return "0&4";
         }
-
     }
-    public void enviarFile(File file){
+
+    public void enviarFile(File file,String matricula,Socket socket,BufferedReader br, PrintWriter pw){
         // Get the size of the file
         new Thread(){
             @Override
@@ -159,12 +158,15 @@ public class DatabaseController {
                 OutputStream out;
                 try {
                     in = new FileInputStream(file);
-                     out= socket.getOutputStream();
+                    out= socket.getOutputStream();
                     int count;
                     while ((count = in.read(bytes)) > 0) {
                         out.write(bytes, 0, count);
                     }
+                    pw.close();
+                    br.close();
                     out.close();
+                    socket.close();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -249,6 +251,26 @@ public class DatabaseController {
         }
         dataSocket.close();
         return recibido;
+    }
+
+    public String actualizarTablas(){
+        String respuesta="";
+        String mensaje=3+"";
+        try {
+            Socket socket = new Socket(pref.getDir_ip(),pref.getPuerto());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(mensaje);
+            respuesta = in.readLine();
+            System.out.println("Nuevas rutas"+respuesta);
+            in.close();
+            out.close();
+
+            //stage.close();
+        } catch (Exception e) {
+            return "0&4";
+        }
+        return respuesta;
     }
 
     public String modificarRuta(String nRuta,String tfno){

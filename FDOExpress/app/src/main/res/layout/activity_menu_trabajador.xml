@@ -21,6 +21,16 @@
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header_menu_trabajador"
-            app:menu="@menu/activity_menu_drawer2"/>
+            app:menu="@menu/activity_menu_drawer2">
+        <Button
+                android:id="@+id/btDesconectar"
+                android:layout_gravity="bottom"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Desconectar"
+
+        />
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

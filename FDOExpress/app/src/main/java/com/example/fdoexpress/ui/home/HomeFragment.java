@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.fdoexpress.*;
 import com.example.fdoexpress.Adapter.PedidoAdapter;
 
@@ -39,6 +41,8 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SharedPreferences preferences;
+    private LottieAnimationView lottieAnimationView;
+    private LinearLayout linearLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +54,8 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
         pedidoList=new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         pedidoAdapter = new PedidoAdapter(getContext(),pedidoList,this);
+        lottieAnimationView = root.findViewById(R.id.loadingAnimation);
+        linearLayout = root.findViewById(R.id.layoutEmpty);
         recyclerView.setAdapter(pedidoAdapter);
         preferences =  getActivity().getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -84,6 +90,7 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
                     mostrarDatos(argumentos[1]);
                 }
                 swipeRefreshLayout.setRefreshing(false);
+
                 break;
 
             case ERROR:
@@ -106,9 +113,12 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
             @Override
             public void onChanged(List<Pedido> pedidos) {
                 pedidoList.clear();
-                if(pedidos!=null){
+                if(pedidos!=null && pedidos.size()>0){
+                    linearLayout.setVisibility(View.GONE);
                     pedidoList.addAll(pedidos);
                     pedidoAdapter.notifyDataSetChanged();
+                }else{
+                    linearLayout.setVisibility(View.VISIBLE);
                 }
             }
         });

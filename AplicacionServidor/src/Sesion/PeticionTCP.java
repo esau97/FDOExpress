@@ -15,12 +15,17 @@ public class PeticionTCP extends Thread{
     private BufferedReader in ;
     private PrintWriter out ;
     private BaseDeDatos bbdd;
+    private OutputStream outputStream;
+    private InputStream inputStream;
+
     public PeticionTCP(Socket cliente){
         this.cliente=cliente;
         this.bbdd = new BaseDeDatos();
         try{
-            in=new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-            out = new PrintWriter (cliente.getOutputStream(), true);
+            inputStream =cliente.getInputStream();
+            in=new BufferedReader(new InputStreamReader(inputStream));
+            outputStream = cliente.getOutputStream();
+            out = new PrintWriter (outputStream, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,10 +85,13 @@ public class PeticionTCP extends Thread{
             case REGISTRO_VEHICULO:
                 respuesta = bbdd.registrarVehiculo(argumentos);
                 out.println(respuesta);
-                guardarArchivo(argumentos[1],argumentos[5]);
+                guardarArchivo(argumentos[1],argumentos[4]);
                 break;
             case DESCARGAR_ARCHIVO:
                 respuesta = enviarFile(new File("Ficheros/"+argumentos[1]+"_"+argumentos[2]));
+                break;
+            case GUARDAR_ARCHIVO:
+                respuesta = guardarArchivo(argumentos[1],argumentos[2]);
                 break;
             case OBTENER_UBICACION:
                 JSONParser parser = new JSONParser();
@@ -138,19 +146,21 @@ public class PeticionTCP extends Thread{
             case ACTUALIZAR_UBICACION:
                 respuesta = bbdd.actualizarUbicacion(argumentos);
                 break;
+            case CARGAR_TABLAS:
+                System.out.println("CARGANDO TABLAS");
+                respuesta = "4&"+bbdd.devolverDatosTablas();
+                break;
         }
         return respuesta;
     }
-    public void guardarArchivo(String matricula,String nombreArchivo){
+    public String guardarArchivo(String matricula,String nombreArchivo){
+        String respuesta = "";
         InputStream in = null;
         OutputStream out = null;
+        in = inputStream;
+
         try {
-            in = cliente.getInputStream();
-        } catch (IOException ex) {
-            System.out.println("Can't get socket input stream. ");
-        }
-        try {
-            out = new FileOutputStream("Fichero/"+matricula+"_"+nombreArchivo);
+            out = new FileOutputStream("Ficheros/"+matricula+"_"+nombreArchivo);
         } catch (FileNotFoundException ex) {
             System.out.println("File not found. ");
         }
@@ -159,15 +169,20 @@ public class PeticionTCP extends Thread{
         System.out.println("Recibiendo datos");
         int count;
         try{
-            while ((count = in.read(bytes)) > 0) {
+            System.out.println("Está cerrado?"+cliente.isClosed());
+            System.out.println("Tamaño leer "+in.available());
+
+            while ((count = in.read(bytes)) != -1) {
+                System.out.println(count);
                 out.write(bytes, 0, count);
             }
+
             out.close();
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return respuesta;
     }
     public String enviarFile(File file){
         String respuesta="";
@@ -178,16 +193,6 @@ public class PeticionTCP extends Thread{
         try {
             in = new FileInputStream(file);
             OutputStream out = cliente.getOutputStream();
-            /*RandomAccessFile raf=new RandomAccessFile(file,"rw");
-            byte count=0;
-            long posicion=raf.getFilePointer();
-
-            while(posicion<file.length()){
-                count=raf.readByte();
-                out.write(count);
-                posicion=raf.getFilePointer();
-            }
-            raf.close();*/
             int count;
             while ((count = in.read(bytes)) > 0) {
                 System.out.println(count);

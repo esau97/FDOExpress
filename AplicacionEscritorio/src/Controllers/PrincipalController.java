@@ -1,36 +1,26 @@
 package Controllers;
 
-import Entity.Employee;
-import Entity.Provider;
-import Entity.User;
-import Entity.Vehicle;
+import Entity.*;
 import Util.Codigos;
-import Util.Preferencias;
 import com.jfoenix.controls.*;
-import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.sothawo.mapjfx.Projection;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.cell.CheckBoxTreeTableCell;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -42,6 +32,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,15 +43,14 @@ import java.util.function.Predicate;
 
 
 public class PrincipalController implements Initializable {
-    private Stage window;
+
     private Scene principal;
     private User usuario;
     private DatabaseController databaseController;
-    private JSONObject jsonObject;
+
     @FXML
     private Label labelName;
-    @FXML
-    VBox orderItem = null;
+
     @FXML
     private Button btnOrders,btnCustomers,btnAddEmployee,
             btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,
@@ -86,11 +77,15 @@ public class PrincipalController implements Initializable {
     @FXML
     private JFXTreeTableView<Provider> tableProviders;
     @FXML
+    private JFXTreeTableView<City> tableOrders;
+    @FXML
     private TreeTableColumn<Employee, String > columnName,columnEmail,columnAddress,columnPhone,columnRuta;
     @FXML
     private TreeTableColumn<Vehicle, String > columnRegistration,columnPurchase,columnRevision,columnDocumentation;
     @FXML
     private TreeTableColumn<Provider, String> columnCompanyName,columnCompanyAddress,columnCompanyNumber,columnCompanyEmail;
+    @FXML
+    private TreeTableColumn<City,String > columnCityOrder,columnQuantityEmployee,columnQuantityOrder;
     @FXML
     private JFXComboBox<String> comboBoxVehicles,comboBoxEmployees,comboBoxCompany;
     private Projection projection;
@@ -100,12 +95,8 @@ public class PrincipalController implements Initializable {
         labelName.setText(usuario.getName());
         this.projection=projection;
         this.databaseController=databaseController;
-
-        this.jsonObject=jsonObject;
         this.employees = FXCollections.observableArrayList();
-        cargarDatosTabla(jsonObject);
-        cargarDatosVehiculos(jsonObject);
-        cargarDatosProveedores(jsonObject);
+        cargarDatosTablas(jsonObject);
         //makeStageDragable();
     }
     @Override
@@ -234,6 +225,7 @@ public class PrincipalController implements Initializable {
         }
         if (actionEvent.getSource()==btnRefresh){
             System.out.println("Cargando datos");
+            tratarMensaje(databaseController.actualizarTablas());
             //cargarDatosTabla();
         }
         if(actionEvent.getSource()==btnActualizarRuta){
@@ -378,7 +370,7 @@ public class PrincipalController implements Initializable {
         }
 
     }
-    public void cargarDatosTabla(JSONObject jsonObject){
+    public void cargarDatosEmpleados(JSONObject jsonObject){
         columnName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Employee, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Employee, String> param) {
@@ -436,8 +428,6 @@ public class PrincipalController implements Initializable {
                     }
                 }
             });
-
-
 
     }
     public void cargarDatosVehiculos(JSONObject jsonObject){
@@ -517,6 +507,44 @@ public class PrincipalController implements Initializable {
         tableProviders.setRoot(rootTable);
         tableProviders.setShowRoot(false);
     }
+    public void cargarDatosOrder(JSONObject jsonObject){
+        columnCityOrder.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<City, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<City, String> param) {
+                return param.getValue().getValue().getOrderCity();
+            }
+        });
+        columnQuantityEmployee.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<City, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<City, String> param) {
+                return param.getValue().getValue().getCityQuantityEmployees();
+            }
+        });
+        columnQuantityOrder.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<City, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<City, String> param) {
+                return param.getValue().getValue().getCityQuantityOrder();
+            }
+        });
+
+        JSONObject root = jsonObject;
+        JSONArray array = (JSONArray) root.get("Ciudades");
+        ObservableList<City> cities = FXCollections.observableArrayList();
+        for(int i = 0 ; i < array.size() ; i++) {
+            JSONObject jsonObject1 = (JSONObject) array.get(i);
+            cities.add(new City(jsonObject1.get("direccion").toString(),jsonObject1.get("cantidadTrabajadores").toString(),jsonObject1.get("cantidadPedidos").toString()));
+        }
+        final TreeItem<City> rootTable= new RecursiveTreeItem<City>(cities, RecursiveTreeObject::getChildren);
+        tableOrders.getColumns().setAll(columnCityOrder,columnQuantityEmployee,columnQuantityOrder);
+        tableOrders.setRoot(rootTable);
+        tableOrders.setShowRoot(false);
+    }
+    public void cargarDatosTablas(JSONObject jsonObject){
+        cargarDatosEmpleados(jsonObject);
+        cargarDatosVehiculos(jsonObject);
+        cargarDatosProveedores(jsonObject);
+        cargarDatosOrder(jsonObject);
+    }
     public void downloadDocumentation(){
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File fileDirectory = directoryChooser.showDialog(null);
@@ -571,6 +599,16 @@ public class PrincipalController implements Initializable {
                         textInfo2.setOpacity(0);
                     }
                 }.start();
+                break;
+            case DATOS_TABLAS:
+                try{
+                    JSONParser jsonParser = new JSONParser();
+                    JSONObject root = (JSONObject) jsonParser.parse(codigos[1]);
+                    cargarDatosTablas(root);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 break;
 
         }

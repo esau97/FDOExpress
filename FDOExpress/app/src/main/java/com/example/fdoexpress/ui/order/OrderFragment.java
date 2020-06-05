@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.fdoexpress.Adapter.PedidoAdapter;
 import com.example.fdoexpress.Pedido;
 import com.example.fdoexpress.PeticionListener;
@@ -39,6 +41,8 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
     private SwipeRefreshLayout swipeRefreshLayout;
     private SharedPreferences preferences;
     private View root;
+    private LottieAnimationView lottieAnimationView;
+    private LinearLayout linearLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +53,8 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
         final TextView textView = root.findViewById(R.id.text_history);
         preferences =  getActivity().getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
         swipeRefreshLayout = root.findViewById(R.id.swLayout);
-
+        lottieAnimationView = root.findViewById(R.id.loadingAnimation);
+        linearLayout = root.findViewById(R.id.layoutEmpty);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -81,9 +86,12 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
             @Override
             public void onChanged(List<Pedido> pedidos) {
                 pedidoList.clear();
-                if(pedidos!=null){
+                if(pedidos!=null && pedidos.size()>0){
+                    linearLayout.setVisibility(View.GONE);
                     pedidoList.addAll(pedidos);
                     pedidoAdapter.notifyDataSetChanged();
+                }else{
+                    linearLayout.setVisibility(View.VISIBLE);
                 }
             }
         });

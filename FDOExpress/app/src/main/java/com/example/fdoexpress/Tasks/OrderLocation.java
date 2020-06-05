@@ -14,7 +14,7 @@ public class OrderLocation extends Thread{
     private PeticionListener peticionListener;
     private String codigoPedido;
     private boolean connected;
-    private String dir_ip="192.168.1.39";
+    private String dir_ip="192.168.1.52";
     byte[] bufOut;
     byte[] bufIn;
     InetAddress address = null;

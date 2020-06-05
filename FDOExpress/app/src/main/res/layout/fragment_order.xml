@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -21,5 +21,37 @@
 
                 />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <LinearLayout
+                android:id="@+id/layoutEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2"
+                android:orientation="vertical"
+        >
+                <com.airbnb.lottie.LottieAnimationView
+                        android:layout_centerInParent="true"
+                        android:id="@+id/loadingAnimation"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1.8"
+                        app:lottie_fileName="order.json"
+                        app:lottie_loop="true"
+                        app:lottie_autoPlay="true"
+                />
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.2"
+                >
+                        <TextView
+                                android:gravity="center"
+                                android:text="Aún no ha realizado un pedido."
+                                android:textStyle="bold"
+                                android:textAlignment="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+
+        </LinearLayout>
+</RelativeLayout>

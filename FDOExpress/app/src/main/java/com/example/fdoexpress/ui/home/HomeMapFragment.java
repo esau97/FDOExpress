@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
@@ -42,6 +43,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
     private View mView;
     private Marker orderMarker;
     private OrderLocation orderLocation;
+    private LinearLayout linearLayout;
 
     @Override
     public View onCreateView(
@@ -50,6 +52,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
 
         mView =  inflater.inflate(R.layout.fragment_home_second, container, false);
+        linearLayout = mView.findViewById(R.id.layoutEmpty);
         return mView;
     }
 
@@ -87,10 +90,19 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
                         latitud=Double.parseDouble(jsonObject1.get("latitud").toString());
                         longitud = Double.parseDouble(jsonObject1.get("longitud").toString());
                     }
+                    if(jsonArray.size()==0){
+                        mapView.setVisibility(View.GONE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }else{
+                        mapView.setVisibility(View.VISIBLE);
+                        linearLayout.setVisibility(View.GONE);
+                    }
                     cambiarUbicacion(latitud,longitud);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                break;
+            case ERROR:
                 break;
         }
 
@@ -144,7 +156,6 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
             }
         },codigoPedido);
         orderLocation.start();
-
     }
 
     @Override

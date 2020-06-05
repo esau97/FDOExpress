@@ -1,4 +1,4 @@
-package com.example.fdoexpress;
+package com.example.fdoexpress.Activities;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +21,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import com.example.fdoexpress.Activities.MainActivity;
+import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.MyLocationServices;
 import com.example.fdoexpress.Tasks.UpdateLocationTask;
 import com.example.fdoexpress.Utils.Constantes;
@@ -42,9 +44,9 @@ public class MenuTrabajadorActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest locationRequest;
     private SharedPreferences preferences;
+    private Button button;
 
-    // TODO : Crear el hilo para cuando el trabajador abra la app vaya enviando la
-    //  localización al servidor
+
 
     public static MenuTrabajadorActivity getInstance(){
         return instance;
@@ -66,6 +68,17 @@ public class MenuTrabajadorActivity extends AppCompatActivity {
                 R.id.trab_home, R.id.nav_orders_trabajador)
                 .setDrawerLayout(drawer)
                 .build();
+        button = findViewById(R.id.btDesconectar);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
+                preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,false).apply();
+                Intent intent   = new Intent(MenuTrabajadorActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_trabajador_fragment);
@@ -164,7 +177,6 @@ public class MenuTrabajadorActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.i("Activity destruida","Destruida");
-
     }
 
 

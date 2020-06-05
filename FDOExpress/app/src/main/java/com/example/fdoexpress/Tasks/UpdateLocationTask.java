@@ -25,7 +25,7 @@ import java.net.UnknownHostException;
 
 public class UpdateLocationTask extends AsyncTask<String,Void, String> {
     private boolean conectado;
-    private String dir_ip="192.168.1.39";
+    private String dir_ip="192.168.1.52";
     private PrintWriter out;
     private BufferedReader in;
     private Socket socket;

@@ -16,7 +16,7 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
     InetAddress address = null;
     DatagramPacket packetToSend = null;
     DatagramPacket packetIn = null;
-    private String dir_ip="192.168.1.39";
+    private String dir_ip="192.168.1.52";
     DatagramSocket dataSocket;
     String enviar;
     private PeticionListener listener;

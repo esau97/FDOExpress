@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class MainAsyncTask extends AsyncTask<String,Void, String> {
 
-    private String dir_ip="192.168.1.39";
+    private String dir_ip="192.168.1.52";
 
     private String enviar;
     private PeticionListener listener;

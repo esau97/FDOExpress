@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation project(path: ':commons-codec-1.14')
+    implementation "com.airbnb.android:lottie:3.4.0"
 
     configurations {
         compile.exclude group: "junit", module: "junit"

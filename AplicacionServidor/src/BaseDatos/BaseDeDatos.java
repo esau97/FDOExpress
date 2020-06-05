@@ -246,11 +246,20 @@ public class BaseDeDatos {
 
         return respuesta;
     }
+    public String devolverDatosTablas(){
+        JSONObject root = new JSONObject();
+        root.put("Empleados",cargarDatosEmpleados());
+        root.put("Vehiculos",cargarDatosVehiculos());
+        root.put("Proveedores",cargarDatosProveedores());
+        root.put("Ciudades",cargarDatosPedidos());
+        return root.toJSONString();
+    }
     public synchronized void cargarDatosTablas() {
         JSONObject root = new JSONObject();
-        root.put("Empleados",cargarDatosEmpleados(root));
-        root.put("Vehiculos",cargarDatosVehiculos(root));
-        root.put("Proveedores",cargarDatosProveedores(root));
+        root.put("Empleados",cargarDatosEmpleados());
+        root.put("Vehiculos",cargarDatosVehiculos());
+        root.put("Proveedores",cargarDatosProveedores());
+        root.put("Ciudades",cargarDatosPedidos());
         System.out.println("Guardando datos");
         try {
             FileWriter fileWriter = new FileWriter("Ficheros/tablas.json");
@@ -262,7 +271,7 @@ public class BaseDeDatos {
         }
 
     }
-    private JSONArray cargarDatosVehiculos(JSONObject root) {
+    private JSONArray cargarDatosVehiculos() {
         String respuesta="";
         JSONArray vehiculosArray = new JSONArray();
 
@@ -286,7 +295,7 @@ public class BaseDeDatos {
         }
         return vehiculosArray;
     }
-    private JSONArray cargarDatosEmpleados(JSONObject root) {
+    private JSONArray cargarDatosEmpleados() {
 
         JSONArray empleadosArray = new JSONArray();
 
@@ -318,7 +327,7 @@ public class BaseDeDatos {
         }
         return empleadosArray;
     }
-    private JSONArray cargarDatosProveedores(JSONObject root){
+    private JSONArray cargarDatosProveedores(){
 
         JSONArray proveedoresArray = new JSONArray();
 
@@ -344,6 +353,41 @@ public class BaseDeDatos {
             throwables.printStackTrace();
         }
         return proveedoresArray;
+    }
+    private JSONArray cargarDatosPedidos(){
+        JSONArray ciudadesArray = new JSONArray();
+        String consulta1="SELECT m.direccion_envio, COUNT(*) as 'Pedidos de la zona' , IFNULL((r.cuenta), 0) as 'Trabajadores en esa ruta'\n" +
+                "FROM historial h, mercancia m\n" +
+                "LEFT OUTER JOIN (\n" +
+                "\tSELECT r2.ruta_asignada, COUNT(*) cuenta\n" +
+                "    FROM rutas r2\n" +
+                "    GROUP BY r2.ruta_asignada\n" +
+                ") r ON m.direccion_envio = r.ruta_asignada\n" +
+                "WHERE h.cod_historial=\n" +
+                "\t(SELECT MAX(h2.cod_historial)\n" +
+                "     FROM historial h2\n" +
+                "     WHERE h2.cod_mercancia=h.cod_mercancia)\n" +
+                "AND h.cod_mercancia = m.cod_mercancia\n" +
+                "AND h.cod_estado=3\n" +
+                "GROUP BY m.direccion_envio";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultado = statement.executeQuery(consulta1);
+
+            while (resultado.next()){
+                JSONObject ciudadObject = new JSONObject();
+                ciudadObject.put("direccion",resultado.getString(1));
+                ciudadObject.put("cantidadPedidos",resultado.getString(2));
+                ciudadObject.put("cantidadTrabajadores",resultado.getString(3));
+                ciudadesArray.add(ciudadObject);
+            }
+
+            System.out.println(ciudadesArray);
+        } catch (SQLException throwables) {
+            System.out.println("Error al ejecutar la sentencia select from proveedor");
+            throwables.printStackTrace();
+        }
+        return ciudadesArray;
     }
     public String registrarProveedor(String[] argumentos) {
         String respuesta="";

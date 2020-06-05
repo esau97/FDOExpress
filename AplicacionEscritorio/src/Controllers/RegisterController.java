@@ -263,8 +263,8 @@ public class RegisterController implements Initializable {
 
             localDate = dateRevision.getValue();
             String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-            tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
+            databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser());
+            //tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
             Node node = (Node)actionEvent.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
             stage.close();

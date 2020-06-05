@@ -19,7 +19,6 @@ import com.example.fdoexpress.Adapter.HistoryAdapter;
 import com.example.fdoexpress.Adapter.HistoryPedido;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
-import com.example.fdoexpress.Tasks.HistoryTask;
 import com.example.fdoexpress.Tasks.MainAsyncTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.ui.home.HomeMapFragmentArgs;
