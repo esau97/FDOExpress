@@ -78,9 +78,9 @@ public class PeticionUDP extends Thread{
         String argumentos[]=codigo.split("&");
         int num=Integer.parseInt(argumentos[0]);
         switch(Codigos.codigo_servidor(num)){
-            case REGISTRO:
+            case REGISTRO_TRABAJADOR:
                 System.out.println("REGISTRO");
-                respuesta=bbdd.registro(argumentos);
+                respuesta=bbdd.registroTrabajador(argumentos);
                 System.out.println("Envio"+respuesta);
                 break;
             case INICIO_SESION:
@@ -130,7 +130,7 @@ public class PeticionUDP extends Thread{
                 }
                 break;
             case NUEVOS_PEDIDOS:
-                respuesta = bbdd.altaNuevosPedidos(argumentos[1]);
+                respuesta = bbdd.altaNuevosPedidos(argumentos);
                 break;
 
             case OBTENER_UBICACION_PEDIDO:

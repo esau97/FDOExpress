@@ -4,7 +4,7 @@ public class Codigos {
 
     public enum recibeServidor{
         INICIO_SESION,
-        REGISTRO,
+        REGISTRO_TRABAJADOR,
         REGISTRO_VEHICULO,
         CARGAR_TABLAS,                  //3
         GUARDAR_ARCHIVO,
@@ -21,7 +21,8 @@ public class Codigos {
         MODIFICAR_RUTA,                 //15
         PEDIDOS_REPARTIR,
         ASIGNAR_VEHICULO,
-        ACTUALIZAR_UBICACION
+        ACTUALIZAR_UBICACION,            //18
+        REGISTRO
 
     }
 

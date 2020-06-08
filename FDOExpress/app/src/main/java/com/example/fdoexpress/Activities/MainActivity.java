@@ -1,5 +1,7 @@
 package com.example.fdoexpress.Activities;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
@@ -17,6 +19,7 @@ import com.example.fdoexpress.Tasks.LoginRegisterAsyncTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.Utils.Constantes;
 
+import com.example.fdoexpress.uiProveedor.ProveedorActivity;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     static EditText editPass;
     private Button blogin;
     private Button bregister;
-    private SharedPreferences preferences ;
+    private SharedPreferences preferences;
     private LottieAnimationView lottieAnimationView;
     private Toolbar toolbar;
     private ScrollView scrollView;
@@ -65,6 +68,24 @@ public class MainActivity extends AppCompatActivity {
         bregister = this.findViewById(R.id.bregister);
         editText= this.findViewById(R.id.edit_usuario);
         editPass = this.findViewById(R.id.edit_pass);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!formatoCorrectoCorreo(editText.getText().toString())){
+                    editText.setError("Compruebe el formato del correo.");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         blogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 //Si el login es correcto se mostraría al cliente el activity menu
                 // Además el servidor me devuelve una lista con todos los pedidos
                 // por lo que debo cargar los datos en el recyclerView
-                if(argumentos[1].equals("2")){
+                if(argumentos[1].equals("3")){
                     saveLoginState(argumentos[1],argumentos[4],argumentos[7],argumentos[8]);
                     Toast.makeText(this, "Login Correcto Receptor", Toast.LENGTH_SHORT).show();
                     Intent intent   = new Intent(MainActivity.this, MenuActivity.class);
@@ -117,15 +138,23 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent,activityOptions.toBundle());
 
                     finish();
-                }else if(argumentos[1].equals("3")){
+                }else if(argumentos[1].equals("2")){
+
                     System.out.println("RECIBIDO"+codigo);
                     saveLoginState(argumentos[3],argumentos[4],argumentos[6],argumentos[7]);
                     Toast.makeText(this, "Login Correcto", Toast.LENGTH_SHORT).show();
                     Intent intent  = new Intent(MainActivity.this, MenuTrabajadorActivity.class);
-                    intent.putExtra("JSON",argumentos[5]);
+                    intent.putExtra("JSON",argumentos[6]);
                     ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                     startActivity(intent,activityOptions.toBundle());
 
+                    finish();
+                }else if(argumentos[1].equals("5")){
+                    //String codigoUsuario,String tfno,String name, String password
+                    saveLoginState(argumentos[3],argumentos[4],argumentos[5],argumentos[6]);
+                    Intent intent  = new Intent(MainActivity.this, ProveedorActivity.class);
+                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                    startActivity(intent,activityOptions.toBundle());
                     finish();
                 }
 
@@ -168,5 +197,9 @@ public class MainActivity extends AppCompatActivity {
         preferences.edit().putString(Constantes.USER_CODE,codigoUsuario).apply();
         //preferences.edit().putString(Constantes.USER_TYPE,tipo);
         preferences.edit().commit();
+    }
+
+    public boolean formatoCorrectoCorreo(String email){
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

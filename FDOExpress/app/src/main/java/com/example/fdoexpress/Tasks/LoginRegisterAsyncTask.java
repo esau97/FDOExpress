@@ -2,6 +2,7 @@ package com.example.fdoexpress.Tasks;
 
 import android.os.AsyncTask;
 import com.example.fdoexpress.PeticionListener;
+import com.example.fdoexpress.Utils.Constantes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,13 +12,8 @@ import java.net.*;
 
 public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
 
-    byte[] bufOut;
-    byte[] bufIn;
-    InetAddress address = null;
-    DatagramPacket packetToSend = null;
-    DatagramPacket packetIn = null;
-    private String dir_ip="192.168.1.52";
-    DatagramSocket dataSocket;
+    private String dir_ip= Constantes.dir_ip;
+
     String enviar;
     private PeticionListener listener;
     private PrintWriter out;
@@ -28,12 +24,6 @@ public class LoginRegisterAsyncTask extends AsyncTask<String,Void, String> {
         this.enviar=enviar;
         this.listener=listener;
 
-    }
-
-    public LoginRegisterAsyncTask(PeticionListener listener, String enviar, Socket socket){
-        this.enviar=enviar;
-        this.listener=listener;
-        this.socket=socket;
     }
 
     @Override

@@ -53,5 +53,6 @@
          </font>
       </Label>
       <Text fx:id="textInfo" layoutX="176.0" layoutY="359.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
+      <JFXTextField fx:id="textRuta" focusColor="#48a5ea" layoutX="416.0" layoutY="283.0" prefHeight="25.0" prefWidth="217.0" promptText="Main Rute" />
    </children>
 </AnchorPane>

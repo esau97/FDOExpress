@@ -6,12 +6,13 @@ public class Codigos {
         ERROR,
         LOGIN_CORRECTO,
         CERRAR_SESION,
-        REGISTRADO, // 3
+        REGISTRADO,             // 3
         NUEVA_UBICACION,
         PEDIDOS_ACTIVOS,
-        PEDIDO_ANADIDO, // 6
+        PEDIDO_ANADIDO,         // 6
         HISTORIAL_PEDIDOS,
-        VEHICULO_ASIGNADO
+        VEHICULO_ASIGNADO,
+        NUEVO_PEDIDO            //9
 
     }
     public static CodigoRecibeCliente codigo_cliente(int num){

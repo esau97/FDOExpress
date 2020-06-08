@@ -1,6 +1,8 @@
 package BaseDatos;
 
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -45,7 +47,9 @@ public class BaseDeDatos {
         }catch(SQLException e){e.printStackTrace();}
         return respuesta;
     }
+    // Crear registroUsuarioComún
     public String registro(String [] argumentos){
+        System.out.println("Registrando");
         String respuesta ="0&";
         String usuario,password;
         usuario=argumentos[2];
@@ -71,7 +75,56 @@ public class BaseDeDatos {
                             cargarDatosTablas();
                         }
                     }.start();
-                    respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5];
+                    respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5]+"&"+argumentos[6];
+                }else{
+                    respuesta="0&2";
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else{
+            respuesta="0&2";
+        }
+
+
+        return respuesta;
+    }
+    public String registroTrabajador(String [] argumentos){
+        System.out.println("Registrando");
+        String respuesta ="0&";
+        String usuario,password;
+        usuario=argumentos[2];
+        password=argumentos[3];
+
+        if (!comprobarExiste(usuario)){
+            try{
+                PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO usuario (nombre,email,contrasena,direccion,tfno,rol) VALUES (?,?,?,?,?,?)");
+                pps.setString(1, argumentos[1]);
+                pps.setString(2, usuario);
+                pps.setString(3,password);
+                pps.setString(4,argumentos[4]);
+                pps.setInt(5,Integer.parseInt(argumentos[5]));
+                pps.setInt(6,Integer.parseInt(argumentos[7]));
+
+                if(pps.executeUpdate()>0){
+                    ResultSet rs = pps.getGeneratedKeys();
+                    rs.next();
+                    System.out.println("El id del trabajador es "+rs.getInt(1));
+                    PreparedStatement insertRuta = connection.prepareStatement("INSERT INTO rutas (ruta_defecto,ruta_asignada,cod_trabajador) VALUES (?,?,?)");
+                    insertRuta.setString(1,argumentos[6]);
+                    insertRuta.setString(2,argumentos[6]);
+                    insertRuta.setInt(3,rs.getInt(1));
+                    if(insertRuta.executeUpdate()>0){
+
+                    }
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            cargarDatosTablas();
+                        }
+                    }.start();
+                    respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5]+"&"+argumentos[6];
                 }else{
                     respuesta="0&2";
                 }
@@ -151,16 +204,18 @@ public class BaseDeDatos {
     }
     public boolean comprobarExisteCompany(String nombre){
         try {
+            System.out.println("Comprobando si existe empresa");
             PreparedStatement pps=(PreparedStatement) connection.prepareStatement("SELECT nombre FROM proveedor WHERE nombre=?");
             pps.setString(1,nombre);
             ResultSet result=pps.executeQuery();
             while(result.next()){
+                System.out.println("Si existe");
                 return true;
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
+        System.out.println("No existe");
         return false;
     }
     public void obtenerUbicacion(){
@@ -392,6 +447,7 @@ public class BaseDeDatos {
     public String registrarProveedor(String[] argumentos) {
         String respuesta="";
         if(!comprobarExisteCompany(argumentos[1])){
+            System.out.println("Dando de alta proveedor");
             try {
                 PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO proveedor (nombre,direccion,telefono,correo) VALUES (?,?,?,?)");
                 pps.setString(1,argumentos[1]);
@@ -403,6 +459,7 @@ public class BaseDeDatos {
                         @Override
                         public void run(){
                             cargarDatosTablas();
+                            usuarioProveedor(argumentos);
                         }
                     }.start();
                     respuesta="7&"+argumentos[1]+"&"+argumentos[2]+"&"+argumentos[3]+"&"+argumentos[4];
@@ -417,10 +474,52 @@ public class BaseDeDatos {
         }
         return respuesta;
     }
+    public void usuarioProveedor(String[] argumentos){
+        System.out.println("Registrando");
+        String respuesta ="0&";
+        String usuario,password;
+        usuario=argumentos[4];
+        password=argumentos[3];
+        String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
+
+        if (!comprobarExiste(usuario)){
+            try{
+                PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO usuario (nombre,email,contrasena,direccion,tfno,rol) VALUES (?,?,?,?,?,?)");
+                pps.setString(1, argumentos[1]);
+                pps.setString(2, usuario);
+                pps.setString(3,passwordCodif);
+                pps.setString(4,argumentos[2]);
+                pps.setInt(5,Integer.parseInt(argumentos[3]));
+                pps.setInt(6,5);
+
+                if(pps.executeUpdate()>0){
+                    ResultSet rs = pps.getGeneratedKeys();
+                    rs.next();
+                    System.out.println("El id del trabajador es "+rs.getInt(1));
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            cargarDatosTablas();
+                        }
+                    }.start();
+                    respuesta="3&";
+                }else{
+                    respuesta="0&2";
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }else{
+            respuesta="0&";
+        }
+
+
+    }
     public String obtenerCodProveedor(String nombreProveedor){
         String codigo="";
         try {
-            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("SELECT cod_proveedor FROM proveedor WHERE nombre=?");
+            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("SELECT nombre FROM proveedor WHERE correo=?");
             pps.setString(1,nombreProveedor);
             ResultSet result=pps.executeQuery();
             while(result.next()){
@@ -431,46 +530,37 @@ public class BaseDeDatos {
         }
         return codigo;
     }
-    public String altaNuevosPedidos(String jsonPedidos) {
-        JSONParser jsonParser = new JSONParser();
+    public String altaNuevosPedidos(String [] argumentos) {
+        String respuesta="0&1";
         try{
-            JSONObject root = (JSONObject) jsonParser.parse(jsonPedidos);
-            JSONArray array = (JSONArray) root.get("Pedidos");
-            String nombreProveedor = root.get("Nombre Proveedor").toString();
+            String correoProveedor = argumentos[4];
             // TODO: Añadir número de seguimiento
-            String nombre_destinatario,direccion_envio,numeroTfno,cod_proveedor;
-            int id=-1;
-            cod_proveedor=obtenerCodProveedor(nombreProveedor);
+            String nombre_destinatario,direccion_envio,numeroTfno,nombreProveedor;
+
+            nombreProveedor=obtenerCodProveedor(correoProveedor);
             // Recorro el json y voy añadiendo a la base de datos todos los pedidos que me ha enviado
             // el proveedor
-            for(int i = 0 ; i < array.size() ; i++) {
-                JSONObject jsonPedido = (JSONObject) array.get(i);
-                nombre_destinatario=jsonPedido.get("nombre_destinatario").toString();
-                direccion_envio=jsonPedido.get("direccion_envio").toString();
-                numeroTfno=jsonPedido.get("numeroTfno").toString();
+            nombre_destinatario=argumentos[1];
+            direccion_envio=argumentos[2];
+            numeroTfno=argumentos[3];
 
-                    PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO mercancia (direccion_envio,nombre_destinatario,numeroTfno,cod_proveedor) VALUES (?,?,?,?)");
-                    pps.setString(1, direccion_envio);
-                    pps.setString(2, nombre_destinatario);
-                    pps.setString(3, numeroTfno);
-                    pps.setInt(4,Integer.parseInt(cod_proveedor));
+            PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO mercancia (direccion_envio,nombre_destinatario,tfno_usuario,nom_proveedor) VALUES (?,?,?,?)");
+            pps.setString(1, direccion_envio);
+            pps.setString(2, nombre_destinatario);
+            pps.setString(3, numeroTfno);
+            pps.setString(4, nombreProveedor);
 
-                    if(pps.executeUpdate()>0){
-                        ResultSet keys = pps.getGeneratedKeys();
-                        id = keys.getInt(1);
-                    }
-
+            if(pps.executeUpdate()>0){
+                respuesta="9&";
+            }else{
+                respuesta="0&1";
             }
-            /*if(root!=null && id!=-1){
-                // Lanzo un hilo encargado de asignar todos los pedidos a los trabajadores
-                new ComprobarPedidos(root,id).start();
-            }*/
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (SQLException throwables) {
+
+        }  catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "";
+
+        return respuesta;
     }
     // Devuelvo los pedidos que aún no han sido entregados.
     public String devolverPedidosActivos(String numero){

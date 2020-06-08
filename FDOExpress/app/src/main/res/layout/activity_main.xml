@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:hint="Username"
+                        android:hint="Correo"
                         android:textAlignment="center"
                         android:textColorHint="#2000ee"
                         android:layout_marginBottom="20dp"
@@ -68,7 +68,7 @@
                         android:layout_marginRight="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Password"
+                        android:hint="Contraseña"
                         android:textAlignment="center"
                         android:textColorHint="#2000ee"
                         android:inputType="textPassword"/>
@@ -79,6 +79,7 @@
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
+                android:id="@+id/layout_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/cardView"
@@ -96,7 +97,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btlogin"
-                    android:text="Sign Up"
+                    android:text="Registrarse"
                     android:textColor="#FFF"
                     android:layout_marginRight="5dp"
                     />
@@ -108,28 +109,18 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btlogin"
-                    android:text="Login"
+                    android:text="Iniciar sesión"
                     android:textColor="#FFF">
 
                 </Button>
-
             </LinearLayout>
-            
-            <TextView
-                android:id="@+id/tvForgot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/cardView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="25dp"
-                android:elevation="5dp"
-                android:textSize="14sp"
-                android:text="Forgot your password?"
 
-                />
         </RelativeLayout>
 
     </ScrollView>
+
+
+
     <com.airbnb.lottie.LottieAnimationView
             android:layout_centerInParent="true"
             android:id="@+id/loadingAnimation"
@@ -140,5 +131,6 @@
             app:lottie_autoPlay="true"
 
     />
+
 
 </RelativeLayout>

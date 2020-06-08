@@ -73,11 +73,11 @@ public class PeticionTCP extends Thread{
                     }
                     //Compruebo si se ha logueado correctamente y si el usuario
                     // es un receptor, si es así obtengo sus pedidos.
-                }else if(rsp[0].equals("1") && rsp[1].equals("2")){
+                }else if(rsp[0].equals("1") && rsp[1].equals("3")){
 
                     String [] cod = respuesta.split("&");
                     respuesta+="&"+bbdd.devolverPedidosActivos(cod[4]);
-                }else if(rsp[0].equals("1") && rsp[1].equals("3")){
+                }else if(rsp[0].equals("1") && rsp[1].equals("2")){
                     String [] cod = respuesta.split("&");
                     respuesta+="&"+bbdd.pedidosReparto(cod[3]);
                 }
@@ -86,6 +86,15 @@ public class PeticionTCP extends Thread{
                 respuesta = bbdd.registrarVehiculo(argumentos);
                 out.println(respuesta);
                 guardarArchivo(argumentos[1],argumentos[4]);
+                break;
+            case REGISTRO_PROVEEDOR:
+                respuesta=bbdd.registrarProveedor(argumentos);
+                break;
+            case NUEVOS_PEDIDOS:
+                respuesta = bbdd.altaNuevosPedidos(argumentos);
+                break;
+            case REGISTRO:
+                respuesta = bbdd.registro(argumentos);
                 break;
             case DESCARGAR_ARCHIVO:
                 respuesta = enviarFile(new File("Ficheros/"+argumentos[1]+"_"+argumentos[2]));

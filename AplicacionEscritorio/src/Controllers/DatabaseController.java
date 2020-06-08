@@ -182,30 +182,20 @@ public class DatabaseController {
         String recibido="";
         String enviar = 6 +"&"+companyName+"&"+fullAddress+"&"+phoneNumber+"&"+email;
         try {
-            dataSocket = new DatagramSocket();
-            bufOut = enviar.getBytes(); //In this program, no information is set by the client
-            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            bufIn = new byte[4096];
-            dataSocket.setBroadcast(true);
-            dataSocket.send(packetToSend);
-            packetIn = new DatagramPacket(bufIn, bufIn.length);
-            dataSocket.receive(packetIn);
+            Socket socket = new Socket(pref.getDir_ip(),pref.getPuerto());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(enviar);
+            recibido = in.readLine();
+            System.out.println(recibido);
 
-            String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-            recibido+=cadena;
-            while(!cadena.equals("finish")){
-                dataSocket.receive(packetIn);
-                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-                if (!cadena.equals("finish")){
-                    recibido+=cadena;
-                }
-            }
-            recibido=recibido.trim();
+            System.out.println("Después de enviar los datos del fichero");
 
-        } catch (IOException ex) {
-            Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+            //stage.close();
+        } catch (Exception e) {
+            return "0&4";
         }
-        dataSocket.close();
+
         return recibido;
     }
     public JSONObject obtenerUbicacion(){

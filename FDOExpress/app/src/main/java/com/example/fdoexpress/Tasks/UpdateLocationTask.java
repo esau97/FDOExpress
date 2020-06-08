@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import com.example.fdoexpress.Utils.Constantes;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -25,7 +26,7 @@ import java.net.UnknownHostException;
 
 public class UpdateLocationTask extends AsyncTask<String,Void, String> {
     private boolean conectado;
-    private String dir_ip="192.168.1.52";
+    private String dir_ip= Constantes.dir_ip;
     private PrintWriter out;
     private BufferedReader in;
     private Socket socket;

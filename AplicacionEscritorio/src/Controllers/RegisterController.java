@@ -33,7 +33,8 @@ public class RegisterController implements Initializable {
     @FXML
     AnchorPane apnlParent;
     @FXML
-    JFXTextField textName,textLName,textEmail,textAddress,textCode,textNumber,textDocumentation,textRegistration,textCompanyName;
+    JFXTextField textName,textLName,textEmail,textAddress,textCode,textNumber
+            ,textDocumentation,textRegistration,textCompanyName,textRuta;
     @FXML
     JFXPasswordField textPassword;
     @FXML
@@ -111,7 +112,8 @@ public class RegisterController implements Initializable {
             String zipCode= textCode.getText().trim();
             String fullAddress = address +" "+zipCode;
             String phoneNumber = textNumber.getText().trim();
-            tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber,rol));
+            String ruta = textRuta.getText().trim();
+            tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol));
         }
         Node node = (Node)actionEvent.getSource();
         Stage stage = (Stage) node.getScene().getWindow();
@@ -132,8 +134,8 @@ public class RegisterController implements Initializable {
                     textInfo.setOpacity(1);
                     Thread.sleep(1000);
                     textInfo.setOpacity(0);
-
-                    TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4],codigos[5]));
+                    System.out.println("He recibido "+mensaje);
+                    TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4],(codigos[5]!=null?codigos[5]:"No tiene ruta asignada")));
                     //tableEmployees.getRoot().getParent().getChildren().add(newEmployee);
                     if (tableEmployees!=null){
                         tableEmployees.getRoot().getChildren().add(newEmployee);

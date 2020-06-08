@@ -2,6 +2,7 @@ package com.example.fdoexpress.Tasks;
 
 import android.util.Log;
 import com.example.fdoexpress.PeticionListener;
+import com.example.fdoexpress.Utils.Constantes;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -14,7 +15,7 @@ public class OrderLocation extends Thread{
     private PeticionListener peticionListener;
     private String codigoPedido;
     private boolean connected;
-    private String dir_ip="192.168.1.52";
+    private String dir_ip= Constantes.dir_ip;
     byte[] bufOut;
     byte[] bufIn;
     InetAddress address = null;
