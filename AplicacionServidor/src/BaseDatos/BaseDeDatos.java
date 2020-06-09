@@ -551,7 +551,22 @@ public class BaseDeDatos {
             pps.setString(4, nombreProveedor);
 
             if(pps.executeUpdate()>0){
-                respuesta="9&";
+                ResultSet keys = pps.getGeneratedKeys();
+                keys.next();
+                String datosPedidos=keys.getInt(1)+"&"+direccion_envio+"&"+nombre_destinatario+"&"+numeroTfno;
+
+                EnviarMail enviarMail = new EnviarMail(correoProveedor,datosPedidos);
+                enviarMail.start();
+                PreparedStatement pps2 = connection.prepareStatement("INSERT INTO historial (descripcion,fecha,cod_estado,cod_mercancia) VALUES (?,?,?,?)");
+                pps2.setString(1,"En instalaciones de proveedor. Pronto se procederá a su recogida.");
+                pps2.setString(2,LocalDate.now().toString());
+                pps2.setInt(3,1);
+                pps2.setInt(4,keys.getInt(1));
+                if(pps2.executeUpdate()>0){
+                    respuesta="9&";
+                }else{
+                    respuesta="0&1";
+                }
             }else{
                 respuesta="0&1";
             }

@@ -59,6 +59,9 @@ public class ProveedorActivity extends AppCompatActivity {
         switch (Codigos.codigo_cliente(num)) {
             case NUEVO_PEDIDO:
                 Toast.makeText(this,"Datos enviados correctamente.", Toast.LENGTH_SHORT).show();
+                nombre.setText("");
+                direccion.setText("");
+                telefono.setText("");
                 break;
             case ERROR:
                 mostrarError(Integer.parseInt(argumentos[1]));

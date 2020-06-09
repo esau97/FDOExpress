@@ -10,5 +10,7 @@
     <orderEntry type="library" name="mysql-connector-java-5.1.6-bin" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="commons-codec-1.14" level="project" />
+    <orderEntry type="library" name="barcode" level="project" />
+    <orderEntry type="library" name="mail" level="project" />
   </component>
 </module>
