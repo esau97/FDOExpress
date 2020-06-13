@@ -5,6 +5,12 @@ import Entity.Provider;
 import Entity.User;
 import Entity.Vehicle;
 import Util.Codigos;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.jfoenix.controls.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,6 +27,8 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -28,7 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegisterController implements Initializable {
-    Stage stage;
+
     private DatabaseController databaseController;
     @FXML
     AnchorPane apnlParent;
@@ -46,6 +54,7 @@ public class RegisterController implements Initializable {
 
     private User user;
     private Integer rol;
+    private Stage stage;
 
     @FXML
     private JFXTreeTableView<Employee> tableEmployees;
@@ -116,8 +125,8 @@ public class RegisterController implements Initializable {
             tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol));
         }
         Node node = (Node)actionEvent.getSource();
-        Stage stage = (Stage) node.getScene().getWindow();
-        stage.close();
+        stage = (Stage) node.getScene().getWindow();
+
         //stage.close();
 
     }
@@ -142,18 +151,45 @@ public class RegisterController implements Initializable {
                     }else{
                         System.out.println("Table employee is null");
                     }
+                    stage.close();
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 break;
             case REGISTRO_VEHICULO:
+                TreeItem<Vehicle> newVehicle = new TreeItem(new Vehicle(codigos[1],codigos[2],codigos[3],codigos[4]));
+
+                if (tableVehicles!=null){
+                    tableVehicles.getRoot().getChildren().add(newVehicle);
+                }else{
+                    System.out.println("Table vehicle is null");
+                }
+                new Thread(){
+                    @Override
+                        public void run(){
+                            generarQR(codigos[1]);
+                    }
+                }.start();
                 System.out.println("Vehiculo registrado");
                 break;
             case ARCHIVO_GUARDADO:
                 System.out.println("Fichero guardado.");
                 break;
 
+        }
+    }
+    public void generarQR(String matricula){
+        String qrcode = System.getProperty("user.home")+"/Desktop/"+matricula+".gif";
+        QRCodeWriter writer = new QRCodeWriter();
+        try{
+            BitMatrix bitMatrix = writer.encode(matricula, BarcodeFormat.QR_CODE,200,200);
+            Path path = FileSystems.getDefault().getPath(qrcode);
+            MatrixToImageWriter.writeToPath(bitMatrix,"GIF",path);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -164,13 +200,43 @@ public class RegisterController implements Initializable {
                 break;
             case 2:
                 System.out.println("Ha ocurrido un error y no se ha podido registrar correctamente");
+
                 break;
             case 3:
                 System.out.println("Existe el proveedor");
+                textInfo.setText("Ya existe ese proveedor");
+                textInfo.setOpacity(1);
+                new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                            textInfo.setOpacity(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 break;
             case 4:
                 textInfo.setText("Error de conexion");
                 textInfo.setOpacity(1);
+                break;
+            case 5:
+                System.out.println("Ya existe ese usuario");
+                textInfo.setText("Existe ese usuario");
+                textInfo.setOpacity(1);
+                new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                            textInfo.setOpacity(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 break;
 
         }
@@ -178,7 +244,21 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if(textNumber!=null && textCode!=null){
+        if(textRegistration!=null){
+            textRegistration.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (textRegistration.getText().length() > 8) {
+                        String s = textRegistration.getText().substring(0, 8);
+                        textRegistration.setText(s);
+                    }
+                    if (!newValue.matches("\\d*")) {
+                        textRegistration.setText(newValue.replaceAll("[^\\d]", ""));
+                    }
+                }
+            });
+        }
+        if(textNumber!=null && textCode!=null ){
             textNumber.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -192,6 +272,7 @@ public class RegisterController implements Initializable {
                     }
                 }
             });
+
             textCode.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -222,6 +303,18 @@ public class RegisterController implements Initializable {
             return false;
         }
     }
+    public boolean formatoCorrectoMatricula(String matricula){
+        Pattern pattern = Pattern
+                .compile("^[0-9]{4}[A-Z]{3}$");
+
+        Matcher mather = pattern.matcher(matricula);
+
+        if (mather.find() == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public void registerProvider(ActionEvent actionEvent){
         if(actionEvent.getSource()==registerProvider){
             String companyName= textCompanyName.getText().trim();
@@ -240,12 +333,41 @@ public class RegisterController implements Initializable {
             File selectedFile = fileChooser.showOpenDialog(null);
             textDocumentation.setText(selectedFile.getAbsolutePath());
         }
+
         if(actionEvent.getSource()==registerVehicle && !textDocumentation.getText().equals("")){
             String matricula = textRegistration.getText().trim();
             File selectedFile = new File(textDocumentation.getText());
-            if (selectedFile==null){
+            if(formatoCorrectoMatricula(matricula)){
+                if (selectedFile==null){
+                    textInfo.setOpacity(1);
+                    textInfo.setText("No se ha podido descargar el archivo");
+                    new Thread(){
+                        @Override
+                        public void run(){
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            textInfo.setOpacity(0);
+                        }
+                    }.start();
+
+                    return;
+                }
+                LocalDate localDate = datePurchase.getValue();
+                String purchaseDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
+                localDate = dateRevision.getValue();
+                String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                //databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser());
+                tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
+                Node node = (Node)actionEvent.getSource();
+                Stage stage = (Stage) node.getScene().getWindow();
+                stage.close();
+            }else{
                 textInfo.setOpacity(1);
-                textInfo.setText("No se ha podido descargar el archivo");
+                textInfo.setText("Comprueba la matricula. (0000-XXX)");
                 new Thread(){
                     @Override
                     public void run(){
@@ -257,35 +379,9 @@ public class RegisterController implements Initializable {
                         textInfo.setOpacity(0);
                     }
                 }.start();
-
-                return;
             }
-            LocalDate localDate = datePurchase.getValue();
-            String purchaseDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-            localDate = dateRevision.getValue();
-            String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-            databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser());
-            //tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
-            Node node = (Node)actionEvent.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            stage.close();
-        }else{
-            textInfo.setOpacity(1);
-            textInfo.setText("No se ha podido descargar el archivo");
-            new Thread(){
-                @Override
-                public void run(){
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    textInfo.setOpacity(0);
-                }
-            }.start();
         }
-
 
     }
 

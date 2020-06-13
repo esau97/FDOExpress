@@ -8,7 +8,7 @@
 <AnchorPane fx:id="pnlParent" prefHeight="260.0" prefWidth="240.0" style="-fx-background-color: #2000ee;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SettingsController">
    <children>
       <JFXTextField id="textIP" fx:id="textIP" alignment="CENTER" focusColor="#6a81c6" layoutX="48.0" layoutY="95.0" promptText="Direccion IP" styleClass="textIP" stylesheets="@../styles.css" unFocusColor="WHITE" />
-      <Button fx:id="saveIP" layoutX="97.0" layoutY="185.0" mnemonicParsing="false" onAction="#handleClicks" style="-fx-background-color: #FFF;" text="Save" />
+      <Button fx:id="saveIP" layoutX="89.0" layoutY="184.0" mnemonicParsing="false" onAction="#handleClicks" style="-fx-background-color: #FFF;" text="Guardar" />
       <FontAwesomeIcon fx:id="closeImage" glyphName="TIMES" layoutX="209.0" layoutY="25.0" />
    </children>
 </AnchorPane>

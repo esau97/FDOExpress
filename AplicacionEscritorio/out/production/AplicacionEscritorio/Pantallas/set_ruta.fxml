@@ -32,16 +32,16 @@
             </ImageView>
          </children>
       </Pane>
-      <JFXTextField fx:id="textName" focusColor="#48a5ea" layoutX="133.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="First Name" />
+      <JFXTextField fx:id="textName" focusColor="#48a5ea" layoutX="133.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Nombre" />
       <JFXTextField fx:id="textRuta" focusColor="#48a5ea" layoutX="133.0" layoutY="170.0" prefHeight="25.0" prefWidth="217.0" promptText="Ruta" />
       <JFXTextField fx:id="textNRuta" focusColor="#48a5ea" layoutX="418.0" layoutY="170.0" prefHeight="25.0" prefWidth="217.0" promptText="Nueva Ruta" />
-      <JFXTextField fx:id="textNumber" focusColor="#48a5ea" layoutX="418.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Phone Number" />
-      <Label layoutX="133.0" layoutY="31.0" text="Basic Details" textFill="#48a5ea">
+      <JFXTextField fx:id="textNumber" focusColor="#48a5ea" layoutX="418.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Telefono" />
+      <Label layoutX="133.0" layoutY="31.0" text="Detalles ruta" textFill="#48a5ea">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <JFXButton fx:id="submit" layoutX="527.0" layoutY="286.0" onAction="#register" prefHeight="25.0" prefWidth="116.0" style="-fx-background-color: #48A5EA;" text="Continue" textFill="WHITE" />
+      <JFXButton fx:id="submit" layoutX="527.0" layoutY="286.0" onAction="#register" prefHeight="25.0" prefWidth="116.0" style="-fx-background-color: #48A5EA;" text="Continuar" textFill="WHITE" />
       <Separator layoutX="133.0" layoutY="68.0" prefHeight="1.0" prefWidth="520.0" />
       <Label id="btn_exit" fx:id="btn_exit" layoutX="675.0" layoutY="2.0" onMousePressed="#handleButtonAction" prefHeight="25.0" prefWidth="21.0" text="X" textFill="#48a5ea">
          <font>

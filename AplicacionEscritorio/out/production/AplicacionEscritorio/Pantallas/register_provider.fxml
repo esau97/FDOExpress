@@ -32,13 +32,13 @@
             </ImageView>
          </children>
       </Pane>
-      <JFXTextField fx:id="textCompanyName" focusColor="#48a5ea" layoutX="133.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Company Name" />
+      <JFXTextField fx:id="textCompanyName" focusColor="#48a5ea" layoutX="133.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Nombre" />
       <JFXTextField fx:id="textEmail" focusColor="#48a5ea" layoutX="133.0" layoutY="157.0" prefHeight="25.0" prefWidth="217.0" promptText="Email ID" />
-      <JFXTextField fx:id="textAddress" focusColor="#48a5ea" layoutX="416.0" layoutY="157.0" prefHeight="25.0" prefWidth="217.0" promptText="Address" />
-      <JFXTextField fx:id="textNumber" focusColor="#48a5ea" layoutX="133.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Phone Number" />
-      <JFXTextField fx:id="textCode" focusColor="#48a5ea" layoutX="416.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Zip Code" />
-      <JFXButton fx:id="registerProvider" layoutX="524.0" layoutY="349.0" onAction="#registerProvider" prefHeight="25.0" prefWidth="116.0" style="-fx-background-color: #48A5EA;" text="Continue" textFill="WHITE" />
-      <Label layoutX="133.0" layoutY="31.0" text="Basic Details" textFill="#48a5ea">
+      <JFXTextField fx:id="textAddress" focusColor="#48a5ea" layoutX="416.0" layoutY="157.0" prefHeight="25.0" prefWidth="217.0" promptText="Direccion" />
+      <JFXTextField fx:id="textNumber" focusColor="#48a5ea" layoutX="133.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Telefono" />
+      <JFXTextField fx:id="textCode" focusColor="#48a5ea" layoutX="416.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Codigo Postal" />
+      <JFXButton fx:id="registerProvider" layoutX="524.0" layoutY="349.0" onAction="#registerProvider" prefHeight="25.0" prefWidth="116.0" style="-fx-background-color: #48A5EA;" text="Continuar" textFill="WHITE" />
+      <Label layoutX="133.0" layoutY="31.0" text="Detalles proveedor" textFill="#48a5ea">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -49,6 +49,6 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Text fx:id="textInfo" layoutX="176.0" layoutY="359.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
+      <Text fx:id="textInfo" fill="RED" layoutX="350.0" layoutY="354.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
    </children>
 </AnchorPane>

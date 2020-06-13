@@ -5,15 +5,12 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -68,14 +65,8 @@ public class BaseDeDatos {
                 if(pps.executeUpdate()>0){
                     ResultSet rs = pps.getGeneratedKeys();
                     rs.next();
-                    System.out.println("El id del trabajador es "+rs.getInt(1));
-                    new Thread(){
-                        @Override
-                        public void run(){
-                            cargarDatosTablas();
-                        }
-                    }.start();
-                    respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5]+"&"+argumentos[6];
+                    System.out.println("El id del receptor es "+rs.getInt(1));
+                    respuesta="3&"+argumentos[1]+"&"+usuario+"&"+argumentos[4]+"&"+argumentos[5]+"&"+argumentos[6]+"&"+devolverPedidosActivos(argumentos[5]);
                 }else{
                     respuesta="0&2";
                 }
@@ -84,10 +75,8 @@ public class BaseDeDatos {
                 e.printStackTrace();
             }
         }else{
-            respuesta="0&2";
+            respuesta="0&5";
         }
-
-
         return respuesta;
     }
     public String registroTrabajador(String [] argumentos){
@@ -133,7 +122,7 @@ public class BaseDeDatos {
                 e.printStackTrace();
             }
         }else{
-            respuesta="0&";
+            respuesta="0&5";
         }
 
 
@@ -165,7 +154,7 @@ public class BaseDeDatos {
                             cargarDatosTablas();
                         }
                     }.start();
-                    respuesta="6&";
+                    respuesta="6&"+matricula+"&"+fechaCompra+"&"+fechaRevision+"&"+documentacion;
                 }else{
                     respuesta="0&2";
                 }
@@ -558,7 +547,7 @@ public class BaseDeDatos {
                 EnviarMail enviarMail = new EnviarMail(correoProveedor,datosPedidos);
                 enviarMail.start();
                 PreparedStatement pps2 = connection.prepareStatement("INSERT INTO historial (descripcion,fecha,cod_estado,cod_mercancia) VALUES (?,?,?,?)");
-                pps2.setString(1,"En instalaciones de proveedor. Pronto se procederá a su recogida.");
+                pps2.setString(1,"En instalaciones de proveedor.");
                 pps2.setString(2,LocalDate.now().toString());
                 pps2.setInt(3,1);
                 pps2.setInt(4,keys.getInt(1));
@@ -1067,7 +1056,6 @@ public class BaseDeDatos {
         }
 
     }
-
     public String asignarVehiculo(String matricula,String codigoTrabajador){
         String respuesta = "";
         try {
@@ -1092,5 +1080,4 @@ public class BaseDeDatos {
 
         return respuesta;
     }
-    // TODO: Añadir funcionalidad cuando un pedido está en estado Ausente.
 }

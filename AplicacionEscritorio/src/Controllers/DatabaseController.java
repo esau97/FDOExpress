@@ -237,6 +237,7 @@ public class DatabaseController {
             dataSocket.send(packetToSend);
 
         } catch (IOException ex) {
+            ex.printStackTrace();
             Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
         }
         dataSocket.close();

@@ -33,26 +33,26 @@
             </ImageView>
          </children>
       </Pane>
-      <JFXTextField fx:id="textName" focusColor="#48a5ea" layoutX="133.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="First Name" />
-      <JFXTextField fx:id="textLName" focusColor="#48a5ea" layoutX="418.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Last Name" />
+      <JFXTextField fx:id="textName" focusColor="#48a5ea" layoutX="133.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Nombre" />
+      <JFXTextField fx:id="textLName" focusColor="#48a5ea" layoutX="418.0" layoutY="92.0" prefHeight="25.0" prefWidth="217.0" promptText="Apellidos" />
       <JFXTextField fx:id="textEmail" focusColor="#48a5ea" layoutX="133.0" layoutY="157.0" prefHeight="25.0" prefWidth="217.0" promptText="Email ID" />
-      <JFXPasswordField fx:id="textPassword" layoutX="416.0" layoutY="157.0" prefHeight="27.0" prefWidth="217.0" promptText="Password" />
-      <JFXTextField fx:id="textAddress" focusColor="#48a5ea" layoutX="133.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Address" />
-      <JFXTextField fx:id="textCode" focusColor="#48a5ea" layoutX="416.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Zip Code" />
-      <JFXTextField fx:id="textNumber" focusColor="#48a5ea" layoutX="133.0" layoutY="283.0" prefHeight="25.0" prefWidth="217.0" promptText="Phone Number" />
-      <Label layoutX="133.0" layoutY="31.0" text="Basic Details" textFill="#48a5ea">
+      <JFXPasswordField fx:id="textPassword" layoutX="416.0" layoutY="157.0" prefHeight="27.0" prefWidth="217.0" promptText="Contraseña" />
+      <JFXTextField fx:id="textAddress" focusColor="#48a5ea" layoutX="133.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Direccion" />
+      <JFXTextField fx:id="textCode" focusColor="#48a5ea" layoutX="416.0" layoutY="224.0" prefHeight="25.0" prefWidth="217.0" promptText="Codigo Postal" />
+      <JFXTextField fx:id="textNumber" focusColor="#48a5ea" layoutX="133.0" layoutY="283.0" prefHeight="25.0" prefWidth="217.0" promptText="Telefono" />
+      <Label layoutX="133.0" layoutY="31.0" text="Datos trabajador" textFill="#48a5ea">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <JFXButton fx:id="submit" layoutX="524.0" layoutY="349.0" onAction="#register" prefHeight="25.0" prefWidth="116.0" style="-fx-background-color: #48A5EA;" text="Continue" textFill="WHITE" />
+      <JFXButton fx:id="submit" layoutX="524.0" layoutY="349.0" onAction="#register" prefHeight="25.0" prefWidth="116.0" style="-fx-background-color: #48A5EA;" text="Continuar" textFill="WHITE" />
       <Separator layoutX="133.0" layoutY="68.0" prefHeight="1.0" prefWidth="520.0" />
       <Label id="btn_exit" fx:id="btn_exit" layoutX="675.0" layoutY="2.0" onMousePressed="#handleButtonAction" prefHeight="25.0" prefWidth="21.0" text="X" textFill="#48a5ea">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Text fx:id="textInfo" layoutX="176.0" layoutY="359.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
-      <JFXTextField fx:id="textRuta" focusColor="#48a5ea" layoutX="416.0" layoutY="283.0" prefHeight="25.0" prefWidth="217.0" promptText="Main Rute" />
+      <Text fx:id="textInfo" fill="RED" layoutX="305.0" layoutY="367.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
+      <JFXTextField fx:id="textRuta" focusColor="#48a5ea" layoutX="416.0" layoutY="283.0" prefHeight="25.0" prefWidth="217.0" promptText="Ruta principal" />
    </children>
 </AnchorPane>

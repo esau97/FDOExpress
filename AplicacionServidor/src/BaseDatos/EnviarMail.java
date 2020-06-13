@@ -46,11 +46,6 @@ public class EnviarMail extends Thread{
         try{
             BodyPart texto = new MimeBodyPart();
             BodyPart adjunto = new MimeBodyPart();
-            /*MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(correoRemitente));
-            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(correoReceptor));
-            mimeMessage.setSubject(asunto);
-            mimeMessage.setText(mensaje);*/
             texto.setText(mensaje);
 
             adjunto.setDataHandler(new DataHandler(new FileDataSource(archivo)));
@@ -69,7 +64,7 @@ public class EnviarMail extends Thread{
             transport.close();
             File ar = new File(archivo);
             ar.delete();
-            JOptionPane.showMessageDialog(null,"Correo enviado");
+            //JOptionPane.showMessageDialog(null,"Correo enviado");
 
         }  catch(AddressException e) {
             System.out.println("Error en la direccion del correo");

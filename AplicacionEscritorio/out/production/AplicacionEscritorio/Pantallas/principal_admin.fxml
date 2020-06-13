@@ -35,7 +35,7 @@
                   <Insets left="40.0" />
                </padding>
             </Button>
-            <Button fx:id="btnOrders" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Orders">
+            <Button fx:id="btnOrders" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Pedidos">
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -47,7 +47,7 @@
                   <Insets left="40.0" />
                </padding>
             </Button>
-            <Button fx:id="btnCustomers" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="199.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Customers">
+            <Button fx:id="btnCustomers" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="199.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Proveedores">
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -59,7 +59,7 @@
                   <Insets left="40.0" />
                </padding>
             </Button>
-            <Button fx:id="btnEmployees" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="238.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Employees">
+            <Button fx:id="btnEmployees" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="238.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Empleados">
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -71,7 +71,7 @@
                   <Insets left="40.0" />
                </padding>
             </Button>
-            <Button fx:id="btnVehicles" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Vehicles">
+            <Button fx:id="btnVehicles" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Vehiculos">
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -83,7 +83,7 @@
                   <Insets left="40.0" />
                </padding>
             </Button>
-            <Button fx:id="btnSignOut" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="199.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Sign Out">
+            <Button fx:id="btnSignOut" alignment="BASELINE_LEFT" graphicTextGap="20.0" layoutX="10.0" layoutY="199.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="39.0" prefWidth="253.0" stylesheets="@../styles.css" text="Cerrar sesion">
                <graphic>
                   <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -104,38 +104,7 @@
       </VBox>
       <StackPane fx:id="parentPane" layoutX="244.0" prefHeight="589.0" prefWidth="662.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Pane fx:id="pnlCustomers" opacity="0.0" prefHeight="572.0" prefWidth="221.0">
-               <children>
-                  <Label layoutX="24.0" layoutY="43.0" text="Customers">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="706.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Imagenes/icons8_Search_52px.png" />
-                     </image>
-                  </ImageView>
-                  <JFXTextField fx:id="searchCompany" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Search" />
-                  <JFXButton id="btnAdd" fx:id="btnAddCompany" layoutX="643.0" layoutY="114.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New provider" />
-                  <JFXTreeTableView fx:id="tableProviders" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
-                     <columns>
-                        <TreeTableColumn fx:id="columnCompanyName" prefWidth="179.0" text="Company Name" />
-                        <TreeTableColumn fx:id="columnCompanyAddress" prefWidth="179.0" text="Address" />
-                        <TreeTableColumn fx:id="columnCompanyNumber" prefWidth="179.0" text="Phone Number" />
-                        <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="179.0" text="Email" />
-                     </columns>
-                  </JFXTreeTableView>
-                  <JFXButton fx:id="btnRefresh11" contentDisplay="RIGHT" layoutX="660.0" layoutY="177.0" onAction="#handleClicks" text="Refresh">
-                     <graphic>
-                        <FontAwesomeIcon glyphName="UNDO" />
-                     </graphic>
-                  </JFXButton>
-                  <JFXComboBox fx:id="comboBoxCompany" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filter by" />
-                  <Text fx:id="textInfo1" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-               </children>
-            </Pane>
-            <Pane fx:id="pnlEmployees" opacity="0.0" prefHeight="572.0" prefWidth="221.0">
+            <Pane fx:id="pnlEmployees" prefHeight="572.0" prefWidth="221.0">
                <children>
                   <Label fx:id="labelName" layoutX="24.0" layoutY="43.0" text="Nombre">
                      <font>
@@ -144,10 +113,10 @@
                   </Label>
                   <JFXTreeTableView fx:id="tableEmployees" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
                      <columns>
-                        <TreeTableColumn fx:id="columnName" prefWidth="159.0" text="Name" />
-                        <TreeTableColumn fx:id="columnEmail" prefWidth="127.0" text="email" />
-                        <TreeTableColumn fx:id="columnAddress" prefWidth="163.0" text="Address" />
-                        <TreeTableColumn fx:id="columnPhone" prefWidth="114.33331298828125" text="Phone" />
+                        <TreeTableColumn fx:id="columnName" prefWidth="159.0" text="Hombre" />
+                        <TreeTableColumn fx:id="columnEmail" prefWidth="127.0" text="eMail" />
+                        <TreeTableColumn fx:id="columnAddress" prefWidth="163.0" text="Direccion" />
+                        <TreeTableColumn fx:id="columnPhone" prefWidth="114.33331298828125" text="Telefono" />
                         <TreeTableColumn fx:id="columnRuta" prefWidth="151.0" text="Ruta" />
                      </columns>
                   </JFXTreeTableView>
@@ -156,56 +125,22 @@
                         <Image url="@../Imagenes/icons8_Search_52px.png" />
                      </image>
                   </ImageView>
-                  <JFXTextField fx:id="searchEmployee" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Search" />
-                  <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="627.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Employee" />
-                  <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="500.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Admin" />
-                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="660.0" layoutY="177.0" onAction="#handleClicks" text="Refresh">
+                  <JFXTextField fx:id="searchEmployee" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
+                  <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="627.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo empleado" />
+                  <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="482.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo administrador" />
+                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
                   </JFXButton>
-                  <JFXComboBox fx:id="comboBoxEmployees" layoutX="378.0" layoutY="45.0" prefWidth="126.0" promptText="Filter by" />
+                  <JFXComboBox fx:id="comboBoxEmployees" layoutX="378.0" layoutY="45.0" prefWidth="126.0" promptText="Filtrado" />
                   <JFXButton fx:id="asignarRuta" layoutX="34.0" layoutY="181.0" onAction="#handleClicks" text="Ruta" />
                   <Text fx:id="textInfo2" layoutX="145.0" layoutY="198.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                </children>
             </Pane>
-            <Pane fx:id="pnlOrders" opacity="0.0" prefHeight="572.0" prefWidth="221.0">
+            <Pane fx:id="pnlCustomers" prefHeight="572.0" prefWidth="221.0">
                <children>
-                  <Label layoutX="24.0" layoutY="43.0" text="Orders">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-                  <JFXTreeTableView fx:id="tableOrders" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
-                     <columns>
-                        <TreeTableColumn fx:id="columnCityOrder" prefWidth="238.0" text="City" />
-                        <TreeTableColumn fx:id="columnQuantityEmployee" prefWidth="238.0" text="Employees" />
-                        <TreeTableColumn fx:id="columnQuantityOrder" prefWidth="239.0" text="Quantity Orders" />
-                     </columns>
-                  </JFXTreeTableView>
-                  <ImageView fx:id="btnSearchOrders" fitHeight="27.0" fitWidth="29.0" layoutX="706.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Imagenes/icons8_Search_52px.png" />
-                     </image>
-                  </ImageView>
-                  <JFXTextField fx:id="searchOrders" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Search" />
-                  <JFXButton id="btnAdd" fx:id="btnAddOrder" layoutX="654.0" layoutY="114.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New Order" />
-                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="660.0" layoutY="177.0" onAction="#handleClicks" text="Refresh">
-                     <graphic>
-                        <FontAwesomeIcon glyphName="UNDO" />
-                     </graphic>
-                  </JFXButton>
-                  <JFXComboBox fx:id="comboBoxOrders" layoutX="378.0" layoutY="45.0" prefWidth="126.0" promptText="Filter by" />
-                  <JFXButton fx:id="btnActualizarRuta" contentDisplay="RIGHT" layoutX="23.0" layoutY="183.0" onAction="#handleClicks" text="Actualizar rutas">
-                     <graphic>
-                        <FontAwesomeIcon glyphName="UNDO" />
-                     </graphic>
-                  </JFXButton>
-               </children>
-            </Pane>
-            <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
-               <children>
-                  <Label layoutX="24.0" layoutY="43.0" text="Vehicles">
+                  <Label layoutX="24.0" layoutY="43.0" text="Proveedores">
                      <font>
                         <Font size="26.0" />
                      </font>
@@ -215,28 +150,93 @@
                         <Image url="@../Imagenes/icons8_Search_52px.png" />
                      </image>
                   </ImageView>
-                  <JFXTextField fx:id="searchVehicles" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Search" />
-                  <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="651.0" layoutY="114.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="New vehicle" />
-                  <JFXTreeTableView fx:id="tableVehicles" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
+                  <JFXTextField fx:id="searchCompany" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
+                  <JFXButton id="btnAdd" fx:id="btnAddCompany" layoutX="620.0" layoutY="112.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo proveedor" />
+                  <JFXTreeTableView fx:id="tableProviders" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
                      <columns>
-                        <TreeTableColumn fx:id="columnRegistration" prefWidth="179.0" text="Car Registration" />
-                        <TreeTableColumn fx:id="columnPurchase" prefWidth="179.0" text="Purchase Date" />
-                        <TreeTableColumn fx:id="columnRevision" prefWidth="179.0" text="Revision Date" />
-                        <TreeTableColumn fx:id="columnDocumentation" prefWidth="178.0" text="Documentation" />
+                        <TreeTableColumn fx:id="columnCompanyName" prefWidth="179.0" text="Nombre" />
+                        <TreeTableColumn fx:id="columnCompanyAddress" prefWidth="179.0" text="Telefono" />
+                        <TreeTableColumn fx:id="columnCompanyNumber" prefWidth="179.0" text="Email" />
+                        <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="179.0" text="Direccion" />
                      </columns>
                   </JFXTreeTableView>
-                  <JFXButton fx:id="btnRefresh1" contentDisplay="RIGHT" layoutX="660.0" layoutY="177.0" onAction="#handleClicks" text="Refresh">
+                  <JFXButton fx:id="btnRefresh11" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
                   </JFXButton>
-                  <JFXComboBox fx:id="comboBoxVehicles" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filter by" />
+                  <JFXComboBox fx:id="comboBoxCompany" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filtrador" />
+                  <Text fx:id="textInfo1" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+               </children>
+            </Pane>
+            <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="24.0" layoutY="43.0" text="Vehiculos">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="706.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField fx:id="searchVehicles" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
+                  <JFXButton id="btnAdd" fx:id="btnAddVehicle" layoutX="625.0" layoutY="115.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo vehiculo" />
+                  <JFXTreeTableView fx:id="tableVehicles" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnRegistration" prefWidth="179.0" text="Matricula" />
+                        <TreeTableColumn fx:id="columnPurchase" prefWidth="179.0" text="Fecha de compra" />
+                        <TreeTableColumn fx:id="columnRevision" prefWidth="179.0" text="Fecha de revision" />
+                        <TreeTableColumn fx:id="columnDocumentation" prefWidth="178.0" text="Documentacion" />
+                     </columns>
+                  </JFXTreeTableView>
+                  <JFXButton fx:id="btnRefresh1" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
+                  <JFXComboBox fx:id="comboBoxVehicles" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filtrado" />
                   <Text fx:id="textInfo" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                   <Button fx:id="btnDownload" layoutX="618.0" layoutY="177.0" mnemonicParsing="false" onAction="#downloadDocumentation" prefHeight="25.0" prefWidth="42.0">
                      <graphic>
                         <FontAwesomeIcon fx:id="downloadIcon1" glyphName="DOWNLOAD" />
                      </graphic>
                   </Button>
+               </children>
+            </Pane>
+            <Pane fx:id="pnlOrders" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="24.0" layoutY="43.0" text="Pedidos">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <JFXTreeTableView fx:id="tableOrders" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnCityOrder" prefWidth="238.0" text="Ciudad" />
+                        <TreeTableColumn fx:id="columnQuantityEmployee" prefWidth="238.0" text="Empleados" />
+                        <TreeTableColumn fx:id="columnQuantityOrder" prefWidth="239.0" text="Pedidos" />
+                     </columns>
+                  </JFXTreeTableView>
+                  <ImageView fx:id="btnSearchOrders" fitHeight="27.0" fitWidth="29.0" layoutX="706.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField fx:id="searchOrders" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
+                  <JFXButton id="btnAdd" fx:id="btnAddOrder" layoutX="640.0" layoutY="114.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo pedido" />
+                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
+                  <JFXComboBox fx:id="comboBoxOrders" layoutX="378.0" layoutY="45.0" prefWidth="126.0" promptText="Filtrado" />
+                  <JFXButton fx:id="btnActualizarRuta" contentDisplay="RIGHT" layoutX="23.0" layoutY="183.0" onAction="#handleClicks" text="Actualizar rutas">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
                </children>
             </Pane>
          </children>

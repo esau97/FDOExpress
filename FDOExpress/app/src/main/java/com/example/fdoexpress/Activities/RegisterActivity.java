@@ -102,10 +102,11 @@ public class RegisterActivity extends AppCompatActivity {
             case REGISTRADO:
                 Toast.makeText(this, "Registrado", Toast.LENGTH_SHORT).show();
                 // Intent inicio sesion
-                saveLoginState(argumentos[5],argumentos[4],argumentos[2],argumentos[6]);
+
+                saveLoginState(argumentos[5],argumentos[4],argumentos[2],argumentos[8]);
                 Toast.makeText(this, "Login Correcto Receptor", Toast.LENGTH_SHORT).show();
                 Intent intent   = new Intent(RegisterActivity.this, MenuActivity.class);
-                intent.putExtra("JSON","{[]}");
+                intent.putExtra("JSON",argumentos[7]);
                 ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(RegisterActivity.this);
                 startActivity(intent,activityOptions.toBundle());
                 finish();
