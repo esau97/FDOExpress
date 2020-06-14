@@ -90,7 +90,7 @@ public class EnviarMail extends Thread{
             c.setRotate(rot);
             c.setModuleSize(tam);
 
-            String archivo = "qrPedidoNº"+numeroPedido+".gif";
+            String archivo = "qrPedidoNº"+numeroPedido+".png";
             c.renderBarcode(archivo);
 
         }catch (Exception e){

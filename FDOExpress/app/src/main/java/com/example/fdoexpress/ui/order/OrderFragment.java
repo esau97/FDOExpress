@@ -41,7 +41,6 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
     private SwipeRefreshLayout swipeRefreshLayout;
     private SharedPreferences preferences;
     private View root;
-    private LottieAnimationView lottieAnimationView;
     private LinearLayout linearLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -53,35 +52,28 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
         final TextView textView = root.findViewById(R.id.text_history);
         preferences =  getActivity().getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
         swipeRefreshLayout = root.findViewById(R.id.swLayout);
-        lottieAnimationView = root.findViewById(R.id.loadingAnimation);
         linearLayout = root.findViewById(R.id.layoutEmpty);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                String enviar = 9 +"&"+preferences.getString(Constantes.USER_PHONE,"");
-                MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
-                    @Override
-                    public void callback(String accion) {
-                        tratarMensaje(accion);
-                    }
-                },enviar);
-                log.execute();
+                cargarDatos();
             }
         });
         pedidoList=new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         pedidoAdapter = new PedidoAdapter(getContext(),pedidoList,this);
         recyclerView.setAdapter(pedidoAdapter);
-        Bundle bundle = getActivity().getIntent().getExtras();
+        cargarDatos();
+        /*Bundle bundle = getActivity().getIntent().getExtras();
         if(bundle!=null){
             mostrarDatos(bundle.get("JSON").toString());
-        }
+        }*/
         return root;
     }
 
     public void mostrarDatos(String json){
-        orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
+        orderViewModel = new ViewModelProvider(getParentFragment()).get(OrderViewModel.class);
         orderViewModel.getPedido(json).observe( getViewLifecycleOwner(), new Observer<List<Pedido>>() {
             @Override
             public void onChanged(List<Pedido> pedidos) {
@@ -137,5 +129,15 @@ public class OrderFragment extends Fragment implements PedidoAdapter.OnButtonCli
 
     }
 
+    public void cargarDatos(){
+        String enviar = 9 +"&"+preferences.getString(Constantes.USER_PHONE,"");
+        MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
+            @Override
+            public void callback(String accion) {
+                tratarMensaje(accion);
+            }
+        },enviar);
+        log.execute();
+    }
 
 }

@@ -34,7 +34,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClickedListener{
 
-    private HomeViewModel homeViewModel;
+
     private PedidoViewModel pedidoViewModel;
     private PedidoAdapter pedidoAdapter;
     private List<Pedido> pedidoList;
@@ -46,10 +46,9 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = root.findViewById(R.id.rvPedidos);
+        pedidoViewModel = new ViewModelProvider(getParentFragment()).get(PedidoViewModel.class);
         swipeRefreshLayout = root.findViewById(R.id.swLayout);
         pedidoList=new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -62,20 +61,14 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                String enviar = 9 +"&"+preferences.getString(Constantes.USER_PHONE,"");
-                MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
-                    @Override
-                    public void callback(String accion) {
-                        tratarMensaje(accion);
-                    }
-                },enviar);
-                log.execute();
+                cargarDatos();
             }
         });
-        Bundle bundle = getActivity().getIntent().getExtras();
+        cargarDatos();
+        /*Bundle bundle = getActivity().getIntent().getExtras();
         if(bundle!=null){
             mostrarDatos(bundle.get("JSON").toString());
-        }
+        }*/
         return root;
     }
 
@@ -108,7 +101,7 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
     }
 
     public void mostrarDatos(String json){
-        pedidoViewModel = new ViewModelProvider(this).get(PedidoViewModel.class);
+
         pedidoViewModel.getPedidoActivos(json).observe(getViewLifecycleOwner(), new Observer<List<Pedido>>() {
             @Override
             public void onChanged(List<Pedido> pedidos) {
@@ -146,4 +139,14 @@ public class HomeFragment extends Fragment implements PedidoAdapter.OnButtonClic
         
     }
 
+    public void cargarDatos(){
+        String enviar = 9 +"&"+preferences.getString(Constantes.USER_PHONE,"");
+        MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
+            @Override
+            public void callback(String accion) {
+                tratarMensaje(accion);
+            }
+        },enviar);
+        log.execute();
+    }
 }

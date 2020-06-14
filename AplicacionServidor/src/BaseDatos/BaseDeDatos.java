@@ -125,7 +125,6 @@ public class BaseDeDatos {
             respuesta="0&5";
         }
 
-
         return respuesta;
     }
     public String registrarVehiculo(String argumentos []){
@@ -573,7 +572,7 @@ public class BaseDeDatos {
         JSONArray jsonArray = new JSONArray();
         //TODO: Añadir número de teléfono para poder realizar las peticiones
         String consulta1="select cod_mercancia,nom_proveedor from mercancia where tfno_usuario =?;";
-        String consulta2="select fecha,cod_estado from historial where cod_mercancia=? ORDER BY fecha DESC limit 1;";
+        String consulta2="select fecha,cod_estado from historial where cod_mercancia=? ORDER BY fecha DESC,cod_historial DESC limit 1;";
         try {
             PreparedStatement statement = connection.prepareStatement(consulta1);
             PreparedStatement st = connection.prepareStatement(consulta2);
@@ -607,34 +606,7 @@ public class BaseDeDatos {
         }
         return respuesta;
     }
-    // Devuelvo todos los pedidos.
-    public String devolverPedidos(){
-        String respuesta="";
-        JSONObject root = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        String consulta1="SELECT direccion_envio,cod_proveedor FROM mercancia m,usuario u WHERE m.tfno_usuario=u.tfno AND u.email=?";
-        try {
-            PreparedStatement statement = connection.prepareStatement(consulta1);
-            ResultSet resultado = statement.executeQuery();
-            while (resultado.next()){
-                JSONObject pedido = new JSONObject();
-                pedido.put("direccion_envio",resultado.getString(1));
-                pedido.put("cod_proveedor",resultado.getInt(1));
-                jsonArray.add(pedido);
-            }
-            if(jsonArray!=null){
-                root.put("pedidos",jsonArray);
-                respuesta="codigoPedidos&"+root.toJSONString();
-            }else{
-                respuesta="0&errorPedidos";
-            }
 
-        } catch (SQLException throwables) {
-            System.out.println("Error al ejecutar la sentencia select from usuario");
-            throwables.printStackTrace();
-        }
-        return respuesta;
-    }
     // Cuando ya están asignadas las nuevas rutas de los trabajadores, el administrador indica que quiere
     // que se asignen los pedidos y los asignamos de forma automática.
     public String asignarRutas(){
@@ -976,7 +948,26 @@ public class BaseDeDatos {
         int codigoTrabajador = Integer.parseInt(codigo);
         JSONObject root = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        String consulta = "select mt.cod_mercancia from merc_tran mt, transporte t WHERE mt.cod_transporte=t.cod_transp  AND t.trabajador=? AND t.fecha=? AND tipo=2;";
+        String consulta = "SELECT h.cod_mercancia,t.fecha,h.cod_historial\n" +
+                "                FROM historial h,transporte t,merc_tran mt\n" +
+                "                WHERE mt.cod_mercancia = (\n" +
+                "               \t    SELECT h2.cod_mercancia\n" +
+                "                    FROM historial h2\n" +
+                "                    WHERE h2.cod_mercancia=h.cod_mercancia\n" +
+                "                    HAVING MAX(h2.cod_historial)\n" +
+                "                    ORDER BY h2.fecha DESC)\n" +
+                "                AND h.cod_historial= (\n" +
+                "                    SELECT MAX(h3.cod_historial)\n" +
+                "                    FROM historial h3\n" +
+                "                    WHERE h3.cod_mercancia=h.cod_mercancia\n" +
+                "                    ORDER BY h3.fecha DESC)\n" +
+                "                \n" +
+                "                AND mt.cod_transporte=t.cod_transp\n" +
+                "                AND t.trabajador=? \n" +
+                "                AND t.fecha=?\n" +
+                "                AND t.tipo=2\n" +
+                "                AND h.cod_estado = 4;";
+        //String consulta = "select mt.cod_mercancia from merc_tran mt, transporte t WHERE mt.cod_transporte=t.cod_transp  AND t.trabajador=? AND t.fecha=? AND tipo=2;";
         String consulta2= "select m.nombre_destinatario,m.direccion_envio,m.cod_mercancia,m.nom_proveedor from mercancia m WHERE m.cod_mercancia=?; ";
         try{
             PreparedStatement pps = connection.prepareStatement(consulta);
@@ -1002,6 +993,9 @@ public class BaseDeDatos {
             }
             if(jsonArray!=null){
                 root.put("pedidos",jsonArray);
+            }
+            if(root==null){
+                return "{[]}";
             }
 
 

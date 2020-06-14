@@ -1,23 +1,27 @@
 package com.example.fdoexpress.uiProveedor;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
+import com.example.fdoexpress.Activities.MainActivity;
 import com.example.fdoexpress.PeticionListener;
 import com.example.fdoexpress.R;
 import com.example.fdoexpress.Tasks.MainAsyncTask;
 import com.example.fdoexpress.Utils.Codigos;
 import com.example.fdoexpress.Utils.Constantes;
-import com.google.android.material.snackbar.Snackbar;
 
 public class ProveedorActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
     private ScrollView scrollView;
-    private Button button;
+    private Button button,btnDesconect;
     private EditText nombre,direccion,telefono;
     private SharedPreferences preferences;
     private View root;
@@ -27,15 +31,17 @@ public class ProveedorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proveedor);
         getWindow().setBackgroundDrawableResource(R.drawable.fondo);
-        toolbar = findViewById(R.id.toolBar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Datos pedidos");
+        setSupportActionBar(toolbar);
         scrollView = findViewById(R.id.scroll);
         preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
         button = findViewById(R.id.benviar);
         nombre = findViewById(R.id.edit_name);
         direccion = findViewById(R.id.edit_address);
         telefono = findViewById(R.id.edit_tfno);
-        toolbar.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.VISIBLE);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +55,8 @@ public class ProveedorActivity extends AppCompatActivity {
                 mainAsyncTask.execute();
             }
         });
+
+
     }
 
     public void tratarMensaje(String codigo){
@@ -75,5 +83,26 @@ public class ProveedorActivity extends AppCompatActivity {
                 Toast.makeText(this, "No se ha podido dar de alta el pedido", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_proveedor,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logOut:
+                SharedPreferences preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
+                preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,false).apply();
+                Intent intent   = new Intent(ProveedorActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

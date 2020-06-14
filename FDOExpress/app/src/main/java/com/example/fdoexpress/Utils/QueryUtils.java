@@ -58,13 +58,12 @@ public class QueryUtils {
                 JSONObject pedidoObject = (JSONObject) arrayPedido.get(i);
                 Pedido pedido = new Pedido();
                 // Compruebo si el estado del pedido es diferente a 5 para mostrarlo
-                if(Integer.parseInt(pedidoObject.get("cod_estado").toString())==5){
+
                     pedido.setcSeguimiento(pedidoObject.get("codigo_mercancia").toString());
                     pedido.setProveedor(pedidoObject.get("nombre_proveedor").toString());
                     pedido.comprobarEstado(Integer.parseInt(pedidoObject.get("cod_estado").toString()));
                     pedido.setFecha(pedidoObject.get("fecha").toString());
                     pedidoList.add(pedido);
-                }
             }
         } catch (ParseException e) {
             e.printStackTrace();

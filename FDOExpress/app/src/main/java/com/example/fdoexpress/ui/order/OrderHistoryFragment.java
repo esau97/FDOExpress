@@ -40,7 +40,7 @@ public class OrderHistoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         historyViewModel =
-                ViewModelProviders.of(this).get(HistoryViewModel.class);
+                ViewModelProviders.of(getParentFragment()).get(HistoryViewModel.class);
         mView =  inflater.inflate(R.layout.fragment_order_history, container, false);
 
         String myArg = HomeMapFragmentArgs.fromBundle(getArguments()).getMyArg();
@@ -55,30 +55,11 @@ public class OrderHistoryFragment extends Fragment {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                String enviar = "10&"+codigoPedido;
-                MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
-                    @Override
-                    public void callback(String accion) {
-                        tratarMensaje(accion);
-                    }
-                },enviar);
-                log.execute();
+                cargarDatos();
             }
         });
         recyclerView.setAdapter(historyAdapter);
-        String enviar = "10&"+codigoPedido;
-        MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
-            @Override
-            public void callback(final String accion) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tratarMensaje(accion);
-                    }
-                });
-            }
-        },enviar);
-        log.execute();
+        cargarDatos();
         return mView;
     }
 
@@ -103,7 +84,7 @@ public class OrderHistoryFragment extends Fragment {
         }
     }
     public void mostrarDatos(String json){
-        historyViewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
+        historyViewModel = new ViewModelProvider(getParentFragment()).get(HistoryViewModel.class);
         historyViewModel.getPedido(json).observe(getViewLifecycleOwner(), new Observer<List<HistoryPedido>>() {
             @Override
             public void onChanged(List<HistoryPedido> pedidos) {
@@ -123,6 +104,17 @@ public class OrderHistoryFragment extends Fragment {
             }
         });
 
+    }
+
+    public void cargarDatos(){
+        String enviar = "10&"+codigoPedido;
+        MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
+            @Override
+            public void callback(String accion) {
+                tratarMensaje(accion);
+            }
+        },enviar);
+        log.execute();
     }
 
 }

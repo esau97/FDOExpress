@@ -51,25 +51,18 @@ public class TrabajadorOrderFragment extends Fragment {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                String enviar ="16&"+preferences.getString(Constantes.USER_CODE,"");
-                MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
-                    @Override
-                    public void callback(String accion) {
-                        tratarMensaje(accion);
-                    }
-                }, enviar);
-                log.execute();
+                cargarDatos();
             }
         });
         pedidoList = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         trabajadorOrderAdapter = new TrabajadorOrderAdapter(getContext(), pedidoList);
         recyclerView.setAdapter(trabajadorOrderAdapter);
-        Bundle bundle = getActivity().getIntent().getExtras();
+        cargarDatos();
+        /*Bundle bundle = getActivity().getIntent().getExtras();
         if (bundle != null) {
-
             mostrarDatos(bundle.get("JSON").toString());
-        }
+        }*/
         return root;
     }
 
@@ -117,6 +110,17 @@ public class TrabajadorOrderFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 break;
         }
+    }
+
+    public void cargarDatos(){
+        String enviar ="16&"+preferences.getString(Constantes.USER_CODE,"");
+        MainAsyncTask log = new MainAsyncTask(new PeticionListener() {
+            @Override
+            public void callback(String accion) {
+                tratarMensaje(accion);
+            }
+        }, enviar);
+        log.execute();
     }
 }
 

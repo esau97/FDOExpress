@@ -83,7 +83,7 @@ public class Pedido implements Serializable {
                 setEstado("Pendiente");
                 break;
             case 2:
-                setEstado("Camino a instalaciones");
+                setEstado("En tránsito");
                 break;
             case 3:
                 setEstado("En Instalaciones");
@@ -98,7 +98,7 @@ public class Pedido implements Serializable {
                 setEstado("Ausente");
                 break;
             case 7:
-                setEstado("Devolucion");
+                setEstado("Devolución");
                 break;
             case 8:
                 setEstado("Recogida en almacén");

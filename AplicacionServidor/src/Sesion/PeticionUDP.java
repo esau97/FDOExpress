@@ -83,33 +83,6 @@ public class PeticionUDP extends Thread{
                 respuesta=bbdd.registroTrabajador(argumentos);
                 System.out.println("Envio"+respuesta);
                 break;
-            case INICIO_SESION:
-                System.out.println("INICIO SESION");
-                respuesta=bbdd.iniciarSesion(argumentos[1],argumentos[2]);
-                System.out.println(respuesta);
-                String rsp [] = respuesta.split("&");
-                // Si el usuario se ha loqueado correctamente lo almaceno en una lista
-                if (rsp[0].equals("1") && (rsp[1].equals("1")||rsp[1].equals("4"))){
-                    informacionCompartida.setListaLogueados(argumentos[1]);
-                    JSONParser parser = new JSONParser();
-                    try {
-                        JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/tablas.json"));
-                        respuesta+="&"+root.toJSONString();
-                        // TODO: cambiar el codigo en el lado escritorio
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    //Compruebo si se ha logueado correctamente y si el usuario
-                    // es un receptor, si es así obtengo sus pedidos.
-                }else if(rsp[0].equals("1") && rsp[1].equals("2")){
-                    informacionCompartida.setListaLogueados(argumentos[1]);
-                    String [] cod = respuesta.split("&");
-                    respuesta+="&"+bbdd.devolverPedidosActivos(cod[4]);
-                    System.out.println("Pedidos activos "+respuesta);
-                }
-                break;
 
             case CARGAR_TABLAS:
                 System.out.println("CARGANDO TABLAS");
