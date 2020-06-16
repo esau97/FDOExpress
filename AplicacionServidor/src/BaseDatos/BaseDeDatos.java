@@ -110,6 +110,7 @@ public class BaseDeDatos {
                     new Thread(){
                         @Override
                         public void run(){
+                            System.out.println("----CARGANDO TABLAS----");
                             cargarDatosTablas();
                         }
                     }.start();
@@ -150,9 +151,19 @@ public class BaseDeDatos {
                     new Thread(){
                         @Override
                         public void run(){
+                            System.out.println("----CARGANDO TABLAS----");
                             cargarDatosTablas();
+                            try{
+                                PreparedStatement insertUbicacion = (PreparedStatement) connection.prepareStatement("INSERT INTO ubicacion (latitud,longitud,matricula) VALUES (36.526718,-6.2891002,?)");
+                                insertUbicacion.setString(1,matricula);
+                                insertUbicacion.executeUpdate();
+                            } catch (SQLException throwables) {
+                                throwables.printStackTrace();
+                            }
+
                         }
                     }.start();
+
                     respuesta="6&"+matricula+"&"+fechaCompra+"&"+fechaRevision+"&"+documentacion;
                 }else{
                     respuesta="0&2";
@@ -260,7 +271,7 @@ public class BaseDeDatos {
             }else{
 
             }
-
+            System.out.println("Ubicacion obtenida");
         } catch (SQLException throwables) {
             System.out.println("Error al ejecutar la sentencia select from usuario");
             throwables.printStackTrace();
@@ -446,6 +457,7 @@ public class BaseDeDatos {
                     new Thread(){
                         @Override
                         public void run(){
+                            System.out.println("----CARGANDO TABLAS----");
                             cargarDatosTablas();
                             usuarioProveedor(argumentos);
                         }
@@ -487,6 +499,7 @@ public class BaseDeDatos {
                     new Thread(){
                         @Override
                         public void run(){
+                            System.out.println("----CARGANDO TABLAS----");
                             cargarDatosTablas();
                         }
                     }.start();
@@ -523,7 +536,7 @@ public class BaseDeDatos {
         try{
             String correoProveedor = argumentos[4];
             // TODO: Añadir número de seguimiento
-            String nombre_destinatario,direccion_envio,numeroTfno,nombreProveedor;
+            String nombre_destinatario,direccion_envio,numeroTfno,nombreProveedor,estadoPedido;
 
             nombreProveedor=obtenerCodProveedor(correoProveedor);
             // Recorro el json y voy añadiendo a la base de datos todos los pedidos que me ha enviado
@@ -531,6 +544,8 @@ public class BaseDeDatos {
             nombre_destinatario=argumentos[1];
             direccion_envio=argumentos[2];
             numeroTfno=argumentos[3];
+            estadoPedido=argumentos[5];
+
 
             PreparedStatement pps=(PreparedStatement) connection.prepareStatement("INSERT INTO mercancia (direccion_envio,nombre_destinatario,tfno_usuario,nom_proveedor) VALUES (?,?,?,?)");
             pps.setString(1, direccion_envio);
@@ -546,10 +561,18 @@ public class BaseDeDatos {
                 EnviarMail enviarMail = new EnviarMail(correoProveedor,datosPedidos);
                 enviarMail.start();
                 PreparedStatement pps2 = connection.prepareStatement("INSERT INTO historial (descripcion,fecha,cod_estado,cod_mercancia) VALUES (?,?,?,?)");
-                pps2.setString(1,"En instalaciones de proveedor.");
-                pps2.setString(2,LocalDate.now().toString());
-                pps2.setInt(3,1);
-                pps2.setInt(4,keys.getInt(1));
+                if(estadoPedido.equals("1")){
+                    pps2.setString(1,"En instalaciones de proveedor.");
+                    pps2.setString(2,LocalDate.now().toString());
+                    pps2.setInt(3,1);
+                    pps2.setInt(4,keys.getInt(1));
+                }else{
+                    pps2.setString(1,"Esperando recogida para posterior devolución.");
+                    pps2.setString(2,LocalDate.now().toString());
+                    pps2.setInt(3,7);
+                    pps2.setInt(4,keys.getInt(1));
+                }
+
                 if(pps2.executeUpdate()>0){
                     respuesta="9&";
                 }else{
@@ -562,7 +585,6 @@ public class BaseDeDatos {
         }  catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
         return respuesta;
     }
     // Devuelvo los pedidos que aún no han sido entregados.
@@ -640,7 +662,7 @@ public class BaseDeDatos {
                 "    ORDER BY h3.fecha DESC)\n" +
                 "AND h.fecha <=? \n" +
                 "AND p.nombre=m.nom_proveedor\n" +
-                "AND h.cod_estado = 1;";
+                "AND h.cod_estado IN (1,7);";
         try {
             PreparedStatement pedidosPendientes = connection.prepareStatement(consulta);
             pedidosPendientes.setString(1,LocalDate.now().minusDays(1).toString());
@@ -653,7 +675,7 @@ public class BaseDeDatos {
              * trabajadores que vayan a repartir por Jerez.
              */
             while (resultado.next()){
-                direccion = resultado.getString(3).split(" ")[0];
+                direccion = resultado.getString(3).split(",")[0];
                 codigoMercancia = resultado.getInt(1);
                 if (!listaPedidos.containsKey(direccion)){
                     LinkedList <Integer> pedidos = new LinkedList<>();
@@ -715,6 +737,7 @@ public class BaseDeDatos {
 
                         List<Integer> lista = listaPedidos.get(clave).subList(inicio,fin);
                         for (int i = 0; i < lista.size() ; i++) {
+                            System.out.println("Pedido nº"+i);
                             asignarRecogida(lista.get(i),resultadoTrabajadores.getInt(1));
                         }
                         inicio=fin;
@@ -906,7 +929,11 @@ public class BaseDeDatos {
                 update.setString(3,rs.getString(1));
                 if(update.executeUpdate()>0){
                     respuesta="";
+                }else{
+                    respuesta="0&";
                 }
+            }else{
+                respuesta="0&";
             }
 
         } catch (SQLException throwables) {
@@ -991,18 +1018,138 @@ public class BaseDeDatos {
                     jsonArray.add(pedido);
                 }
             }
+
             if(jsonArray!=null){
-                root.put("pedidos",jsonArray);
+                root.put("pedidos_entregar",jsonArray);
             }
             if(root==null){
                 return "{[]}";
             }
-
+            root.put("pedidos_recoger",pedidosRecoger(codigoTrabajador));
+            root.put("pedidos_devolver",pedidosDevolver(codigoTrabajador));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return root.toJSONString();
+    }
+    public JSONArray pedidosRecoger(int codigo){
+        String respuesta = "";
+        int codigoTrabajador = codigo;
+        JSONObject root = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        String consulta = "SELECT h.cod_mercancia,t.fecha,h.cod_historial\n" +
+                "                FROM historial h,transporte t,merc_tran mt\n" +
+                "                WHERE mt.cod_mercancia = (\n" +
+                "               \t    SELECT h2.cod_mercancia\n" +
+                "                    FROM historial h2\n" +
+                "                    WHERE h2.cod_mercancia=h.cod_mercancia\n" +
+                "                    HAVING MAX(h2.cod_historial)\n" +
+                "                    ORDER BY h2.fecha DESC)\n" +
+                "                AND h.cod_historial= (\n" +
+                "                    SELECT MAX(h3.cod_historial)\n" +
+                "                    FROM historial h3\n" +
+                "                    WHERE h3.cod_mercancia=h.cod_mercancia\n" +
+                "                    ORDER BY h3.fecha DESC)\n" +
+                "                \n" +
+                "                AND mt.cod_transporte=t.cod_transp\n" +
+                "                AND t.trabajador=? \n" +
+                "                AND t.fecha=?\n" +
+                "                AND t.tipo=1\n" +
+                "                AND h.cod_estado = 1;";
+        //String consulta = "select mt.cod_mercancia from merc_tran mt, transporte t WHERE mt.cod_transporte=t.cod_transp  AND t.trabajador=? AND t.fecha=? AND tipo=2;";
+        String consulta2= "select m.nombre_destinatario,m.direccion_envio,m.cod_mercancia,m.nom_proveedor from mercancia m WHERE m.cod_mercancia=?; ";
+        try{
+            PreparedStatement pps = connection.prepareStatement(consulta);
+            pps.setInt(1,codigoTrabajador);
+            PreparedStatement pps2 = connection.prepareStatement(consulta2);
+            pps.setString(2,LocalDate.now().toString());
+
+            ResultSet result=pps.executeQuery();
+            ResultSet datosPedido ;
+            while(result.next()){
+                pps2.setInt(1,result.getInt(1));
+                datosPedido = pps2.executeQuery();
+                if(datosPedido.next()){
+                    JSONObject pedido = new JSONObject();
+
+                    pedido.put("nombre_destinatario",datosPedido.getString(1));
+                    pedido.put("direccion_envio",datosPedido.getString(2));
+                    pedido.put("cod_mercancia",datosPedido.getString(3));
+                    pedido.put("nombre_proveedor",datosPedido.getString(4));
+                    pedido.put("cod_estado",1);
+                    jsonArray.add(pedido);
+                }
+            }
+            if(jsonArray!=null){
+                root.put("pedidos",jsonArray);
+                return jsonArray;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return jsonArray;
+        //return root.toJSONString();
+    }
+    public JSONArray pedidosDevolver(int codigo){
+        String respuesta = "";
+        int codigoTrabajador = codigo;
+        JSONObject root = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        String consulta = "SELECT h.cod_mercancia,t.fecha,h.cod_historial\n" +
+                "                FROM historial h,transporte t,merc_tran mt\n" +
+                "                WHERE mt.cod_mercancia = (\n" +
+                "               \t    SELECT h2.cod_mercancia\n" +
+                "                    FROM historial h2\n" +
+                "                    WHERE h2.cod_mercancia=h.cod_mercancia\n" +
+                "                    HAVING MAX(h2.cod_historial)\n" +
+                "                    ORDER BY h2.fecha DESC)\n" +
+                "                AND h.cod_historial= (\n" +
+                "                    SELECT MAX(h3.cod_historial)\n" +
+                "                    FROM historial h3\n" +
+                "                    WHERE h3.cod_mercancia=h.cod_mercancia\n" +
+                "                    ORDER BY h3.fecha DESC)\n" +
+                "                \n" +
+                "                AND mt.cod_transporte=t.cod_transp\n" +
+                "                AND t.trabajador=? \n" +
+                "                AND t.fecha=?\n" +
+                "                AND t.tipo=1\n" +
+                "                AND h.cod_estado = 7;";
+        //String consulta = "select mt.cod_mercancia from merc_tran mt, transporte t WHERE mt.cod_transporte=t.cod_transp  AND t.trabajador=? AND t.fecha=? AND tipo=2;";
+        String consulta2= "select m.nombre_destinatario,m.direccion_envio,m.cod_mercancia,m.nom_proveedor from mercancia m WHERE m.cod_mercancia=?; ";
+        try{
+            PreparedStatement pps = connection.prepareStatement(consulta);
+            pps.setInt(1,codigoTrabajador);
+            PreparedStatement pps2 = connection.prepareStatement(consulta2);
+            pps.setString(2,LocalDate.now().toString());
+
+            ResultSet result=pps.executeQuery();
+            ResultSet datosPedido ;
+            while(result.next()){
+                pps2.setInt(1,result.getInt(1));
+                datosPedido = pps2.executeQuery();
+                if(datosPedido.next()){
+                    JSONObject pedido = new JSONObject();
+
+                    pedido.put("nombre_destinatario",datosPedido.getString(1));
+                    pedido.put("direccion_envio",datosPedido.getString(2));
+                    pedido.put("cod_mercancia",datosPedido.getString(3));
+                    pedido.put("nombre_proveedor",datosPedido.getString(4));
+                    pedido.put("cod_estado",7);
+                    jsonArray.add(pedido);
+                }
+            }
+            if(jsonArray!=null){
+                root.put("pedidos",jsonArray);
+                return jsonArray;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return jsonArray;
+        //return root.toJSONString();
     }
     public void guardarAusente(int codigoPedido){
 

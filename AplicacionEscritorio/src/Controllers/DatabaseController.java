@@ -42,50 +42,32 @@ public class DatabaseController {
         }
     }
 
-    public String enviarDatos(String email,String contrasena, int accion){
+    public String iniciarSesion(String email, String contrasena, int accion){
         String recibido="";
         String enviar="";
         String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(contrasena)));
         enviar=accion+"&"+email+"&"+passwordCodif;
 
         try {
-            dataSocket = new DatagramSocket();
-            bufOut = enviar.getBytes(); //In this program, no information is set by the client
-            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            System.out.println("Envio "+enviar);
-            dataSocket.setBroadcast(true);
-            dataSocket.send(packetToSend);
+            Socket socket = new Socket(pref.getDir_ip(),pref.getPuerto());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(enviar);
+            recibido = in.readLine();
 
-            byte[] last = "finish".getBytes();
-            packetToSend = new DatagramPacket(last, last.length, address, 5555);
-            dataSocket.send(packetToSend);
-            bufIn = new byte[4096];
-            packetIn = new DatagramPacket(bufIn, bufIn.length);
-
-            dataSocket.receive(packetIn);
-            String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-            recibido+=cadena;
-            while(!cadena.equals("finish")){
-                dataSocket.receive(packetIn);
-                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-                if (!cadena.equals("finish")){
-                    recibido+=cadena;
-                }
-            }
-            recibido=recibido.trim();
-            System.out.println("Recibido"+recibido);
             callback.callback(recibido);
 
         } catch (UnknownHostException unknownHostException){
             System.out.println("Error al introducir la IP");
         } catch (IOException ex) {
+            recibido="0&5";
+            callback.callback(recibido);
             Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dataSocket.close();
 
         return recibido;
     }
-    public String enviarDatos(String fullName,String email,String password, String fullAddress,String phoneNumber,Integer rol){
+    public String enviarDatos(String fullName, String email, String password, String fullAddress, String phoneNumber, Integer rol){
         String recibido="";
         String enviar="";
         String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
@@ -98,21 +80,11 @@ public class DatabaseController {
             packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
             dataSocket.setBroadcast(true);
             dataSocket.send(packetToSend);
-            byte[] last = "finish".getBytes();
-            packetToSend = new DatagramPacket(last, last.length, address, 5555);
-            dataSocket.send(packetToSend);
             bufIn = new byte[4096];
             packetIn = new DatagramPacket(bufIn, bufIn.length);
             dataSocket.receive(packetIn);
-            String cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-            recibido+=cadena;
-            while(!cadena.equals("finish")){
-                dataSocket.receive(packetIn);
-                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-                if (!cadena.equals("finish")){
-                    recibido+=cadena;
-                }
-            }
+            recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+
             recibido=recibido.trim();
 
         } catch (IOException ex) {
@@ -232,9 +204,6 @@ public class DatabaseController {
             bufIn = new byte[4096];
             dataSocket.setBroadcast(true);
             dataSocket.send(packetToSend);
-            byte[] last = "finish".getBytes();
-            packetToSend = new DatagramPacket(last, last.length, address, 5555);
-            dataSocket.send(packetToSend);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -274,9 +243,6 @@ public class DatabaseController {
             packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
             bufIn = new byte[4096];
             dataSocket.setBroadcast(true);
-            dataSocket.send(packetToSend);
-            byte[] last = "finish".getBytes();
-            packetToSend = new DatagramPacket(last, last.length, address, 5555);
             dataSocket.send(packetToSend);
 
         } catch (IOException ex) {

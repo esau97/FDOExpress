@@ -1,6 +1,11 @@
 package BaseDatos;
 
 import com.barcodelib.barcode.QRCode;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -8,6 +13,9 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Properties;
 
 public class EnviarMail extends Thread{
@@ -49,7 +57,7 @@ public class EnviarMail extends Thread{
             texto.setText(mensaje);
 
             adjunto.setDataHandler(new DataHandler(new FileDataSource(archivo)));
-            adjunto.setFileName("EtiquetaPedidoNº"+numeroPedido+".png");
+            adjunto.setFileName("EtiquetaPedidoNº"+numeroPedido+".gif");
             MimeMultipart mimeMultipart = new MimeMultipart();
             mimeMultipart.addBodyPart(texto);
             mimeMultipart.addBodyPart(adjunto);
@@ -74,7 +82,7 @@ public class EnviarMail extends Thread{
         }
     }
 
-    public void generarQR(String datos){
+    /*public void generarQR(String datos){
         int udm=0,resol=84,rot=0;
         float mi=0.000f,md=0.000f,ms=0.000f,min=0.000f, tam = 8.00f;
         try{
@@ -90,12 +98,25 @@ public class EnviarMail extends Thread{
             c.setRotate(rot);
             c.setModuleSize(tam);
 
-            String archivo = "qrPedidoNº"+numeroPedido+".png";
+            String archivo = "qrPedidoNº"+numeroPedido+".gif";
             c.renderBarcode(archivo);
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
+    }*/
+    public void generarQR(String matricula){
+        String qrcode = "qrPedidoNº"+numeroPedido+".gif";
+        QRCodeWriter writer = new QRCodeWriter();
+        try{
+            BitMatrix bitMatrix = writer.encode(matricula, BarcodeFormat.QR_CODE,200,200);
+            Path path = FileSystems.getDefault().getPath(qrcode);
+            MatrixToImageWriter.writeToPath(bitMatrix,"GIF",path);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

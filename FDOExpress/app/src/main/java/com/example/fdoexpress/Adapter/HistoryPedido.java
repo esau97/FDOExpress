@@ -58,6 +58,15 @@ public class HistoryPedido implements Serializable {
             case 5:
                 setEstado("Entregado");
                 break;
+            case 6:
+                setEstado("Ausente");
+                break;
+            case 7:
+                setEstado("Devolución");
+                break;
+            case 8:
+                setEstado("Recogida en almacén");
+                break;
         }
     }
 }

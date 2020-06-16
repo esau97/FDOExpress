@@ -42,7 +42,6 @@ public class TrabajadorHomeFragment extends Fragment {
     private String token;
     private SharedPreferences preferences;
     private Vibrator vibrator;
-    private ProgressBar progressBar;
     private View root;
     private EditText editText;
 
@@ -54,13 +53,13 @@ public class TrabajadorHomeFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_trabajador_home, container, false);
         spinner = root.findViewById(R.id.spinnerEstado);
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        progressBar = root.findViewById(R.id.progress_bar);
         editText = root.findViewById(R.id.edit_descripcion);
-        progressBar.setVisibility(View.GONE);
         String lista [] = {"1.- Pendiente", "2.- En tránsito", "3.- En instalaciones", "4.- En reparto", "5.- Entregado", "6.- Ausente","7.- Asociar vehículo"};
         ArrayAdapter<String> valoresSpinner = new ArrayAdapter<String>(root.getContext(),
                 android.R.layout.simple_spinner_item, lista);
+
         valoresSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setSelection(3);
         spinner.setAdapter(valoresSpinner);
         cameraView=root.findViewById(R.id.camera_view);
         barcodeDetector =

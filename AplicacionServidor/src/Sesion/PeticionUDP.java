@@ -48,24 +48,9 @@ public class PeticionUDP extends Thread{
             System.out.println("Recibido"+recibido);
             enviar=tratarMensaje(recibido);
             bufOut=enviar.getBytes();
-            // TODO: cambiar peticion UDP para recibir cadenas de bytes pequeñas
-            //  y solo enviar un paquete
-            int maxValue=0;
-            System.out.println("Buffer a enviar es "+bufOut.length);
-            while(maxValue<=bufOut.length){
-                byte[] slice = Arrays.copyOfRange(bufOut, maxValue, maxValue+4096);
-                maxValue+=4096;
-                packetOut = new DatagramPacket(slice, slice.length, address, port);
-                dataSocket.send(packetOut);
-                System.out.println("Enviando"+new String(packetOut.getData(), 0, packetOut.getLength()));
-            }
-
-            byte []last = "finish".getBytes();
-            packetOut = new DatagramPacket(last, last.length, address, port);
+            packetOut = new DatagramPacket(bufOut,bufOut.length,address,port);
             dataSocket.send(packetOut);
-
-            System.out.println("Lo ultimo enviado es finish");
-
+            System.out.println("Enviando por UDP "+enviar);
 
         } catch (IOException ex) {
             Logger.getLogger(PeticionUDP.class.getName()).log(Level.SEVERE, null, ex);
@@ -84,13 +69,6 @@ public class PeticionUDP extends Thread{
                 System.out.println("Envio"+respuesta);
                 break;
 
-            case CARGAR_TABLAS:
-                System.out.println("CARGANDO TABLAS");
-                respuesta = bbdd.devolverDatosEmpleados();
-                break;
-            case REGISTRO_PROVEEDOR:
-                respuesta=bbdd.registrarProveedor(argumentos);
-                break;
             case OBTENER_UBICACION:
                 JSONParser parser = new JSONParser();
                 try {

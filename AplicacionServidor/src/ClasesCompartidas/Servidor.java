@@ -14,27 +14,21 @@ public class Servidor {
         Servidor serv = new Servidor();
 
         serv.informacionCompartida = new InformacionCompartida();
-        try {
-            ServerSocket serverSocket = null;
-            boolean listening = true;
-            serverSocket = new ServerSocket(6666);
-            new Thread(){
-                @Override
-                public void run(){
-                    BaseDeDatos bd = new BaseDeDatos();
-                    bd.cargarDatosTablas();
-                    bd.obtenerUbicacion();
-                }
+        new Thread(){
+            @Override
+            public void run(){
+                BaseDeDatos bd = new BaseDeDatos();
+                bd.cargarDatosTablas();
+                bd.obtenerUbicacion();
+            }
 
-            }.start();
-            // Este hilo se encarga de gestionar todas las peticiones UDP
-            new PeticionesUDP(serv.informacionCompartida).start();
-            // Este hilo se encarga de gestionar todas las peticiones TCP
-            new PeticionesTCP().start();
+        }.start();
+        // Este hilo se encarga de gestionar todas las peticiones UDP
+        new PeticionesUDP(serv.informacionCompartida).start();
+        // Este hilo se encarga de gestionar todas las peticiones TCP
+        new PeticionesTCP().start();
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+
     }
 
 }

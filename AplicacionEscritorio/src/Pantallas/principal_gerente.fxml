@@ -173,7 +173,7 @@
                   <JFXTextField fx:id="searchEmployee" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
                   <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="627.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo Empleado" />
                   <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="488.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo Administrador" />
-                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                  <JFXButton fx:id="btnActualizarEmpleados" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
@@ -205,7 +205,7 @@
                         <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="179.0" text="Direccion" />
                      </columns>
                   </JFXTreeTableView>
-                  <JFXButton fx:id="btnRefresh11" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                  <JFXButton fx:id="btnActualizarProveedores" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
@@ -236,7 +236,7 @@
                         <TreeTableColumn fx:id="columnDocumentation" prefWidth="178.0" text="Documentacion" />
                      </columns>
                   </JFXTreeTableView>
-                  <JFXButton fx:id="btnRefresh1" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                  <JFXButton fx:id="btnActualizarVehiculos" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>

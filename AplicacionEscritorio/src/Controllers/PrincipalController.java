@@ -55,7 +55,8 @@ public class PrincipalController implements Initializable {
     private Button btnOrders,btnCustomers,btnAddEmployee,
             btnEmployees,btnVehicles,btnAddAdmin,btnAddVehicle,
             btnRefresh,btnAddCompany,btnSignOut,btnLocation,
-            asignarRuta,btnActualizarRuta;
+            asignarRuta,btnActualizarRuta,btnActualizarVehiculos,
+            btnActualizarEmpleados,btnActualizarProveedores;
     @FXML
     private Pane pnlOrders,pnlCustomers,pnlEmployees,pnlVehicles;
     @FXML
@@ -223,7 +224,7 @@ public class PrincipalController implements Initializable {
             pnlEmployees.setStyle("-fx-background-color: #fff");
             pnlEmployees.toFront();
         }
-        if (actionEvent.getSource()==btnRefresh){
+        if (actionEvent.getSource()==btnRefresh || actionEvent.getSource()==btnActualizarVehiculos || actionEvent.getSource()==btnActualizarProveedores || actionEvent.getSource()==btnActualizarEmpleados){
             System.out.println("Cargando datos");
             tratarMensaje(databaseController.actualizarTablas());
             //cargarDatosTabla();

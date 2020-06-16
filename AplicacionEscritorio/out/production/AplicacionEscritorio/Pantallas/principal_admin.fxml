@@ -128,7 +128,7 @@
                   <JFXTextField fx:id="searchEmployee" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
                   <JFXButton id="btnAdd" fx:id="btnAddEmployee" layoutX="627.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo empleado" />
                   <JFXButton id="btnAdd" fx:id="btnAddAdmin" layoutX="482.0" layoutY="116.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo administrador" />
-                  <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                  <JFXButton fx:id="btnActualizarEmpleados" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
@@ -160,7 +160,7 @@
                         <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="179.0" text="Direccion" />
                      </columns>
                   </JFXTreeTableView>
-                  <JFXButton fx:id="btnRefresh11" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                  <JFXButton fx:id="btnActualizarProveedores" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
@@ -191,14 +191,14 @@
                         <TreeTableColumn fx:id="columnDocumentation" prefWidth="178.0" text="Documentacion" />
                      </columns>
                   </JFXTreeTableView>
-                  <JFXButton fx:id="btnRefresh1" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                  <JFXButton fx:id="btnActualizarVehiculos" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
                   </JFXButton>
                   <JFXComboBox fx:id="comboBoxVehicles" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filtrado" />
                   <Text fx:id="textInfo" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-                  <Button fx:id="btnDownload" layoutX="618.0" layoutY="177.0" mnemonicParsing="false" onAction="#downloadDocumentation" prefHeight="25.0" prefWidth="42.0">
+                  <Button fx:id="btnDownload" layoutX="600.0" layoutY="176.0" mnemonicParsing="false" onAction="#downloadDocumentation" prefHeight="25.0" prefWidth="42.0">
                      <graphic>
                         <FontAwesomeIcon fx:id="downloadIcon1" glyphName="DOWNLOAD" />
                      </graphic>
@@ -225,7 +225,6 @@
                      </image>
                   </ImageView>
                   <JFXTextField fx:id="searchOrders" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
-                  <JFXButton id="btnAdd" fx:id="btnAddOrder" layoutX="640.0" layoutY="114.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo pedido" />
                   <JFXButton fx:id="btnRefresh" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />

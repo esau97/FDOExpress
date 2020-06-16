@@ -12,6 +12,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.jfoenix.controls.*;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -122,7 +123,19 @@ public class RegisterController implements Initializable {
             String fullAddress = address +" "+zipCode;
             String phoneNumber = textNumber.getText().trim();
             String ruta = textRuta.getText().trim();
-            tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol));
+            databaseController.setCallbackPerformed(new MyCallback() {
+                @Override
+                public void callback(String accion) {
+                    tratarMensaje(accion);
+                }
+            });
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol);
+                }
+            });
+            //tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol));
         }
         Node node = (Node)actionEvent.getSource();
         stage = (Stage) node.getScene().getWindow();
@@ -139,7 +152,7 @@ public class RegisterController implements Initializable {
                 break;
             case REGISTRO:
                 try{
-                    textInfo.setText("Registered succesfully");
+                    textInfo.setText("Registrado correctamente.");
                     textInfo.setOpacity(1);
                     Thread.sleep(1000);
                     textInfo.setOpacity(0);
@@ -159,7 +172,6 @@ public class RegisterController implements Initializable {
                 break;
             case REGISTRO_VEHICULO:
                 TreeItem<Vehicle> newVehicle = new TreeItem(new Vehicle(codigos[1],codigos[2],codigos[3],codigos[4]));
-
                 if (tableVehicles!=null){
                     tableVehicles.getRoot().getChildren().add(newVehicle);
                 }else{
@@ -252,9 +264,6 @@ public class RegisterController implements Initializable {
                         String s = textRegistration.getText().substring(0, 8);
                         textRegistration.setText(s);
                     }
-                    if (!newValue.matches("\\d*")) {
-                        textRegistration.setText(newValue.replaceAll("[^\\d]", ""));
-                    }
                 }
             });
         }
@@ -305,7 +314,7 @@ public class RegisterController implements Initializable {
     }
     public boolean formatoCorrectoMatricula(String matricula){
         Pattern pattern = Pattern
-                .compile("^[0-9]{4}[A-Z]{3}$");
+                .compile("^[0-9]{4}-[A-Z]{3}$");
 
         Matcher mather = pattern.matcher(matricula);
 

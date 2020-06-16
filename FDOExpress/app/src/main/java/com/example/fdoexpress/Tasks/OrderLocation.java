@@ -50,21 +50,9 @@ public class OrderLocation extends Thread{
                 System.out.println("En bucle");
                 packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
                 dataSocket.send(packetToSend);
-                byte[] last = "finish".getBytes();
-                packetToSend = new DatagramPacket(last, last.length, address, 5555);
-                dataSocket.send(packetToSend);
                 dataSocket.receive(packetIn);
-                cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-                if(!cadena.equals("finish")){
-                    recibido+=cadena;
-                }
-                while(!cadena.equals("finish")){
-                    dataSocket.receive(packetIn);
-                    cadena = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-                    if (!cadena.equals("finish")){
-                        recibido+=cadena;
-                    }
-                }
+                recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
+
                 recibido=recibido.trim();
                 System.out.println(recibido);
                 peticionListener.callback(recibido);

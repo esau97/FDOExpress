@@ -148,6 +148,7 @@ public class PeticionTCP extends Thread{
                 break;
             case PEDIDOS_REPARTIR:
                 respuesta = "5&"+bbdd.pedidosReparto(argumentos[1]);
+                //respuesta+="&"+ bbdd.pedidosRecoger(argumentos[1]);
                 break;
             case ASIGNAR_VEHICULO:
                 respuesta = ""+bbdd.asignarVehiculo(argumentos[1],argumentos[2]);

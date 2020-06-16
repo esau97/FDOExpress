@@ -51,14 +51,6 @@
                 android:scrollbarStyle="insideInset"
                 android:layout_height="wrap_content"/>
 
-        <ProgressBar
-                android:layout_marginTop="20dp"
-                android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-
-        />
 
     </LinearLayout>
 

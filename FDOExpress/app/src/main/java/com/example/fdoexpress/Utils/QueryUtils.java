@@ -101,7 +101,31 @@ public class QueryUtils {
             JSONParser jsonParser = new JSONParser();
             JSONObject root = (JSONObject) jsonParser.parse(JSON);
             //JSONObject pedidos = root.getJSONObject("pedidos");
-            JSONArray arrayPedido = (JSONArray) root.get("pedidos");
+            JSONArray arrayPedido = (JSONArray) root.get("pedidos_recoger");
+            for (int i = 0; i <arrayPedido.size() ; i++) {
+                JSONObject pedidoObject = (JSONObject) arrayPedido.get(i);
+                Pedido pedido = new Pedido();
+                // Compruebo si el estado del pedido es diferente a 5 para mostrarlo
+                pedido.setcSeguimiento(pedidoObject.get("cod_mercancia").toString());
+                pedido.setProveedor(pedidoObject.get("nombre_proveedor").toString());
+                pedido.comprobarEstado(Integer.parseInt(pedidoObject.get("cod_estado").toString()));
+                pedido.setNombreDestinatario(pedidoObject.get("nombre_proveedor").toString());
+                pedido.setDireccion(pedidoObject.get("direccion_envio").toString());
+                pedidoList.add(pedido);
+            }
+            arrayPedido = (JSONArray) root.get("pedidos_entregar");
+            for (int i = 0; i <arrayPedido.size() ; i++) {
+                JSONObject pedidoObject = (JSONObject) arrayPedido.get(i);
+                Pedido pedido = new Pedido();
+                // Compruebo si el estado del pedido es diferente a 5 para mostrarlo
+                pedido.setcSeguimiento(pedidoObject.get("cod_mercancia").toString());
+                pedido.setProveedor(pedidoObject.get("nombre_proveedor").toString());
+                pedido.comprobarEstado(Integer.parseInt(pedidoObject.get("cod_estado").toString()));
+                pedido.setNombreDestinatario(pedidoObject.get("nombre_destinatario").toString());
+                pedido.setDireccion(pedidoObject.get("direccion_envio").toString());
+                pedidoList.add(pedido);
+            }
+            arrayPedido = (JSONArray) root.get("pedidos_devolver");
             for (int i = 0; i <arrayPedido.size() ; i++) {
                 JSONObject pedidoObject = (JSONObject) arrayPedido.get(i);
                 Pedido pedido = new Pedido();

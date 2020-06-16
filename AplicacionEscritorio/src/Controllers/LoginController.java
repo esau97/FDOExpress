@@ -2,7 +2,6 @@ package Controllers;
 
 import Entity.User;
 import Util.Codigos;
-import Util.Constantes;
 import Util.Preferencias;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -25,19 +24,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import netscape.javascript.JSObject;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.*;
-import java.util.EventListener;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,7 +58,7 @@ public class LoginController implements Initializable {
     FontAwesomeIcon configImage;
     @FXML
     private AnchorPane pnlParent;
-    private double xOffset=0,yOffset=0;
+
 
     private Preferencias preferencias;
     public LoginController(){
@@ -90,7 +82,7 @@ public class LoginController implements Initializable {
 
     public void iniciarSesion(ActionEvent actionEvent) throws IOException {
         //preferencias.setDir_ip("192.168.1.52");
-        databaseController = new DatabaseController(new Preferencias("192.168.1.52"));
+        databaseController = new DatabaseController(new Preferencias("192.168.1.59"));
         this.actionEvent = actionEvent;
         String respuesta="";
         respuesta=usuario.getText();
@@ -109,11 +101,9 @@ public class LoginController implements Initializable {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        databaseController.enviarDatos(user, pass, 0);
+                        databaseController.iniciarSesion(user, pass, 0);
                     }
                 });
-                //tratarMensaje(databaseController.enviarDatos(user,pass,0));
-                //enviarDatos(user,pass,0);
             }else {
                 showError("Error","Debe introducir el usuario y la contraseña");
             }
@@ -202,6 +192,10 @@ public class LoginController implements Initializable {
                 labelError.setText("Compruebe si ha escrito bien la direccion IP o si tiene conexion a internet.");
                 labelError.setOpacity(1);
                 break;
+            case 5:
+                labelError.setText("No se pudo establecer la conexión con servidor.");
+                labelError.setOpacity(1);
+                break;
 
         }
     }
@@ -264,32 +258,6 @@ public class LoginController implements Initializable {
         alert.setContentText(message);
 
         alert.showAndWait();
-    }
-    public boolean formatoCorrectoCorreo(String email){
-        Pattern pattern = Pattern
-                .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-
-        Matcher mather = pattern.matcher(email);
-
-        if (mather.find() == true) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    public void makeStageDragable(){
-
-        pnlParent.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
-        });
-        pnlParent.setOnMouseDragged(event -> {
-            window = (Stage) ((Node)event.getSource()).getScene().getWindow();
-            window.setX(event.getScreenX()-xOffset);
-            window.setY(event.getScreenY()-yOffset);
-
-        });
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {

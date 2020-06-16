@@ -25,6 +25,7 @@ public class ProveedorActivity extends AppCompatActivity {
     private EditText nombre,direccion,telefono;
     private SharedPreferences preferences;
     private View root;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,13 @@ public class ProveedorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_proveedor);
         getWindow().setBackgroundDrawableResource(R.drawable.fondo);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        spinner = findViewById(R.id.spinnerEstado);
+        String lista [] = {"1.- Recogida", "2.- Devolución"};
+        ArrayAdapter<String> valoresSpinner = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, lista);
+        valoresSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(valoresSpinner);
+        spinner.setSelection(0);
         toolbar.setTitle("Datos pedidos");
         setSupportActionBar(toolbar);
         scrollView = findViewById(R.id.scroll);
@@ -45,7 +53,14 @@ public class ProveedorActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String enviar = "8&"+ nombre.getText().toString()+"&"+direccion.getText().toString()+"&"+telefono.getText().toString()+"&"+preferences.getString(Constantes.USER_NAME,"");
+                String text = spinner.getSelectedItem().toString();
+                String estado;
+                if(text.substring(0,1).equals("2")){
+                    estado="7";
+                }else{
+                    estado="1";
+                }
+                String enviar = "8&"+ nombre.getText().toString()+"&"+direccion.getText().toString()+"&"+telefono.getText().toString()+"&"+preferences.getString(Constantes.USER_NAME,"")+"&"+estado;
                 MainAsyncTask mainAsyncTask = new MainAsyncTask(new PeticionListener() {
                     @Override
                     public void callback(String accion) {
