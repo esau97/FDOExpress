@@ -82,7 +82,7 @@ public class LoginController implements Initializable {
 
     public void iniciarSesion(ActionEvent actionEvent) throws IOException {
         //preferencias.setDir_ip("192.168.1.52");
-        databaseController = new DatabaseController(new Preferencias("192.168.1.59"));
+        databaseController = new DatabaseController(new Preferencias("192.168.1.52"));
         this.actionEvent = actionEvent;
         String respuesta="";
         respuesta=usuario.getText();

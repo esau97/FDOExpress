@@ -64,7 +64,7 @@
 
                     android:id="@+id/textViewEstado"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="1.1"
                     android:layout_height="wrap_content"
                     android:text="En reparto"
                     android:textSize="18sp"
@@ -73,7 +73,7 @@
             <TextView
                     android:id="@+id/textViewFecha"
                     android:layout_width="0dp"
-                    android:layout_weight="0.8"
+                    android:layout_weight="0.7"
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:textSize="12sp"

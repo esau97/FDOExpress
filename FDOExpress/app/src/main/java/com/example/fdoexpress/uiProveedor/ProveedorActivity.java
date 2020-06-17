@@ -22,7 +22,7 @@ public class ProveedorActivity extends AppCompatActivity {
 
     private ScrollView scrollView;
     private Button button,btnDesconect;
-    private EditText nombre,direccion,telefono;
+    private EditText nombre,direccion,telefono,localidad;
     private SharedPreferences preferences;
     private View root;
     private Spinner spinner;
@@ -46,8 +46,9 @@ public class ProveedorActivity extends AppCompatActivity {
         preferences = getSharedPreferences(Constantes.STRING_PREFERENCES,MODE_PRIVATE);
         button = findViewById(R.id.benviar);
         nombre = findViewById(R.id.edit_name);
-        direccion = findViewById(R.id.edit_address);
+        localidad = findViewById(R.id.edit_address);
         telefono = findViewById(R.id.edit_tfno);
+        direccion = findViewById(R.id.edit_fullAddress);
         scrollView.setVisibility(View.VISIBLE);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -55,19 +56,24 @@ public class ProveedorActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String text = spinner.getSelectedItem().toString();
                 String estado;
-                if(text.substring(0,1).equals("2")){
-                    estado="7";
-                }else{
-                    estado="1";
-                }
-                String enviar = "8&"+ nombre.getText().toString()+"&"+direccion.getText().toString()+"&"+telefono.getText().toString()+"&"+preferences.getString(Constantes.USER_NAME,"")+"&"+estado;
-                MainAsyncTask mainAsyncTask = new MainAsyncTask(new PeticionListener() {
-                    @Override
-                    public void callback(String accion) {
-                        tratarMensaje(accion);
+                if(!nombre.getText().toString().equals("")&& !localidad.getText().toString().equals("") && !direccion.getText().toString().equals("") && !telefono.getText().toString().equals("")){
+                    if(text.substring(0,1).equals("2")){
+                        estado="7";
+                    }else{
+                        estado="1";
                     }
-                },enviar);
-                mainAsyncTask.execute();
+                    String enviar = "8&"+ nombre.getText().toString()+"&"+localidad.getText().toString()+","+direccion.getText().toString()+"&"+telefono.getText().toString()+"&"+preferences.getString(Constantes.USER_NAME,"")+"&"+estado;
+                    MainAsyncTask mainAsyncTask = new MainAsyncTask(new PeticionListener() {
+                        @Override
+                        public void callback(String accion) {
+                            tratarMensaje(accion);
+                        }
+                    },enviar);
+                    mainAsyncTask.execute();
+                }else{
+                    Toast.makeText(ProveedorActivity.this, "Debes rellenar todos los campos.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 

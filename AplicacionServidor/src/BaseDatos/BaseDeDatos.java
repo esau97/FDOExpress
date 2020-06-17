@@ -766,10 +766,11 @@ public class BaseDeDatos {
     // En este método cambio el estado del pedido.
     public String cambiarEstadoPedido(String [] argumentos){
 
-        String estado=argumentos[1],codigoPedido=argumentos[2],descripcion=argumentos[6],codTrabajador=argumentos[7];
+
         String respuesta="";
 
         try{
+            String estado=argumentos[1],codigoPedido=argumentos[2],descripcion=argumentos[6],codTrabajador=argumentos[7];
             PreparedStatement pps = connection.prepareStatement("INSERT INTO historial (descripcion,fecha,cod_estado,cod_mercancia) VALUES (?,?,?,?)");
             pps.setString(1,descripcion);
             pps.setString(2,LocalDate.now().toString());
@@ -791,6 +792,8 @@ public class BaseDeDatos {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }catch (ArrayIndexOutOfBoundsException e){
+            respuesta="0&3";
         }
         return respuesta;
     }
@@ -1200,7 +1203,7 @@ public class BaseDeDatos {
     public String asignarVehiculo(String matricula,String codigoTrabajador){
         String respuesta = "";
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo=2");
+            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo IN (1,2)");
             pps.setInt(1, Integer.parseInt(codigoTrabajador));
             pps.setString(2, LocalDate.now().toString());
             ResultSet result = pps.executeQuery();
@@ -1214,9 +1217,13 @@ public class BaseDeDatos {
                 }else{
                     respuesta="0&";
                 }
+            }else{
+                respuesta="0&2";
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }catch (NumberFormatException e){
+            respuesta="0&4";
         }
 
         return respuesta;

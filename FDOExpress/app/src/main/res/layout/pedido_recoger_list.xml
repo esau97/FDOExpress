@@ -55,7 +55,8 @@
                         android:id="@+id/tvDireccion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Direccion"
+                        android:text="Dirección"
+                        android:maxLength="50"
                         android:textSize="16sp"
                 />
 
@@ -64,7 +65,7 @@
 
                     android:id="@+id/textViewEstado"
                     android:layout_width="0dp"
-                    android:layout_weight="1.1"
+                    android:layout_weight="1.2"
                     android:layout_height="wrap_content"
                     android:text="En reparto"
                     android:textSize="18sp"
@@ -73,11 +74,11 @@
             <TextView
                     android:id="@+id/tvSeguimiento"
                     android:layout_width="0dp"
-                    android:layout_weight="0.7"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:textSize="12sp"
-                    android:text="Nº 1244-2132"
+                    android:text="1244-2132"
                     android:layout_marginRight="4dp"
             />
 

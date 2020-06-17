@@ -189,6 +189,18 @@ public class TrabajadorHomeFragment extends Fragment {
                 Snackbar.make(root, "Se ha producido un error al cambiar el estado del pedido.", Snackbar.LENGTH_LONG)
                         .show();
                 break;
+            case 2:
+                Snackbar.make(root,"No se ha podido asignar vehículo. Inténtelo más tarde.",Snackbar.LENGTH_LONG)
+                        .show();
+                break;
+            case 3:
+                Snackbar.make(root,"Selecciona la opción asignar vehículo.",Snackbar.LENGTH_LONG)
+                        .show();
+                break;
+            case 4:
+                Snackbar.make(root,"Debe seleccionar un estado para el pedido.",Snackbar.LENGTH_LONG)
+                        .show();
+                break;
         }
     }
 

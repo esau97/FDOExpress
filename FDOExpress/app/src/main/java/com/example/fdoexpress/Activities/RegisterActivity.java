@@ -28,11 +28,8 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends AppCompatActivity {
 
     static Button bregister;
-    static EditText editName;
-    static EditText editPass;
-    static EditText editAddress;
-    static EditText editTfn;
-    static EditText editUser;
+    static EditText editName,editPass,editLocalidad,editTfn,editUser,editAddress;
+
     private SharedPreferences preferences;
 
 
@@ -46,7 +43,8 @@ public class RegisterActivity extends AppCompatActivity {
         editName = this.findViewById(R.id.edit_name);
         editPass = this.findViewById(R.id.edit_pass);
         editUser = this.findViewById(R.id.edit_user);
-        editAddress = this.findViewById(R.id.edit_address);
+        editLocalidad = this.findViewById(R.id.edit_address);
+        editAddress = this.findViewById(R.id.edit_fullAddress);
         editTfn = this.findViewById(R.id.edit_tfno);
         editUser.addTextChangedListener(new TextWatcher() {
             @Override
@@ -72,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String name = editName.getText().toString().trim();
                 String password = editPass.getText().toString().trim();
                 String username = editUser.getText().toString().trim();
-                String address = editAddress.getText().toString().trim();
+                String address = editLocalidad.getText().toString().trim()+","+editAddress.getText().toString();
                 String tfn = editTfn.getText().toString().trim();
                 final String passwordCodif = new String(Hex.encodeHex(DigestUtils.sha256(password)));
                 String enviar = 19 +"&"+ name +"&"+ username + "&"+passwordCodif+"&"+address+"&"+tfn+"&3";
@@ -93,7 +91,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-
     public void tratarMensaje(String codigo){
         String argumentos[] = codigo.split("&");
         System.out.println("Recibido"+codigo);
@@ -116,7 +113,6 @@ public class RegisterActivity extends AppCompatActivity {
                 break;
         }
     }
-
     public void mostrarError(int codigoError){
         switch (codigoError) {
             case 2:
@@ -127,7 +123,6 @@ public class RegisterActivity extends AppCompatActivity {
                 break;
         }
     }
-
     public void saveLoginState(String codigoUsuario,String tfno,String name, String password){
         preferences.edit().putBoolean(Constantes.PREFERENCE_LOGIN_STATE,true).apply();
         preferences.edit().putString(Constantes.USER_NAME,name).apply();
@@ -137,7 +132,6 @@ public class RegisterActivity extends AppCompatActivity {
         //preferences.edit().putString(Constantes.USER_TYPE,tipo);
         preferences.edit().commit();
     }
-
     public boolean formatoCorrectoCorreo(String email){
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
