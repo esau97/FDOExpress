@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class Preferencias {
-    private String dir_ip="";
+    private String dir_ip=Constantes.dir_ip;
     private int puerto = 4444;
 
     public Preferencias() {
