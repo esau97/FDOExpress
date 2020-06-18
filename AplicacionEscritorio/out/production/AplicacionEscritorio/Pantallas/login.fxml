@@ -63,7 +63,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </HBox>
-                        <JFXButton fx:id="buttonLogin" onKeyPressed="#iniciarSesion" prefHeight="27.0" prefWidth="89.0" style="-fx-border-radius: 200px; -fx-background-color: #2000ee#2000ee;" text="Login" textFill="WHITE">
+                        <JFXButton fx:id="buttonLogin" onAction="#iniciarSesion" onKeyPressed="#iniciarSesion" prefHeight="27.0" prefWidth="89.0" style="-fx-border-radius: 200px; -fx-background-color: #2000ee#2000ee;" text="Login" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="40.0" />
                            </VBox.margin>
