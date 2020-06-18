@@ -2,6 +2,7 @@ package Controllers;
 
 import Entity.User;
 import Util.Codigos;
+import Util.Constantes;
 import Util.Preferencias;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -81,50 +82,32 @@ public class LoginController implements Initializable {
     }
 
     public void iniciarSesion(ActionEvent actionEvent) throws IOException {
-        //preferencias.setDir_ip("192.168.1.52");
-        databaseController = new DatabaseController(new Preferencias("192.168.1.52"));
+        databaseController = new DatabaseController(new Preferencias(Constantes.dir_ip));
         this.actionEvent = actionEvent;
         String respuesta="";
         respuesta=usuario.getText();
 
         String user = usuario.getText().toString();
         String pass = passwordField.getText().toString();
-        if (preferencias.getDir_ip()!=""){
-            if(!user.equals("") && !pass.equals("")){
 
-                databaseController.setCallbackPerformed(new MyCallback() {
-                    @Override
-                    public void callback(String accion) {
-                        tratarMensaje(accion);
-                    }
-                });
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        databaseController.iniciarSesion(user, pass, 0);
-                    }
-                });
-            }else {
-                showError("Error","Debe introducir el usuario y la contraseña");
-            }
-        }else{
-            labelError.setText("Debes introducir la direccion IP");
-            labelError.setOpacity(1);
-            new Thread(){
+        if(!user.equals("") && !pass.equals("")){
+            databaseController.setCallbackPerformed(new MyCallback() {
                 @Override
-                public void run(){
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    labelError.setOpacity(0);
+                public void callback(String accion) {
+                    tratarMensaje(accion);
                 }
-            }.start();
+            });
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    databaseController.iniciarSesion(user, pass, 0);
+                }
+            });
+        }else {
+            showError("Error","Debe introducir el usuario y la contraseña");
         }
 
         System.out.println(respuesta);
-
     }
     public void initData(Projection projection){
         this.projection = projection;
@@ -229,14 +212,6 @@ public class LoginController implements Initializable {
                     window.setScene(principal);
                 }
                 if(window!=null){
-                /*root.setOnMousePressed(event ->{
-                    x = event.getX();
-                    y = event.getY();
-                });
-                root.setOnMouseDragged(event ->{
-                    window.setX(event.getSceneX()-x);
-                    window.setY(event.getSceneY()-y);
-                });*/
                     window.centerOnScreen();
                     window.setResizable(false);
                     window.show();

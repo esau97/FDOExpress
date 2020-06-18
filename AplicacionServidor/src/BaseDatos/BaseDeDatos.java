@@ -1,11 +1,13 @@
 package BaseDatos;
 
 
+import ClasesCompartidas.Constantes;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -233,7 +235,7 @@ public class BaseDeDatos {
                 ubicacionArray.add(ubObject);
             }
             ubicacionObject.put("Ubicaciones",ubicacionArray);
-            FileWriter fileWriter = new FileWriter("Ficheros/ubicaciones.json");
+            FileWriter fileWriter = new FileWriter(Constantes.rutaFicheros+"/ubicaciones.json");
             fileWriter.write(ubicacionObject.toJSONString());
             fileWriter.flush();
             fileWriter.close();
@@ -316,7 +318,7 @@ public class BaseDeDatos {
         root.put("Ciudades",cargarDatosPedidos());
         System.out.println("Guardando datos");
         try {
-            FileWriter fileWriter = new FileWriter("Ficheros/tablas.json");
+            FileWriter fileWriter = new FileWriter(Constantes.rutaFicheros+"/tablas.json");
             fileWriter.write(root.toJSONString());
             fileWriter.flush();
             fileWriter.close();

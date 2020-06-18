@@ -2,6 +2,7 @@ package Sesion;
 
 import BaseDatos.BaseDeDatos;
 import ClasesCompartidas.Codigos;
+import ClasesCompartidas.Constantes;
 import ClasesCompartidas.InformacionCompartida;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -72,7 +73,7 @@ public class PeticionUDP extends Thread{
             case OBTENER_UBICACION:
                 JSONParser parser = new JSONParser();
                 try {
-                    JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
+                    JSONObject root = (JSONObject) parser.parse(new FileReader(Constantes.rutaFicheros+"/ubicaciones.json"));
                     respuesta+="8&"+root.toJSONString();
                 } catch (ParseException e) {
                     e.printStackTrace();

@@ -37,8 +37,6 @@ public class DatabaseController {
             System.out.println("Guardando IP");
         } catch (UnknownHostException unknownHostException){
             System.out.println("Error al introducir la direccion IP");
-        }catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -58,6 +56,8 @@ public class DatabaseController {
             callback.callback(recibido);
 
         } catch (UnknownHostException unknownHostException){
+            recibido="0&5";
+            callback.callback(recibido);
             System.out.println("Error al introducir la IP");
         } catch (IOException ex) {
             recibido="0&5";

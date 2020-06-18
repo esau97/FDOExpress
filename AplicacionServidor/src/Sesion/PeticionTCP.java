@@ -2,6 +2,7 @@ package Sesion;
 
 import BaseDatos.BaseDeDatos;
 import ClasesCompartidas.Codigos;
+import ClasesCompartidas.Constantes;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -63,7 +64,7 @@ public class PeticionTCP extends Thread{
 
                     JSONParser parser = new JSONParser();
                     try {
-                        JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/tablas.json"));
+                        JSONObject root = (JSONObject) parser.parse(new FileReader(Constantes.rutaFicheros+"/tablas.json"));
                         respuesta+="&"+root.toJSONString();
                         // TODO: cambiar el codigo en el lado escritorio
                     } catch (IOException e) {
@@ -97,7 +98,7 @@ public class PeticionTCP extends Thread{
                 respuesta = bbdd.registro(argumentos);
                 break;
             case DESCARGAR_ARCHIVO:
-                respuesta = enviarFile(new File("Ficheros/"+argumentos[1]+"_"+argumentos[2]));
+                respuesta = enviarFile(new File(Constantes.rutaFicheros+"/"+argumentos[1]+"_"+argumentos[2]));
                 break;
             case GUARDAR_ARCHIVO:
                 respuesta = guardarArchivo(argumentos[1],argumentos[2]);
@@ -105,14 +106,14 @@ public class PeticionTCP extends Thread{
             case OBTENER_UBICACION:
                 JSONParser parser = new JSONParser();
                 try {
-                    JSONObject root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
+                    JSONObject root = (JSONObject) parser.parse(new FileReader(Constantes.rutaFicheros+"/ubicaciones.json"));
                     respuesta+="8&"+root.toJSONString();
                     boolean connected = true;
                     out.println(respuesta);
                     while (connected){
                         System.out.println("bucle");
                         bbdd.obtenerUbicacion();
-                        root = (JSONObject) parser.parse(new FileReader("Ficheros/ubicaciones.json"));
+                        root = (JSONObject) parser.parse(new FileReader(Constantes.rutaFicheros+"/ubicaciones.json"));
                         respuesta="8&"+root.toJSONString();
                         System.out.println("Envio respuesta "+respuesta);
 
@@ -170,7 +171,7 @@ public class PeticionTCP extends Thread{
         in = inputStream;
 
         try {
-            out = new FileOutputStream("Ficheros/"+matricula+"_"+nombreArchivo);
+            out = new FileOutputStream(Constantes.rutaFicheros+"/"+matricula+"_"+nombreArchivo);
         } catch (FileNotFoundException ex) {
             System.out.println("File not found. ");
         }
