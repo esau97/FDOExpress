@@ -88,6 +88,7 @@ public class ProveedorActivity extends AppCompatActivity {
         switch (Codigos.codigo_cliente(num)) {
             case NUEVO_PEDIDO:
                 Toast.makeText(this,"Datos enviados correctamente.", Toast.LENGTH_SHORT).show();
+                localidad.setText("");
                 nombre.setText("");
                 direccion.setText("");
                 telefono.setText("");

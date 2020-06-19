@@ -808,15 +808,14 @@ public class BaseDeDatos {
             pps.setString(2,LocalDate.now().toString());
             ResultSet result=pps.executeQuery();
             if(result.next()){
-                if(0<100){
+
                     PreparedStatement pps2 = connection.prepareStatement("INSERT INTO merc_tran (cod_transporte,cod_mercancia) VALUES (?,?) ");
                     pps2.setInt(1,result.getInt(1));
                     pps2.setInt(2,codigoPedido);
                     if(pps2.executeUpdate()>0){
                         respuesta = "6&"; // Código indicando que se ha asociado correctamente el pedido
                     }
-                }else
-                    respuesta = "0&"; // Codigo error indicando que ya no puede asociarse más pedidos
+
             }else{
                 // Si no encuentro el codigo de transporte, creo un nuevo transporte y le asigno el pedido.
                 PreparedStatement pps2 = connection.prepareStatement("INSERT INTO transporte (fecha,tipo,trabajador) VALUES (?,?,?)");
@@ -1203,9 +1202,24 @@ public class BaseDeDatos {
 
     }
     public String asignarVehiculo(String matricula,String codigoTrabajador){
-        String respuesta = "";
+        String respuesta = " ";
+        try{
+            if(asignarTransporteRecogida(matricula,codigoTrabajador) && asignarTransporteEntrega(matricula,codigoTrabajador)){
+                respuesta="8&";
+            }else{
+                respuesta="0&2";
+            }
+        }catch (NumberFormatException e){
+            respuesta="0&4";
+        }
+
+        return respuesta;
+    }
+
+    public boolean asignarTransporteRecogida(String matricula,String codigoTrabajador){
+        String respuesta="0&";
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo IN (1,2)");
+            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo = 1");
             pps.setInt(1, Integer.parseInt(codigoTrabajador));
             pps.setString(2, LocalDate.now().toString());
             ResultSet result = pps.executeQuery();
@@ -1216,18 +1230,67 @@ public class BaseDeDatos {
                 update.setInt(2,result.getInt(1));
                 if(update.executeUpdate()>0){
                     respuesta="8&";
+                    return true;
                 }else{
                     respuesta="0&";
+                    return false;
                 }
             }else{
-                respuesta="0&2";
+                PreparedStatement pps2 = connection.prepareStatement("INSERT INTO transporte (fecha,tipo,trabajador,vehiculo) VALUES (?,?,?,(SELECT cod_veh FROM vehiculo WHERE matricula=?))");
+                pps2.setString(1,LocalDate.now().toString());
+                pps2.setInt(2,1);
+                pps2.setInt(3,Integer.parseInt(codigoTrabajador));
+                pps2.setString(4,matricula);
+                if(pps2.executeUpdate()>0){
+                    respuesta="8&";
+                    return true;
+                }else{
+                    respuesta="0&2";
+                    return false;
+                }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        }catch (NumberFormatException e){
-            respuesta="0&4";
         }
+        return false;
+    }
 
-        return respuesta;
+    public boolean asignarTransporteEntrega(String matricula,String codigoTrabajador){
+        String respuesta="0&";
+        try {
+            PreparedStatement pps = connection.prepareStatement("SELECT cod_transp FROM transporte WHERE trabajador=? AND fecha=? AND tipo =2");
+            pps.setInt(1, Integer.parseInt(codigoTrabajador));
+            pps.setString(2, LocalDate.now().toString());
+            ResultSet result = pps.executeQuery();
+
+            if (result.next()) {
+                PreparedStatement update = connection.prepareStatement("UPDATE transporte SET vehiculo=(SELECT cod_veh FROM vehiculo WHERE matricula=?) WHERE cod_transp=?");
+                update.setString(1, matricula);
+                update.setInt(2,result.getInt(1));
+                if(update.executeUpdate()>0){
+                    respuesta="8&";
+                    return true;
+                }else{
+                    respuesta="0&";
+                    return false;
+                }
+            }else{
+                PreparedStatement pps2 = connection.prepareStatement("INSERT INTO transporte (fecha,tipo,trabajador,vehiculo) VALUES (?,?,?,(SELECT cod_veh FROM vehiculo WHERE matricula=?))");
+                pps2.setString(1,LocalDate.now().toString());
+                pps2.setInt(2,2);
+                pps2.setInt(3,Integer.parseInt(codigoTrabajador));
+                pps2.setString(4,matricula);
+                if(pps2.executeUpdate()>0){
+                    respuesta="8&";
+                    return true;
+                }else{
+                    respuesta="0&2";
+                    return false;
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
     }
 }
