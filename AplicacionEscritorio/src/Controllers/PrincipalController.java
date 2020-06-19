@@ -501,10 +501,10 @@ public class PrincipalController implements Initializable {
         ObservableList<Provider> providers = FXCollections.observableArrayList();
         for(int i = 0 ; i < array.size() ; i++) {
             JSONObject jsonObject1 = (JSONObject) array.get(i);
-            providers.add(new Provider(jsonObject1.get("nombre").toString(),jsonObject1.get("direccion").toString(),jsonObject1.get("telefono").toString(),jsonObject1.get("correo").toString()));
+            providers.add(new Provider(jsonObject1.get("nombre").toString(),jsonObject1.get("correo").toString(),jsonObject1.get("direccion").toString(),jsonObject1.get("telefono").toString()));
         }
         final TreeItem<Provider> rootTable= new RecursiveTreeItem<Provider>(providers, RecursiveTreeObject::getChildren);
-        tableProviders.getColumns().setAll(columnCompanyName,columnCompanyAddress,columnCompanyNumber,columnCompanyEmail);
+        tableProviders.getColumns().setAll(columnCompanyName,columnCompanyAddress,columnCompanyEmail,columnCompanyNumber);
         tableProviders.setRoot(rootTable);
         tableProviders.setShowRoot(false);
     }

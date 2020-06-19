@@ -64,11 +64,6 @@ public class PeticionUDP extends Thread{
         String argumentos[]=codigo.split("&");
         int num=Integer.parseInt(argumentos[0]);
         switch(Codigos.codigo_servidor(num)){
-            case REGISTRO_TRABAJADOR:
-                System.out.println("REGISTRO");
-                respuesta=bbdd.registroTrabajador(argumentos);
-                System.out.println("Envio"+respuesta);
-                break;
 
             case OBTENER_UBICACION:
                 JSONParser parser = new JSONParser();

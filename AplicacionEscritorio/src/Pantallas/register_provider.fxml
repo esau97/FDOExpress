@@ -49,6 +49,6 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Text fx:id="textInfo" fill="RED" layoutX="350.0" layoutY="354.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
+      <Text fx:id="textInfo" fill="RED" layoutX="151.0" layoutY="354.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="InfoText" />
    </children>
 </AnchorPane>

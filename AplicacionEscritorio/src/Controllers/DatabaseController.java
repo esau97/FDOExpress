@@ -75,22 +75,17 @@ public class DatabaseController {
         enviar=1+"&"+fullName+"&"+email+"&"+passwordCodif+"&"+fullAddress+"&"+phoneNumber+"&"+rol;
 
         try {
-            dataSocket = new DatagramSocket();
-            bufOut = enviar.getBytes(); //In this program, no information is set by the client
-            packetToSend = new DatagramPacket(bufOut, bufOut.length, address, 5555);
-            dataSocket.setBroadcast(true);
-            dataSocket.send(packetToSend);
-            bufIn = new byte[4096];
-            packetIn = new DatagramPacket(bufIn, bufIn.length);
-            dataSocket.receive(packetIn);
-            recibido = new String(packetIn.getData(), 0, packetIn.getLength()).trim();
-
-            recibido=recibido.trim();
+            Socket socket = new Socket(pref.getDir_ip(),pref.getPuerto());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(enviar);
+            recibido = in.readLine();
+            System.out.println(recibido);
+            callback.callback(recibido);
 
         } catch (IOException ex) {
             Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dataSocket.close();
         return recibido;
     }
 
@@ -160,8 +155,6 @@ public class DatabaseController {
             out.println(enviar);
             recibido = in.readLine();
             System.out.println(recibido);
-
-            System.out.println("Después de enviar los datos del fichero");
 
             //stage.close();
         } catch (Exception e) {

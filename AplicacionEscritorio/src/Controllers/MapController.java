@@ -124,7 +124,7 @@ public class MapController {
                 } catch (InterruptedException e) {
                     connected=false;
                     out.println("0");
-                    e.printStackTrace();
+                    System.out.println("Cerrando hilo actualizar ubicación.");
                 }catch (IOException e) {
                     e.printStackTrace();
                 } catch (ParseException e) {
@@ -245,9 +245,8 @@ public class MapController {
             marcador = marcadoresVehiculos.get(matricula);
             marcador.setVisible(true);
             mapView.setCenter(marcador.getPosition());
+            mapView.setZoom(ZOOM_DEFAULT);
         }
-
-
     }
 
 }

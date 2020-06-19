@@ -112,6 +112,8 @@ public class RegisterController implements Initializable {
         makeStageDragable();
     }
     public void register(ActionEvent actionEvent) {
+        Node node = (Node)actionEvent.getSource();
+        stage = (Stage) node.getScene().getWindow();
         if(formatoCorrectoCorreo(textEmail.getText().trim())){
             String name= textName.getText().trim();
             String lastName = textLName.getText().trim();
@@ -123,7 +125,7 @@ public class RegisterController implements Initializable {
             String fullAddress = address +" "+zipCode;
             String phoneNumber = textNumber.getText().trim();
             String ruta = textRuta.getText().trim();
-            databaseController.setCallbackPerformed(new MyCallback() {
+            /*databaseController.setCallbackPerformed(new MyCallback() {
                 @Override
                 public void callback(String accion) {
                     tratarMensaje(accion);
@@ -134,12 +136,39 @@ public class RegisterController implements Initializable {
                 public void run() {
                     databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol);
                 }
-            });
-            //tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol));
+            });*/
+            if(name.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || address.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty() || ruta.isEmpty()){
+                textInfo.setText("Por favor, rellene todos los campos.");
+                textInfo.setOpacity(1);
+                new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                            textInfo.setOpacity(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }else{
+                tratarMensaje(databaseController.enviarDatos(fullName,email,password,fullAddress,phoneNumber+"&"+ruta,rol));
+            }
+        }else{
+            textInfo.setText("Introduzca bien el correo.");
+            textInfo.setOpacity(1);
+            new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(3000);
+                        textInfo.setOpacity(0);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
         }
-        Node node = (Node)actionEvent.getSource();
-        stage = (Stage) node.getScene().getWindow();
-
         //stage.close();
 
     }
@@ -151,24 +180,30 @@ public class RegisterController implements Initializable {
                 mostrarError(Integer.parseInt(codigos[1]));
                 break;
             case REGISTRO:
-                try{
-                    textInfo.setText("Registrado correctamente.");
-                    textInfo.setOpacity(1);
-                    Thread.sleep(1000);
-                    textInfo.setOpacity(0);
-                    System.out.println("He recibido "+mensaje);
-                    TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4],(codigos[5]!=null?codigos[5]:"No tiene ruta asignada")));
-                    //tableEmployees.getRoot().getParent().getChildren().add(newEmployee);
-                    if (tableEmployees!=null){
-                        tableEmployees.getRoot().getChildren().add(newEmployee);
-                    }else{
-                        System.out.println("Table employee is null");
-                    }
-                    stage.close();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                TreeItem<Employee> newEmployee = new TreeItem(new Employee(codigos[1],codigos[2],codigos[3],codigos[4],(codigos[5]!=null?codigos[5]:"No tiene ruta asignada")));
+                //tableEmployees.getRoot().getParent().getChildren().add(newEmployee);
+                if (tableEmployees!=null){
+                    tableEmployees.getRoot().getChildren().add(newEmployee);
+                }else{
+                    System.out.println("Table employee is null");
                 }
+                textInfo.setText("Registrado correctamente.");
+                textInfo.setOpacity(1);
+                new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                            textInfo.setOpacity(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+                System.out.println("He recibido "+mensaje);
+
+                stage.close();
+
                 break;
             case REGISTRO_VEHICULO:
                 TreeItem<Vehicle> newVehicle = new TreeItem(new Vehicle(codigos[1],codigos[2],codigos[3],codigos[4]));
@@ -184,6 +219,14 @@ public class RegisterController implements Initializable {
                     }
                 }.start();
                 System.out.println("Vehiculo registrado");
+                stage.close();
+                break;
+            case REGISTRO_PROVEEDOR:
+                TreeItem<Provider> newProvider = new TreeItem(new Provider(codigos[1],codigos[4],codigos[2],codigos[3]));
+                if(tableProviders!=null){
+                    tableProviders.getRoot().getChildren().add(newProvider);
+                }
+                stage.close();
                 break;
             case ARCHIVO_GUARDADO:
                 System.out.println("Fichero guardado.");
@@ -325,6 +368,8 @@ public class RegisterController implements Initializable {
         }
     }
     public void registerProvider(ActionEvent actionEvent){
+        Node node = (Node)actionEvent.getSource();
+        stage = (Stage) node.getScene().getWindow();
         if(actionEvent.getSource()==registerProvider){
             String companyName= textCompanyName.getText().trim();
             String email = textEmail.getText().trim();
@@ -332,7 +377,23 @@ public class RegisterController implements Initializable {
             String zipCode= textCode.getText().trim();
             String fullAddress = address +" "+zipCode;
             String phoneNumber = textNumber.getText().trim();
-            tratarMensaje(databaseController.enviarDatosProveedor(companyName,email,fullAddress,phoneNumber));
+            if(companyName.isEmpty() || email.isEmpty() || address.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty()){
+                textInfo.setText("Por favor, rellene todos los campos.");
+                textInfo.setOpacity(1);
+                new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                            textInfo.setOpacity(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }else{
+                tratarMensaje(databaseController.enviarDatosProveedor(companyName,email,fullAddress,phoneNumber));
+            }
         }
     }
     public void registerVehicle(ActionEvent actionEvent) {
@@ -346,10 +407,12 @@ public class RegisterController implements Initializable {
         if(actionEvent.getSource()==registerVehicle && !textDocumentation.getText().equals("")){
             String matricula = textRegistration.getText().trim();
             File selectedFile = new File(textDocumentation.getText());
+            Node node = (Node)actionEvent.getSource();
+            stage = (Stage) node.getScene().getWindow();
             if(formatoCorrectoMatricula(matricula)){
-                if (selectedFile==null){
+                if (!selectedFile.exists()){
                     textInfo.setOpacity(1);
-                    textInfo.setText("No se ha podido descargar el archivo");
+                    textInfo.setText("No se ha podido descargar el archivo.");
                     new Thread(){
                         @Override
                         public void run(){
@@ -364,16 +427,29 @@ public class RegisterController implements Initializable {
 
                     return;
                 }
-                LocalDate localDate = datePurchase.getValue();
-                String purchaseDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-                localDate = dateRevision.getValue();
-                String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-                //databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser());
-                tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
-                Node node = (Node)actionEvent.getSource();
-                Stage stage = (Stage) node.getScene().getWindow();
-                stage.close();
+                if(matricula.isEmpty() || datePurchase.getValue()==null || dateRevision.getValue()==null){
+                    textInfo.setText("Por favor, rellene todos los campos.");
+                    textInfo.setOpacity(1);
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(3000);
+                                textInfo.setOpacity(0);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
+                }else{
+                    LocalDate localDate = datePurchase.getValue();
+                    String purchaseDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                    localDate = dateRevision.getValue();
+                    String revisionDate=localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                    tratarMensaje(databaseController.enviarDatosVehiculo(matricula,purchaseDate,revisionDate,selectedFile,user.getCodUser()));
+                }
+
             }else{
                 textInfo.setOpacity(1);
                 textInfo.setText("Comprueba la matricula. (0000-XXX)");
@@ -390,6 +466,20 @@ public class RegisterController implements Initializable {
                 }.start();
             }
 
+        }else{
+            textInfo.setOpacity(1);
+            textInfo.setText("Seleccione un archivo.");
+            new Thread(){
+                @Override
+                public void run(){
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    textInfo.setOpacity(0);
+                }
+            }.start();
         }
 
     }

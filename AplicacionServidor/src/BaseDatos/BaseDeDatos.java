@@ -376,7 +376,7 @@ public class BaseDeDatos {
             }
 
 
-            System.out.println(empleadosArray);
+
         } catch (SQLException throwables) {
             System.out.println("Error al ejecutar la sentencia select from usuario");
             throwables.printStackTrace();
@@ -403,7 +403,6 @@ public class BaseDeDatos {
 
             }
 
-            System.out.println(proveedoresArray);
         } catch (SQLException throwables) {
             System.out.println("Error al ejecutar la sentencia select from proveedor");
             throwables.printStackTrace();
@@ -438,7 +437,6 @@ public class BaseDeDatos {
                 ciudadesArray.add(ciudadObject);
             }
 
-            System.out.println(ciudadesArray);
         } catch (SQLException throwables) {
             System.out.println("Error al ejecutar la sentencia select from proveedor");
             throwables.printStackTrace();

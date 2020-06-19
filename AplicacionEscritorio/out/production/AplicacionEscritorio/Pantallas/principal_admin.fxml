@@ -138,37 +138,6 @@
                   <Text fx:id="textInfo2" layoutX="145.0" layoutY="198.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                </children>
             </Pane>
-            <Pane fx:id="pnlCustomers" prefHeight="572.0" prefWidth="221.0">
-               <children>
-                  <Label layoutX="24.0" layoutY="43.0" text="Proveedores">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="706.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Imagenes/icons8_Search_52px.png" />
-                     </image>
-                  </ImageView>
-                  <JFXTextField fx:id="searchCompany" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
-                  <JFXButton id="btnAdd" fx:id="btnAddCompany" layoutX="620.0" layoutY="112.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo proveedor" />
-                  <JFXTreeTableView fx:id="tableProviders" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
-                     <columns>
-                        <TreeTableColumn fx:id="columnCompanyName" prefWidth="179.0" text="Nombre" />
-                        <TreeTableColumn fx:id="columnCompanyAddress" prefWidth="179.0" text="Telefono" />
-                        <TreeTableColumn fx:id="columnCompanyNumber" prefWidth="179.0" text="Email" />
-                        <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="179.0" text="Direccion" />
-                     </columns>
-                  </JFXTreeTableView>
-                  <JFXButton fx:id="btnActualizarProveedores" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
-                     <graphic>
-                        <FontAwesomeIcon glyphName="UNDO" />
-                     </graphic>
-                  </JFXButton>
-                  <JFXComboBox fx:id="comboBoxCompany" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filtrador" />
-                  <Text fx:id="textInfo1" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-               </children>
-            </Pane>
             <Pane fx:id="pnlVehicles" prefHeight="572.0" prefWidth="221.0">
                <children>
                   <Label layoutX="24.0" layoutY="43.0" text="Vehiculos">
@@ -236,6 +205,37 @@
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>
                   </JFXButton>
+               </children>
+            </Pane>
+            <Pane fx:id="pnlCustomers" prefHeight="572.0" prefWidth="221.0">
+               <children>
+                  <Label layoutX="24.0" layoutY="43.0" text="Proveedores">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="27.0" fitWidth="29.0" layoutX="706.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Imagenes/icons8_Search_52px.png" />
+                     </image>
+                  </ImageView>
+                  <JFXTextField fx:id="searchCompany" alignment="CENTER" layoutX="555.0" layoutY="45.0" promptText="Buscar" />
+                  <JFXButton id="btnAdd" fx:id="btnAddCompany" layoutX="620.0" layoutY="112.0" onAction="#handleClicks" styleClass="btnAdd" stylesheets="@../styles.css" text="Nuevo proveedor" />
+                  <JFXTreeTableView fx:id="tableProviders" layoutX="20.0" layoutY="220.0" prefHeight="368.0" prefWidth="716.0">
+                     <columns>
+                        <TreeTableColumn fx:id="columnCompanyName" prefWidth="179.0" text="Nombre" />
+                        <TreeTableColumn fx:id="columnCompanyAddress" prefWidth="179.0" text="Direccion" />
+                        <TreeTableColumn fx:id="columnCompanyNumber" prefWidth="179.0" text="Telefono" />
+                        <TreeTableColumn fx:id="columnCompanyEmail" prefWidth="179.0" text="Correo" />
+                     </columns>
+                  </JFXTreeTableView>
+                  <JFXButton fx:id="btnActualizarProveedores" contentDisplay="RIGHT" layoutX="648.0" layoutY="176.0" onAction="#handleClicks" text="Actualizar">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="UNDO" />
+                     </graphic>
+                  </JFXButton>
+                  <JFXComboBox fx:id="comboBoxCompany" layoutX="378.0" layoutY="45.0" prefHeight="27.0" prefWidth="126.0" promptText="Filtrador" />
+                  <Text fx:id="textInfo1" layoutX="367.0" layoutY="185.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                </children>
             </Pane>
          </children>

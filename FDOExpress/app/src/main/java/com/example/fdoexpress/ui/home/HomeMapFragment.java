@@ -119,7 +119,7 @@ public class HomeMapFragment extends Fragment implements OnMapReadyCallback {
             LatLng newLatLong = new LatLng(latitud,longitud);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(newLatLong));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLong, 12.0f));
-            MarkerOptions mk = new MarkerOptions().position(newLatLong).title("Marker in Puerto Real");
+            MarkerOptions mk = new MarkerOptions().position(newLatLong);
             orderMarker = mMap.addMarker(mk);
         }
     }

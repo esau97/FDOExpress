@@ -40,7 +40,6 @@ public class PeticionTCP extends Thread{
             System.out.println("Recibo"+respuesta);
             // Tratamos el mensaje recibido
             mensaje=tratarMensaje(respuesta);
-            System.out.println("Envio"+mensaje);
             //Enviamos una respuesta al cliente
 
             out.println(mensaje);
@@ -160,6 +159,10 @@ public class PeticionTCP extends Thread{
             case CARGAR_TABLAS:
                 System.out.println("CARGANDO TABLAS");
                 respuesta = "4&"+bbdd.devolverDatosTablas();
+                break;
+            case REGISTRO_TRABAJADOR:
+                System.out.println("REGISTRO");
+                respuesta=bbdd.registroTrabajador(argumentos);
                 break;
         }
         return respuesta;
