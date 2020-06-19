@@ -134,7 +134,7 @@
                      </graphic>
                   </JFXButton>
                   <JFXComboBox fx:id="comboBoxEmployees" layoutX="378.0" layoutY="45.0" prefWidth="126.0" promptText="Filtrado" />
-                  <JFXButton fx:id="asignarRuta" layoutX="34.0" layoutY="181.0" onAction="#handleClicks" text="Ruta" />
+                  <JFXButton fx:id="asignarRuta" layoutX="34.0" layoutY="181.0" onAction="#handleClicks" text="Modificar ruta" />
                   <Text fx:id="textInfo2" layoutX="145.0" layoutY="198.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                </children>
             </Pane>
@@ -176,7 +176,7 @@
             </Pane>
             <Pane fx:id="pnlOrders" prefHeight="572.0" prefWidth="221.0">
                <children>
-                  <Label layoutX="24.0" layoutY="43.0" text="Pedidos">
+                  <Label layoutX="24.0" layoutY="43.0" text="Pedidos en  reparto">
                      <font>
                         <Font size="26.0" />
                      </font>
@@ -200,7 +200,7 @@
                      </graphic>
                   </JFXButton>
                   <JFXComboBox fx:id="comboBoxOrders" layoutX="378.0" layoutY="45.0" prefWidth="126.0" promptText="Filtrado" />
-                  <JFXButton fx:id="btnActualizarRuta" contentDisplay="RIGHT" layoutX="23.0" layoutY="183.0" onAction="#handleClicks" text="Actualizar rutas">
+                  <JFXButton fx:id="btnActualizarRuta" contentDisplay="RIGHT" layoutX="23.0" layoutY="183.0" onAction="#handleClicks" text="Asignar pedidos">
                      <graphic>
                         <FontAwesomeIcon glyphName="UNDO" />
                      </graphic>

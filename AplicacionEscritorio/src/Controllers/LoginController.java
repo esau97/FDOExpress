@@ -107,7 +107,6 @@ public class LoginController implements Initializable {
             showError("Error","Debe introducir el usuario y la contraseña");
         }
 
-        System.out.println(respuesta);
     }
     public void initData(Projection projection){
         this.projection = projection;
@@ -115,7 +114,6 @@ public class LoginController implements Initializable {
     }
     public void tratarMensaje(String mensaje){
         String codigos[]=mensaje.split("&");
-        System.out.println("Recibido"+mensaje);
         switch (Codigos.codigo_cliente(Integer.parseInt(codigos[0]))){
             case ERROR:
                 mostrarError(Integer.parseInt(codigos[1]));
@@ -127,12 +125,10 @@ public class LoginController implements Initializable {
                     user.setName(codigos[2]);
                     user.setCodUser(Integer.parseInt(codigos[3]));
 
-                    System.out.println("recibo"+mensaje);
                     JSONParser jsonParser = new JSONParser();
                     JSONObject jsonObject=null;
                     try{
                         jsonObject = (JSONObject) jsonParser.parse(codigos[5]);
-                        System.out.println(jsonObject);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -198,7 +194,6 @@ public class LoginController implements Initializable {
                     loader.setLocation(getClass().getResource("/Pantallas/principal_gerente.fxml"));
                     root = loader.load();
                     PrincipalController principalController = loader.getController();
-                    System.out.println(databaseController.getPref().getDir_ip());
                     principalController.initData(user,databaseController,jsonObject,projection);
                     principal =  new Scene(root);
                 }

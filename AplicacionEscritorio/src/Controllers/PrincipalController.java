@@ -424,7 +424,6 @@ public class PrincipalController implements Initializable {
                     while(c.next()){
                         if(c.wasUpdated()){
                             TreeItem<Employee> employeeTreeItem = tableEmployees.getSelectionModel().getSelectedItem();
-                            System.out.println("Nuevo dato "+ employeeTreeItem.getValue().getAddress());
                         }
                     }
                 }

@@ -200,7 +200,6 @@ public class RegisterController implements Initializable {
                         }
                     }
                 }.start();
-                System.out.println("He recibido "+mensaje);
 
                 stage.close();
 
@@ -218,7 +217,6 @@ public class RegisterController implements Initializable {
                             generarQR(codigos[1]);
                     }
                 }.start();
-                System.out.println("Vehiculo registrado");
                 stage.close();
                 break;
             case REGISTRO_PROVEEDOR:
@@ -235,7 +233,9 @@ public class RegisterController implements Initializable {
         }
     }
     public void generarQR(String matricula){
-        String qrcode = System.getProperty("user.home")+"/Desktop/"+matricula+".gif";
+        // System.getProperty("user.home")
+        File f = new File("Ficheros");
+        String qrcode = f+"/"+matricula+".gif";
         QRCodeWriter writer = new QRCodeWriter();
         try{
             BitMatrix bitMatrix = writer.encode(matricula, BarcodeFormat.QR_CODE,200,200);
@@ -375,7 +375,7 @@ public class RegisterController implements Initializable {
             String email = textEmail.getText().trim();
             String address= textAddress.getText().trim();
             String zipCode= textCode.getText().trim();
-            String fullAddress = address +" "+zipCode;
+            String fullAddress = address +","+zipCode;
             String phoneNumber = textNumber.getText().trim();
             if(companyName.isEmpty() || email.isEmpty() || address.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty()){
                 textInfo.setText("Por favor, rellene todos los campos.");

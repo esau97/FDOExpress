@@ -87,15 +87,14 @@ public class MapController {
                     out = new PrintWriter(socket.getOutputStream(), true);
                     out.println("7");
                     int cont=0;
-
+                    System.out.println("Hilo conexión ubicaciones");
                     while (connected){
-                        System.out.println("en bucle");
                         String recibido = in.readLine();
                         String argumentos [] = recibido.split("&");
                         JSONParser jsonParser = new JSONParser();
                         jsonObject = (JSONObject) jsonParser.parse(argumentos[1]);
                         JSONArray jsonArray = (JSONArray) jsonObject.get("Ubicaciones");
-                        System.out.println(jsonObject);
+
                         for (int i = 0; i < jsonArray.size() ; i++) {
                             JSONObject jsonObject1 = (JSONObject) jsonArray.get(i);
                             double latitud=Double.parseDouble(jsonObject1.get("latitud").toString());
@@ -141,7 +140,6 @@ public class MapController {
                     mapLabel=new MapLabel(obj,10, -10).setVisible(true).setCssClass("orange-label");
                     labelVehiculos.put(obj,mapLabel);
                     marker.attachLabel(mapLabel);
-                    System.out.println(obj);
                 }
             }
         };

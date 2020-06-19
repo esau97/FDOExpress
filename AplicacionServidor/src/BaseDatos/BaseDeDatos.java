@@ -759,6 +759,8 @@ public class BaseDeDatos {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }catch (ArithmeticException e){
+            System.out.println("No se puede dividir entre 0");
         }
 
         return respuesta;
@@ -1061,7 +1063,7 @@ public class BaseDeDatos {
                 "                AND t.tipo=1\n" +
                 "                AND h.cod_estado = 1;";
         //String consulta = "select mt.cod_mercancia from merc_tran mt, transporte t WHERE mt.cod_transporte=t.cod_transp  AND t.trabajador=? AND t.fecha=? AND tipo=2;";
-        String consulta2= "select m.nombre_destinatario,m.direccion_envio,m.cod_mercancia,m.nom_proveedor from mercancia m WHERE m.cod_mercancia=?; ";
+        String consulta2= "select m.nombre_destinatario,p.direccion,m.cod_mercancia,m.nom_proveedor from mercancia m,proveedor p WHERE m.cod_mercancia=? AND m.nom_proveedor = p.nombre; ";
         try{
             PreparedStatement pps = connection.prepareStatement(consulta);
             pps.setInt(1,codigoTrabajador);
