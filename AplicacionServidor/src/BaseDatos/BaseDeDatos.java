@@ -431,7 +431,7 @@ public class BaseDeDatos {
 
             while (resultado.next()){
                 JSONObject ciudadObject = new JSONObject();
-                ciudadObject.put("direccion",resultado.getString(1));
+                ciudadObject.put("direccion",resultado.getString(1).split(",")[0]);
                 ciudadObject.put("cantidadPedidos",resultado.getString(2));
                 ciudadObject.put("cantidadTrabajadores",resultado.getString(3));
                 ciudadesArray.add(ciudadObject);
