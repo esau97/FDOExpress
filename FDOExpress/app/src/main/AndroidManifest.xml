@@ -22,7 +22,7 @@
 
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyAWHKQwKD7glvVIV3ursrFGg0Bp97o0mqM"/>
+                android:value="Your ApiKey"/>
 
         <receiver android:name=".Tasks.MyLocationServices">
         </receiver>
