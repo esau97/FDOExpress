@@ -29,7 +29,7 @@ public class EnviarMail extends Thread{
         String argumentos [] = datosQR.split("&");
         this.numeroPedido=argumentos[0];
         //this.destinatario=destinatario;
-        this.destinatario="esauh97@gmail.com";
+        this.destinatario="x@gmail.com";
         this.datosQR = datosQR;
     }
 
